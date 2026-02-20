@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, theme-color=#4f46e5">
+    <title>Tabungan Bersama</title>
+    
+    <link rel="manifest" id="manifest-link">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
+
+    <!-- Tailwind CSS with Dark Mode Support -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        premium: '#4f46e5',
+                        'premium-dark': '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; } 
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .app-container { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; overflow-x: hidden; }
+        .toggle-checkbox:checked { right: 0; border-color: #4f46e5; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #4f46e5; }
+        .bg-premium-gradient { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); }
+        .celeb-ping { animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        .toast-visible { opacity: 1 !important; transform: translate(-50%, -20px) !important; }
+        
+        /* Spinner */
+        .spinner { animation: rotate 2s linear infinite; width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; }
+        .spinner .path { stroke: currentColor; stroke-linecap: round; animation: dash 1.5s ease-in-out infinite; }
+        @keyframes rotate { 100% { transform: rotate(360deg); } }
+        @keyframes dash { 0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; } 50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; } 100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; } }
+        
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+        
+        /* Modal selection style */
+        .color-btn.selected { border-color: #1e293b; transform: scale(1.1); border-width: 4px; }
+        .emoji-btn.selected { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.1); border-width: 2px; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
+
+    <div class="app-container flex flex-col h-screen relative bg-slate-50 dark:bg-slate-900 shadow-2xl">
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 bg-slate-900 dark:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none">
+            Pesan
+        </div>
+
+        <!-- VIEW 1: HOME -->
+        <main id="view-home" class="flex-1 overflow-y-auto no-scrollbar pb-24">
+            <div class="px-6 pt-10 pb-4 bg-white dark:bg-slate-900 relative">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <div id="home-avatar" class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-inner transition-all duration-500"></div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider translate-y-0.5" data-t="welcome">Selamat datang,</p>
+                            <p id="home-username" class="font-extrabold text-slate-900 dark:text-white text-lg tracking-tight">-</p>
+                        </div>
+                    </div>
+                    <div id="auth-status-icon" class="text-emerald-500 opacity-50"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                </div>
+            </div>
+
+            <div class="px-6 pb-10 bg-white dark:bg-slate-900 rounded-b-[2.5rem] shadow-sm border-b border-slate-100 dark:border-slate-800">
+                <div class="bg-premium-gradient rounded-[2rem] p-7 shadow-xl shadow-indigo-200/40 dark:shadow-none text-white relative overflow-hidden">
+                    <div class="relative z-10 flex justify-between items-center mb-1">
+                        <p class="text-indigo-100 font-medium text-xs opacity-80 uppercase tracking-widest" data-t="total_balance">Total Saldo</p>
+                        <button onclick="window.toggleBalance()" class="p-2 bg-white/10 rounded-full active:scale-95 transition-transform">
+                            <i id="eye-icon" data-lucide="eye" class="w-4 h-4 text-white"></i>
+                        </button>
+                    </div>
+                    <h1 id="total-balance" class="text-4xl font-black tracking-tight mb-6" data-value="0">Rp 0</h1>
+                    
+                    <div class="relative z-10 pt-5 border-t border-white/10 flex justify-between items-center">
+                        <div>
+                            <p class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter" data-t="income">Masuk (Bln Ini)</p>
+                            <p id="mutasi-in" class="font-bold text-sm text-emerald-300">Rp 0</p>
+                        </div>
+                        <div class="w-px h-6 bg-white/10"></div>
+                        <div class="text-right">
+                            <p class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter" data-t="outcome">Keluar (Bulan Ini)</p>
+                            <p id="mutasi-out" class="font-bold text-sm text-rose-300">Rp 0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="font-black text-slate-900 dark:text-white tracking-tight" data-t="savings_goal">Tujuan Tabungan</h2>
+                    <button onclick="window.switchView('view-create')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 p-2 rounded-full active:scale-90 transition-transform">
+                        <i data-lucide="plus" class="w-6 h-6"></i>
+                    </button>
+                </div>
+                <div id="rooms-container" class="space-y-4"></div>
+            </div>
+        </main>
+
+        <!-- VIEW 2: DETAIL ROOM -->
+        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-slate-50 dark:bg-slate-950 hidden relative">
+            <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button onclick="window.historyBackOverride('view-home')" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
+                    <h1 id="detail-title" class="font-bold text-lg text-slate-800 dark:text-white truncate">Detail</h1>
+                </div>
+                <button onclick="window.openEditModal()" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
+            </div>
+            <div class="p-8 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2" data-t="available_balance">Saldo Tersedia</p>
+                <h2 id="detail-balance" class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Rp 0</h2>
+                <div id="detail-target-container" class="mt-8 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between text-xs font-bold mb-3">
+                        <span class="text-slate-400 uppercase" data-t="progress">Progres</span>
+                        <span id="detail-progress-text" class="text-indigo-600 dark:text-indigo-400">0 / 0</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+                        <div id="detail-progress-bar" class="bg-indigo-600 h-3 transition-all duration-1000 shadow-sm" style="width: 0%"></div>
+                    </div>
+                    <div id="detail-archive-btn-container" class="mt-6 hidden">
+                        <button onclick="window.completeAndArchiveRoom()" class="w-full py-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-amber-100 dark:border-amber-900/30" data-t="archive_now">Arsipkan Sekarang</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="detail-milestone-container" class="p-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
+                <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
+                <div id="detail-milestone-list" class="space-y-3"></div>
+            </div>
+
+            <div class="p-6">
+                <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="history" class="w-4 h-4"></i> <span data-t="history">Riwayat</span></h3>
+                <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
+            </div>
+            <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-[480px] mx-auto z-20 flex gap-4">
+                <button onclick="window.openTransactionModal('tarik')" class="flex-1 py-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 font-black rounded-2xl active:bg-rose-100" data-t="withdraw">Tarik</button>
+                <button onclick="window.openTransactionModal('nabung')" class="flex-1 py-4 bg-premium text-white font-black rounded-2xl shadow-xl shadow-indigo-200 dark:shadow-none active:opacity-90" data-t="save">Nabung</button>
+            </div>
+        </main>
+
+        <!-- VIEW 3: HISTORY -->
+        <main id="view-history" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-white dark:bg-slate-900 hidden">
+            <div class="px-6 pt-10 pb-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
+                <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-5 tracking-tight" data-t="history">Riwayat</h1>
+                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <button onclick="window.filterHistory('all')" id="filter-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-black rounded-full whitespace-nowrap" data-t="all">Semua</button>
+                    <button onclick="window.filterHistory('in')" id="filter-in" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="in">Masuk</button>
+                    <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="out">Keluar</button>
+                </div>
+            </div>
+            <div id="global-history-container" class="p-6 space-y-4"></div>
+        </main>
+
+        <!-- VIEW 4: PROFILE -->
+        <main id="view-profile" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden">
+            <div class="p-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center relative">
+                <div class="relative inline-block mx-auto mb-5">
+                    <div id="profile-avatar" class="w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black border border-black/5 shadow-inner"></div>
+                    <button onclick="window.openAvatarModal()" class="absolute bottom-0 right-0 bg-slate-900 dark:bg-slate-700 text-white p-2.5 rounded-full border-4 border-white dark:border-slate-900 shadow-md active:scale-90 transition-transform">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
+                </div>
+                <h1 id="profile-username" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">-</h1>
+                <p id="profile-stats" class="text-sm font-bold text-slate-400 mt-1 uppercase tracking-widest">0 Tabungan Aktif</p>
+            </div>
+
+            <div class="p-6 space-y-8">
+                <div>
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="data_activities">Data & Aktivitas</h3>
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+                        <div onclick="window.switchView('view-archive')" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-xl"><i data-lucide="archive" class="w-5 h-5"></i></div>
+                                <div>
+                                    <p class="text-sm font-black text-slate-700 dark:text-slate-200 tracking-tight" data-t="archive">Arsip Tabungan</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase" data-t="archive_desc">Target Selesai 100%</p>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="app_settings">Pengaturan Aplikasi</h3>
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
+                        <!-- Dark Mode -->
+                        <div class="flex items-center justify-between p-5">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl"><i data-lucide="moon" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="dark_mode">Mode Gelap</span>
+                            </div>
+                            <div class="relative inline-block w-10 h-5">
+                                <input type="checkbox" id="toggle-dark" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer border-slate-200 transition-all" onchange="window.toggleDarkMode()"/>
+                                <label for="toggle-dark" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer transition-colors"></label>
+                            </div>
+                        </div>
+                        <!-- Language -->
+                        <div class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800" onclick="window.toggleLanguage()">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-xl"><i data-lucide="languages" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="language_name">Bahasa</span>
+                            </div>
+                            <span id="lang-display" class="text-[10px] font-black uppercase text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">ID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- VIEW 5: ARCHIVE -->
+        <main id="view-archive" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden">
+            <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+                <button onclick="window.switchView('view-profile', 'nav-profile')" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90 transition-transform"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
+                <h1 class="font-bold text-lg text-slate-800 dark:text-white" data-t="archive">Arsip Tabungan</h1>
+            </div>
+            <div class="p-6" id="archive-container"></div>
+        </main>
+
+        <!-- VIEW 6: CREATE -->
+        <main id="view-create" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-white dark:bg-slate-950 hidden relative">
+             <div class="sticky top-0 bg-white z-10 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 dark:bg-slate-900">
+                <button onclick="window.historyBackOverride('view-home')" class="p-2 text-slate-600 active:scale-90 dark:text-slate-400"><i data-lucide="x" class="w-7 h-7"></i></button>
+                <h1 class="font-bold text-lg text-slate-800 dark:text-white" data-t="savings_goal">Buat Tabungan</h1>
+            </div>
+            <div class="p-6 space-y-8">
+                <div>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1" data-t="goal_name">Nama Tujuan</label>
+                    <input type="text" id="create-name" placeholder="Beli Laptop..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold text-slate-900 dark:text-white transition-all">
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm font-black text-slate-800 dark:text-slate-200" data-t="target_nominal">Target Nominal?</p>
+                        <div class="relative inline-block w-12 h-6">
+                            <input type="checkbox" id="toggle-target" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-200 transition-all duration-300" onchange="document.getElementById('target-input-div').classList.toggle('hidden')"/>
+                            <label for="toggle-target" class="toggle-label block h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                    </div>
+                    <div id="target-input-div" class="hidden mt-6 relative text-center">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">Rp</span>
+                        <input type="text" id="create-target" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none">
+                    </div>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm font-black text-slate-800 dark:text-slate-200">Milestone?</p>
+                        <div class="relative inline-block w-12 h-6">
+                            <input type="checkbox" id="toggle-milestone" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-200 transition-all duration-300" onchange="document.getElementById('milestone-input-div').classList.toggle('hidden')"/>
+                            <label for="toggle-milestone" class="toggle-label block h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                    </div>
+                    <div id="milestone-input-div" class="hidden mt-6 space-y-4">
+                        <div id="milestone-rows-container">
+                            <div class="milestone-row bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-3 shadow-sm relative text-left">
+                                <input type="text" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
+                                <div class="relative">
+                                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span>
+                                    <input type="text" inputmode="numeric" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white">
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="window.addMilestoneRow()" class="w-full py-3 border-2 border-dashed border-slate-300 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-colors">+ Tambah Rincian</button>
+                    </div>
+                </div>
+            </div>
+            <div class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 max-w-[480px] mx-auto z-20">
+                <button id="btn-save-room" onclick="window.handleCreateRoom()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-2xl active:scale-95 transition-all">Simpan</button>
+            </div>
+        </main>
+
+        <!-- FOOTER NAV -->
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-10 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
+            <button onclick="window.switchView('view-home', 'nav-home')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-indigo-600 transition-all" id="nav-home">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_home">Home</span>
+            </button>
+            <button onclick="window.switchView('view-history', 'nav-history')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-300 transition-all" id="nav-history">
+                <i data-lucide="pie-chart" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_history">Riwayat</span>
+            </button>
+            <button onclick="window.switchView('view-profile', 'nav-profile')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-300 transition-all" id="nav-profile">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_profile">Profil</span>
+            </button>
+        </nav>
+
+        <!-- MODALS -->
+        <div id="modal-overlay" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[40] hidden max-w-[480px] mx-auto transition-opacity" onclick="window.closeAllModals()"></div>
+
+        <!-- ONBOARDING -->
+        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto">
+            <div class="w-full text-center">
+                <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Mulai Menabung!</h2>
+                <div class="text-left mb-8">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Nama Lengkap</label>
+                    <input type="text" id="onboarding-name" placeholder="Leonardo Suprayogi" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] font-bold text-xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-slate-900 dark:text-white">
+                </div>
+                <button id="btn-onboarding" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Masuk Aplikasi</button>
+            </div>
+        </div>
+
+        <div id="modal-transaction" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[50] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8 text-left">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 id="trx-title" class="font-black text-2xl text-slate-900 dark:text-white">Nominal</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <input type="hidden" id="trx-type" value="in">
+                <div class="relative mb-10 text-center">
+                    <span class="absolute left-0 top-1 text-3xl font-black text-slate-300 dark:text-slate-700">Rp</span>
+                    <input type="text" id="trx-amount" inputmode="numeric" placeholder="0" class="money-input w-full pl-14 text-5xl font-black text-slate-900 dark:text-white border-b-4 border-indigo-100 dark:border-slate-800 pb-3 focus:outline-none focus:border-indigo-500 bg-transparent transition-colors">
+                </div>
+                <div class="space-y-6 mb-10 text-left">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="label_depositor">Penyetor</label>
+                        <input type="text" id="trx-user-display" disabled class="w-full p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl font-bold text-slate-500 border-none opacity-100">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="label_note">Catatan (Opsional)</label>
+                        <input type="text" id="trx-note" placeholder="Misal: Bonus kerja..." class="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none border border-slate-100 dark:border-slate-800">
+                    </div>
+                </div>
+                <button id="btn-submit-trx" onclick="window.handleTransactionSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-2xl flex items-center justify-center gap-3 active:scale-95 transition-transform" data-t="confirm">Konfirmasi</button>
+            </div>
+        </div>
+
+        <div id="modal-manage" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[50] transform translate-y-full transition-transform duration-300 pb-safe shadow-[0_-20px_50px_rgba(0,0,0,0.1)] hidden">
+            <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mt-5 mb-8"></div>
+            <div class="px-8 pb-8 space-y-4 text-left">
+                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Kelola Tabungan</h3>
+                <button onclick="window.openShareOptions()" class="w-full flex items-center justify-between p-5 rounded-2xl border border-slate-100 bg-slate-50 dark:bg-slate-800 dark:border-slate-700 active:bg-white transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="p-2.5 bg-indigo-100 text-indigo-600 rounded-xl"><i data-lucide="link" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-800 dark:text-slate-200">Bagikan Tabungan</span>
+                    </div>
+                    <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
+                </button>
+                <button onclick="window.deleteCurrentRoom()" class="w-full flex items-center p-5 rounded-2xl bg-rose-50 dark:bg-rose-900/20 border border-rose-100 dark:border-rose-900/30 mt-4 active:scale-95 transition-transform">
+                    <div class="p-2.5 bg-rose-100 text-rose-600 rounded-xl mr-4"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                    <span class="font-bold text-rose-600">Hapus Permanen</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="modal-share" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 pb-safe shadow-2xl hidden text-left">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-black text-2xl text-slate-900 dark:text-white">Bagikan</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="p-5 bg-slate-50 dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 flex justify-between items-center mb-10 shadow-inner">
+                    <span class="text-xs font-bold text-slate-500 truncate mr-4" id="share-link-text">...</span>
+                    <button onclick="window.copyShareLink()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-2xl text-xs font-black shadow-lg active:scale-95 transition-transform">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i> Salin
+                    </button>
+                </div>
+                <button onclick="window.closeAllModals()" class="w-full py-5 bg-slate-900 text-white font-black text-lg rounded-[1.5rem]">Tutup</button>
+            </div>
+        </div>
+
+        <div id="modal-edit" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden text-left">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-black text-2xl text-slate-900 dark:text-white" data-t="edit_goal">Ubah Tabungan</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="space-y-6 mb-10 text-left">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="goal_name">Nama Tujuan</label>
+                        <input type="text" id="edit-name" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="target_nominal">Target Nominal</label>
+                        <div class="relative">
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
+                            <input type="text" id="edit-target" inputmode="numeric" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-save-edit" onclick="window.handleEditSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl flex items-center justify-center gap-3" data-t="save_changes">Simpan Perubahan</button>
+            </div>
+        </div>
+
+        <div id="modal-celebration" class="fixed inset-0 z-[70] flex items-center justify-center p-8 hidden bg-slate-950/80 backdrop-blur-md max-w-[480px] mx-auto transition-opacity">
+            <div class="w-full bg-white dark:bg-slate-900 rounded-[3rem] p-10 text-center shadow-2xl transform transition-transform">
+                <div class="w-24 h-24 bg-amber-50 dark:bg-amber-900/20 rounded-full mx-auto flex items-center justify-center text-amber-500 mb-8 border border-amber-100 dark:border-amber-800 relative">
+                    <i data-lucide="trophy" class="w-12 h-12 relative z-10"></i>
+                    <div class="absolute top-0 right-0 w-4 h-4 bg-indigo-500 rounded-full celeb-ping"></div>
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-4 tracking-tight" data-t="goal_reached">Tercapai!</h2>
+                <p class="text-slate-500 dark:text-slate-400 font-medium mb-10"><span data-t="celeb_desc">Tabungan</span> <strong id="celeb-room-name" class="text-indigo-500"></strong> <span data-t="celeb_done">lunas 100%!</span></p>
+                <button onclick="window.closeAllModals()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl active:scale-95 transition-transform" data-t="continue">Lanjutkan</button>
+            </div>
+        </div>
+
+        <div id="modal-avatar" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[50] transform translate-y-full transition-transform duration-300 shadow-2xl hidden text-left">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-black text-2xl text-slate-900 dark:text-white">Avatar & Warna</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="mb-8">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Warna Latar</label>
+                    <div class="flex gap-4 overflow-x-auto no-scrollbar pb-2" id="color-options"></div>
+                </div>
+                <div class="mb-10">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Karakter</label>
+                    <div class="grid grid-cols-5 gap-3" id="emoji-options"></div>
+                </div>
+                <button onclick="window.saveAvatarSelection()" class="w-full py-5 bg-slate-900 text-white font-black text-lg rounded-[1.5rem] active:scale-95 transition-transform">Simpan Perubahan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK Modules -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // --- CONFIG ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDUPTlI50-ZrTwokK9A9S7MJr5iCmqqyT4",
+            authDomain: "tabungan-bersama-e48da.firebaseapp.com",
+            projectId: "tabungan-bersama-e48da",
+            storageBucket: "tabungan-bersama-e48da.firebasestorage.app",
+            messagingSenderId: "984749032676",
+            appId: "1:984749032676:web:eee0cff2200445e927d8f1"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // --- TRANSLATIONS ---
+        const i18n = {
+            id: {
+                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk (Bln Ini)", outcome: "Keluar (Bln Ini)",
+                savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
+                archive_now: "Arsipkan Sekarang", milestone_list: "Daftar Milestone", history: "Riwayat Transaksi",
+                withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
+                archive: "Arsip Tabungan", archive_desc: "Target 100% Selesai", dark_mode: "Mode Gelap", language_name: "Bahasa",
+                language_val: "ID", edit_goal: "Ubah Tabungan", goal_name: "Nama Tujuan", target_nominal: "Target Nominal",
+                save_changes: "Simpan Perubahan", goal_reached: "Tercapai!", celeb_desc: "Tabungan", celeb_done: "lunas 100%!",
+                continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
+                all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi"
+            },
+            en: {
+                welcome: "Welcome,", total_balance: "Total Balance", income: "Income (This Month)", outcome: "Outcome (This Month)",
+                savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
+                archive_now: "Archive Now", milestone_list: "Milestone List", history: "Transaction History",
+                withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
+                archive: "Archive", archive_desc: "100% Goal Completed", dark_mode: "Dark Mode", language_name: "Language",
+                language_val: "EN", edit_goal: "Edit Saving", goal_name: "Goal Name", target_nominal: "Target Amount",
+                save_changes: "Save Changes", goal_reached: "Reached!", celeb_desc: "Saving", celeb_done: "is 100% completed!",
+                continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
+                all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings"
+            }
+        };
+
+        // --- GLOBAL STATE ---
+        const DB_KEY = 'tabungan_app_v10_stable_fix_final';
+        let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
+            user: '',
+            avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
+            joinedRooms: [],
+            darkMode: false,
+            language: 'id'
+        };
+        let globalRooms = [];
+        let globalHistory = [];
+        let currentRoomId = null;
+        let roomToDelete = null;
+        let isBalanceHidden = false;
+        let currentHistoryFilter = 'all';
+
+        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit'];
+
+        // --- ATTACH TO WINDOW (IMMEDIATE) ---
+        window.saveLocal = () => localStorage.setItem(DB_KEY, JSON.stringify(appData));
+        
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            if(t) { t.innerText = msg; t.classList.add('toast-visible'); setTimeout(() => t.classList.remove('toast-visible'), 2500); }
+        };
+        
+        window.closeAllModals = () => {
+            modalIds.forEach(id => { 
+                const m = document.getElementById(id); 
+                if(m) {
+                    m.classList.add('translate-y-full');
+                    setTimeout(() => m.classList.add('hidden'), 300);
+                }
+            });
+            const overlay = document.getElementById('modal-overlay'); if(overlay) overlay.classList.add('hidden');
+        };
+
+        window.showModal = (id) => {
+            const overlay = document.getElementById('modal-overlay');
+            const m = document.getElementById(id);
+            if(overlay) overlay.classList.remove('hidden');
+            if(m) {
+                m.classList.remove('hidden');
+                setTimeout(() => m.classList.remove('translate-y-full'), 10);
+            }
+        };
+
+        window.switchView = (viewId, navId = null) => {
+            const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
+            views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+            const target = document.getElementById(viewId); if(target) target.classList.remove('hidden');
+            const nav = document.getElementById('bottom-nav');
+            if(nav) {
+                if (['view-detail', 'view-create', 'view-archive'].includes(viewId)) nav.classList.add('hidden');
+                else nav.classList.remove('hidden');
+            }
+            if(navId) {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.replace('text-indigo-600', 'text-slate-300');
+                    const span = btn.querySelector('span'); if(span) span.classList.replace('font-black', 'font-bold');
+                });
+                const active = document.getElementById(navId);
+                if(active) {
+                    active.classList.replace('text-slate-300', 'text-indigo-600');
+                    const span = active.querySelector('span'); if(span) span.classList.replace('font-bold', 'font-black');
+                }
+            }
+            window.scrollTo(0,0);
+        };
+
+        window.historyBackOverride = (view) => window.switchView(view, 'nav-home');
+        
+        const createSpinner = () => `<svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>`;
+
+        // --- FIREBASE LOGIC ---
+        function startRealtimeSync() {
+            onSnapshot(collection(db, "rooms"), (snap) => {
+                globalRooms = [];
+                snap.forEach(doc => {
+                    const r = doc.data();
+                    if(appData.joinedRooms.includes(r.id)) globalRooms.push(r);
+                });
+                globalRooms.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+                updateUI();
+                if(currentRoomId) refreshRoomUI(currentRoomId);
+            });
+            onSnapshot(collection(db, "history"), (snap) => {
+                globalHistory = [];
+                snap.forEach(doc => {
+                    const h = doc.data();
+                    if(appData.joinedRooms.includes(h.roomId)) globalHistory.push(h);
+                });
+                globalHistory.sort((a,b) => b.timestamp - a.timestamp);
+                updateUI();
+                if(currentRoomId) refreshRoomUI(currentRoomId);
+            });
+        }
+
+        async function initApp() {
+            try {
+                await signInAnonymously(auth);
+                startRealtimeSync();
+            } catch (error) {
+                console.error("Auth Error", error);
+                window.showToast("Database Connection Failure");
+            }
+        }
+
+        function applyTranslations() {
+            const lang = i18n[appData.language];
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (lang[key]) el.innerText = lang[key];
+            });
+            const langDisp = document.getElementById('lang-display');
+            if (langDisp) langDisp.innerText = appData.language.toUpperCase();
+        }
+        window.applyTranslations = applyTranslations;
+
+        window.toggleLanguage = () => {
+            appData.language = appData.language === 'id' ? 'en' : 'id';
+            window.saveLocal();
+            applyTranslations();
+            updateUI();
+        };
+
+        window.toggleDarkMode = () => {
+            const toggle = document.getElementById('toggle-dark');
+            if (!toggle) return;
+            appData.darkMode = toggle.checked;
+            window.saveLocal();
+            if (appData.darkMode) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
+        };
+
+        window.saveOnboardingName = () => {
+            const btn = document.getElementById('btn-onboarding');
+            const nameEl = document.getElementById('onboarding-name');
+            if(!nameEl) return;
+            const name = nameEl.value.trim();
+            if(!/^[a-zA-Z\s]+$/.test(name)) return alert("Nama hanya boleh huruf.");
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            appData.user = name; window.saveLocal();
+            document.getElementById('modal-onboarding').classList.add('hidden');
+            initApp(); updateUI();
+        };
+
+        window.addMilestoneRow = () => {
+            const container = document.getElementById('milestone-rows-container');
+            if(!container) return;
+            const row = document.createElement('div');
+            row.className = 'milestone-row bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-3 shadow-sm relative text-left';
+            row.innerHTML = `
+                <button onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-slate-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                <input type="text" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
+                <div class="relative"><span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span><input type="text" inputmode="numeric" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white"></div>`;
+            container.appendChild(row); lucide.createIcons();
+            row.querySelector('.ms-price').addEventListener('input', function() {
+                const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : '';
+            });
+        };
+
+        window.handleCreateRoom = async () => {
+            const btn = document.getElementById('btn-save-room');
+            const nameEl = document.getElementById('create-name');
+            if(!nameEl || !nameEl.value.trim()) return alert("Isi nama tabungan.");
+            const name = nameEl.value.trim();
+            if(globalRooms.some(r => r.name.toLowerCase() === name.toLowerCase())) return alert("Nama tabungan sudah ada!");
+
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            const roomId = 'room_' + Date.now();
+            const toggleTgt = document.getElementById('toggle-target');
+            const targetInp = document.getElementById('create-target');
+            const targetVal = (toggleTgt && toggleTgt.checked && targetInp) ? parseInt(targetInp.value.replace(/\D/g, '')) : 0;
+            
+            let milestones = [];
+            const toggleMs = document.getElementById('toggle-milestone');
+            if(toggleMs && toggleMs.checked) {
+                document.querySelectorAll('.milestone-row').forEach(row => {
+                    const mName = row.querySelector('.ms-name').value.trim();
+                    const mPrice = parseInt(row.querySelector('.ms-price').value.replace(/\D/g, '')) || 0;
+                    if(mName && mPrice > 0) milestones.push({ name: mName, price: mPrice, done: false });
+                });
+            }
+
+            const newRoom = { id: roomId, name: name, balance: 0, hasTarget: targetVal > 0, target: targetVal, hasMilestones: milestones.length > 0, milestones: milestones, isArchived: false, createdAt: new Date().toISOString() };
+            appData.joinedRooms.push(roomId); window.saveLocal();
+            try {
+                await setDoc(doc(db, "rooms", roomId), newRoom);
+                window.switchView('view-home', 'nav-home');
+                window.showToast("Berhasil!");
+                nameEl.value = ''; btn.disabled = false; btn.innerText = 'Simpan';
+            } catch(e) { alert("Error."); btn.disabled = false; }
+        };
+
+        window.openEditModal = () => {
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            if(!r) return;
+            const editName = document.getElementById('edit-name');
+            const editTarget = document.getElementById('edit-target');
+            if(editName) editName.value = r.name;
+            if(editTarget) editTarget.value = r.target ? r.target.toLocaleString('id-ID') : '';
+            window.showModal('modal-edit');
+        };
+
+        window.handleEditSubmit = async () => {
+            const btn = document.getElementById('btn-save-edit');
+            const nameEl = document.getElementById('edit-name');
+            const targetEl = document.getElementById('edit-target');
+            if(!nameEl || !targetEl) return;
+            const name = nameEl.value.trim();
+            const target = parseInt(targetEl.value.replace(/\D/g, '')) || 0;
+            if(!name) return alert("Isi nama tujuan.");
+
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { name: name, target: target, hasTarget: target > 0 });
+                window.closeAllModals();
+                window.showToast("Success!");
+                btn.disabled = false; btn.innerText = i18n[appData.language].save_changes;
+            } catch(e) { alert("Error."); btn.disabled = false; }
+        };
+
+        window.openRoomDetail = (id) => { currentRoomId = id; refreshRoomUI(id); window.switchView('view-detail'); };
+
+        function refreshRoomUI(id) {
+            const r = globalRooms.find(x => x.id === id); if(!r) return;
+            const titleEl = document.getElementById('detail-title');
+            const balanceEl = document.getElementById('detail-balance');
+            if(titleEl) titleEl.innerText = r.name;
+            if(balanceEl) balanceEl.innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
+            
+            const tgtBox = document.getElementById('detail-target-container');
+            if(tgtBox) {
+                if(r.hasTarget) {
+                    tgtBox.classList.remove('hidden');
+                    const progressTxt = document.getElementById('detail-progress-text');
+                    const progressBr = document.getElementById('detail-progress-bar');
+                    const pct = Math.min(Math.round((r.balance/r.target)*100), 100);
+                    if(progressTxt) progressTxt.innerText = `${r.balance.toLocaleString('id-ID')} / ${r.target.toLocaleString('id-ID')}`;
+                    if(progressBr) progressBr.style.width = pct + '%';
+                    const archBtnBox = document.getElementById('detail-archive-btn-container');
+                    if (archBtnBox) {
+                        if (pct >= 100 && !r.isArchived) archBtnBox.classList.remove('hidden');
+                        else archBtnBox.classList.add('hidden');
+                    }
+                } else { 
+                    tgtBox.classList.add('hidden'); 
+                    const archBtnBox = document.getElementById('detail-archive-btn-container');
+                    if (archBtnBox) archBtnBox.classList.add('hidden');
+                }
+            }
+            const msBox = document.getElementById('detail-milestone-container');
+            const msList = document.getElementById('detail-milestone-list');
+            if(msBox && msList) {
+                if(r.hasMilestones && r.milestones.length > 0) {
+                    msBox.classList.remove('hidden'); msList.innerHTML = '';
+                    r.milestones.forEach((m, idx) => {
+                        msList.innerHTML += `<div onclick="window.toggleMilestone(${idx})" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 active:scale-[0.98] transition-all cursor-pointer"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${m.done ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300'}">${m.done ? '<i data-lucide="check" class="w-4 h-4 text-white"></i>' : ''}</div><div class="flex-1"><p class="text-sm font-bold ${m.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${m.name}</p><p class="text-[10px] font-black text-slate-400 tracking-wider uppercase">RP ${m.price.toLocaleString('id-ID')}</p></div></div>`;
+                    });
+                } else msBox.classList.add('hidden');
+            }
+            const histList = document.getElementById('detail-history-list');
+            if(histList) {
+                histList.innerHTML = '';
+                const filtered = globalHistory.filter(h => h.roomId === id);
+                if(filtered.length === 0) histList.innerHTML = `<div class="text-center py-6 opacity-30"><p class="text-[10px] font-black uppercase dark:text-slate-400">Empty History</p></div>`;
+                else filtered.forEach(h => {
+                    const isIn = h.type === 'in';
+                    histList.innerHTML += `<div class="relative pl-8 text-left"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-950"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div><p class="text-sm font-black dark:text-white">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p></div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'}">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                });
+            }
+            lucide.createIcons();
+        }
+
+        window.toggleMilestone = async (idx) => {
+            const r = globalRooms.find(x => x.id === currentRoomId); if(!r) return;
+            r.milestones[idx].done = !r.milestones[idx].done;
+            await updateDoc(doc(db, "rooms", currentRoomId), { milestones: r.milestones });
+        };
+
+        window.openTransactionModal = (type) => {
+            const trxAmount = document.getElementById('trx-amount');
+            const trxType = document.getElementById('trx-type');
+            const trxTitle = document.getElementById('trx-title');
+            const trxUser = document.getElementById('trx-user-display');
+            if(trxAmount) trxAmount.value = '';
+            if(trxType) trxType.value = type === 'nabung' ? 'in' : 'out';
+            if(trxTitle) trxTitle.innerText = type === 'nabung' ? 'Nabung' : 'Tarik';
+            if(trxUser) trxUser.value = appData.user;
+            window.showModal('modal-transaction');
+            setTimeout(() => { if(trxAmount) trxAmount.focus(); }, 400);
+        };
+
+        window.handleTransactionSubmit = async () => {
+            const btn = document.getElementById('btn-submit-trx');
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            const amountStr = document.getElementById('trx-amount').value.replace(/\D/g, '');
+            const amount = parseInt(amountStr);
+            if(!amount || !r) return;
+
+            const type = document.getElementById('trx-type').value;
+            let newBal = r.balance;
+            if(type === 'in') {
+                if(r.hasTarget && r.balance + amount > r.target) return alert("Melebihi target!");
+                newBal += amount;
+            } else {
+                if(amount > r.balance) return alert("Saldo kurang.");
+                newBal -= amount;
+            }
+
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            const reachedGoal = (r.hasTarget && newBal === r.target && type === 'in');
+            const ts = Date.now();
+            const trxId = 'trx_' + ts;
+            const h = { id: trxId, roomId: currentRoomId, roomName: r.name, type: type, amount: amount, userName: appData.user, timestamp: ts, date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) };
+
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { balance: newBal });
+                await setDoc(doc(db, "history", trxId), h);
+                window.closeAllModals();
+                btn.disabled = false; btn.innerText = i18n[appData.language].confirm;
+                if(reachedGoal) {
+                    const celebName = document.getElementById('celeb-room-name');
+                    if(celebName) celebName.innerText = r.name;
+                    setTimeout(() => { window.showModal('modal-celebration'); }, 400);
+                }
+            } catch(e) { alert("Error."); btn.disabled = false; }
+        };
+
+        window.filterHistory = (type) => {
+            currentHistoryFilter = type;
+            ['all', 'in', 'out'].forEach(f => {
+                const btn = document.getElementById('filter-'+f);
+                if(!btn) return;
+                if(f === type) {
+                    btn.classList.add('bg-slate-900', 'text-white', 'dark:bg-indigo-600');
+                    btn.classList.remove('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+                } else {
+                    btn.classList.remove('bg-slate-900', 'text-white', 'dark:bg-indigo-600');
+                    btn.classList.add('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+                }
+            });
+            updateUI();
+        };
+
+        window.openManageModal = (id) => { roomToDelete = id; window.showModal('modal-manage'); };
+        window.openShareOptions = () => {
+            const mManage = document.getElementById('modal-manage');
+            if(mManage) mManage.classList.add('translate-y-full');
+            const baseUrl = window.location.origin + window.location.pathname;
+            const fullLink = baseUrl + "?id=" + roomToDelete;
+            const textEl = document.getElementById('share-link-text');
+            if(textEl) {
+                textEl.innerText = window.location.host + "/?id=" + roomToDelete.substring(0,8) + "...";
+                textEl.setAttribute('data-link', fullLink);
+            }
+            setTimeout(() => window.showModal('modal-share'), 350);
+        };
+        window.copyShareLink = () => {
+            const textEl = document.getElementById('share-link-text');
+            if(!textEl) return;
+            const link = textEl.getAttribute('data-link');
+            const el = document.createElement('textarea'); el.value = link;
+            document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            window.showToast("Copied!"); window.closeAllModals();
+        };
+        window.deleteCurrentRoom = async () => {
+            if(!confirm("Are you sure?")) return;
+            await deleteDoc(doc(db, "rooms", roomToDelete));
+            appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
+            window.saveLocal(); window.closeAllModals();
+        };
+
+        window.completeAndArchiveRoom = async () => {
+            if(!currentRoomId) return;
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { isArchived: true });
+                window.closeAllModals();
+                window.switchView('view-home', 'nav-home');
+                window.showToast(appData.language === 'id' ? "Berhasil diarsipkan" : "Archived");
+            } catch(e) { alert("Error."); }
+        };
+
+        function updateUI() {
+            if(!appData.user) return;
+            const initial = appData.user.charAt(0).toUpperCase();
+            const displayChar = appData.avatar.emoji || initial;
+            const homeAv = document.getElementById('home-avatar');
+            const profAv = document.getElementById('profile-avatar');
+            const homeUser = document.getElementById('home-username');
+            const profUser = document.getElementById('profile-username');
+            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
+            if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; profAv.innerText = displayChar; }
+            if(homeUser) homeUser.innerText = appData.user;
+            if(profUser) profUser.innerText = appData.user;
+
+            const active = globalRooms.filter(r => !r.isArchived);
+            const total = active.reduce((acc, r) => acc + r.balance, 0);
+            const totalEl = document.getElementById('total-balance');
+            if(totalEl) {
+                totalEl.setAttribute('data-value', total);
+                if(!isBalanceHidden) totalEl.innerText = 'Rp ' + total.toLocaleString('id-ID');
+            }
+            const profStats = document.getElementById('profile-stats');
+            if(profStats) profStats.innerText = `${active.length} Tabungan Aktif`;
+
+            const container = document.getElementById('rooms-container');
+            if(container) {
+                container.innerHTML = '';
+                if(active.length === 0) container.innerHTML = `<div class="text-center py-20 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-800 text-left"><p class="text-xs font-black text-slate-400 uppercase text-center">No goals yet</p></div>`;
+                else active.forEach(r => {
+                    const pct = r.hasTarget ? Math.min(Math.round((r.balance/r.target)*100), 100) : 0;
+                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer text-left" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-center gap-4"><div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-2xl"><i data-lucide="target"></i></div><h3 class="font-black text-slate-800 dark:text-white text-lg">${r.name}</h3></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
+                });
+            }
+
+            const archContainer = document.getElementById('archive-container');
+            if(archContainer) {
+                archContainer.innerHTML = '';
+                const archived = globalRooms.filter(r => r.isArchived);
+                if(archived.length === 0) archContainer.innerHTML = `<div class="text-center py-20 opacity-30 dark:text-slate-600"><p class="text-xs font-black uppercase text-center">No archived items</p></div>`;
+                else archived.forEach(r => {
+                    archContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] opacity-70 mb-4 border border-slate-100 dark:border-slate-800 shadow-sm text-left"><div class="flex items-center gap-4 mb-3"><div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-lg"><i data-lucide="award"></i></div><h3 class="font-black text-slate-800 dark:text-white">${r.name}</h3></div><p class="text-sm font-bold text-slate-500 dark:text-slate-400">Total: Rp ${r.balance.toLocaleString('id-ID')}</p></div>`;
+                });
+            }
+
+            const gHistContainer = document.getElementById('global-history-container');
+            if(gHistContainer) {
+                gHistContainer.innerHTML = '';
+                let filtered = globalHistory;
+                if(currentHistoryFilter !== 'all') filtered = globalHistory.filter(h => h.type === currentHistoryFilter);
+                if(filtered.length === 0) gHistContainer.innerHTML = `<div class="text-center py-20 opacity-30 dark:text-slate-600"><p class="text-xs font-black uppercase text-center">History Empty</p></div>`;
+                else filtered.forEach(h => {
+                    const isIn = h.type === 'in';
+                    gHistContainer.innerHTML += `<div class="flex justify-between items-center p-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800 shadow-sm active:bg-slate-50 dark:active:bg-slate-800 cursor-pointer text-left" onclick="window.openRoomDetail('${h.roomId}')"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded-xl ${isIn ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5"></i></div><div><p class="text-sm font-black dark:text-white">${h.roomName}</p><p class="text-[9px] font-bold text-slate-400 uppercase">${h.userName} • ${h.date.split(',')[0]}</p></div></div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'}">${isIn?'+':'-'}Rp ${h.amount.toLocaleString('id-ID')}</p></div>`;
+                });
+            }
+
+            const now = new Date();
+            const curMonth = now.getMonth(); const curYear = now.getFullYear();
+            let mIn = 0, mOut = 0;
+            globalHistory.forEach(h => {
+                const hDate = new Date(h.timestamp);
+                if(hDate.getMonth() === curMonth && hDate.getFullYear() === curYear) {
+                    if(h.type === 'in') mIn += h.amount;
+                    else mOut += h.amount;
+                }
+            });
+            const inEl = document.getElementById('mutasi-in');
+            const outEl = document.getElementById('mutasi-out');
+            if(inEl) inEl.innerText = 'Rp ' + mIn.toLocaleString('id-ID');
+            if(outEl) outEl.innerText = 'Rp ' + mOut.toLocaleString('id-ID');
+            lucide.createIcons();
+        }
+
+        window.toggleBalance = () => {
+            isBalanceHidden = !isBalanceHidden;
+            const el = document.getElementById('total-balance');
+            const icon = document.getElementById('eye-icon');
+            if(!el || !icon) return;
+            if(isBalanceHidden) { el.innerText = 'Rp *********'; icon.setAttribute('data-lucide', 'eye-off'); }
+            else { el.innerText = 'Rp ' + parseInt(el.getAttribute('data-value')).toLocaleString('id-ID'); icon.setAttribute('data-lucide', 'eye'); }
+            lucide.createIcons();
+        };
+
+        window.saveAvatarSelection = () => { window.saveLocal(); updateUI(); window.closeAllModals(); window.showToast("Success"); };
+        window.openAvatarModal = () => window.showModal('modal-avatar');
+
+        window.onload = () => {
+            if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; }
+            applyTranslations();
+
+            const COLORS = [{bg:'bg-indigo-100', txt:'text-indigo-700'}, {bg:'bg-rose-100', txt:'text-rose-700'}, {bg:'bg-emerald-100', txt:'text-emerald-700'}, {bg:'bg-amber-100', txt:'text-amber-700'}, {bg:'bg-purple-100', txt:'text-purple-700'}, {bg:'bg-slate-200', txt:'text-slate-700'}];
+            const colorDiv = document.getElementById('color-options');
+            if (colorDiv) {
+                colorDiv.innerHTML = '';
+                COLORS.forEach(c => {
+                    const b = document.createElement('button'); b.className = `color-btn w-14 h-14 rounded-full border-4 ${c.bg} shrink-0 transition-all active:scale-90`;
+                    b.onclick = () => { document.querySelectorAll('#color-options button').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); appData.avatar.colorClass = c.bg; appData.avatar.textClass = c.txt; };
+                    if(appData.avatar.colorClass === c.bg) b.classList.add('selected'); colorDiv.appendChild(b);
+                });
+            }
+
+            const EMOJIS = ['A', '🦊', '🍣', '🍔', '🍕', '🐼', '🐯', '🤖', '👾', '👻'];
+            const emojiDiv = document.getElementById('emoji-options');
+            if (emojiDiv) {
+                emojiDiv.innerHTML = '';
+                EMOJIS.forEach(e => {
+                    const b = document.createElement('button'); b.className = `emoji-btn p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-2xl border-2 border-transparent active:scale-90 flex items-center justify-center`;
+                    b.innerText = e === 'A' ? 'Ab' : e;
+                    b.onclick = () => { document.querySelectorAll('#emoji-options button').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); appData.avatar.emoji = (e === 'A') ? '' : e; };
+                    if((e === 'A' && !appData.avatar.emoji) || (e === appData.avatar.emoji)) b.classList.add('selected');
+                    emojiDiv.appendChild(b);
+                });
+            }
+
+            document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedId = urlParams.get('id');
+            if(sharedId && !appData.joinedRooms.includes(sharedId)) {
+                appData.joinedRooms.push(sharedId); window.saveLocal();
+            }
+
+            if(!appData.user) {
+                const onboarding = document.getElementById('modal-onboarding');
+                if(onboarding) onboarding.classList.remove('hidden');
+            } else {
+                initApp();
+            }
+            lucide.createIcons();
+        };
+
+        // Initialize Firebase
+        initApp();
+    </script>
+</body>
+</html>
