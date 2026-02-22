@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, theme-color=#4f46e5">
+    
+    <!-- PWA Meta Tags (Crucial for iOS/Safari Fullscreen) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tabungan">
+    <meta name="mobile-web-app-capable" content="yes">
+    
     <title>Tabungan Bersama</title>
     
     <link rel="manifest" id="manifest-link">
@@ -70,13 +77,13 @@
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="window.openInstallModal(); window.dismissInstallBanner();" class="text-xs bg-premium text-white font-black px-4 py-2 rounded-xl active:scale-95 transition-transform" data-t="install_btn">Install</button>
+                <button onclick="window.openInstallModal(); window.dismissInstallBanner();" class="text-xs bg-premium text-white font-black px-4 py-2 rounded-xl active:scale-95 transition-transform" data-t="install_btn">Lihat Tutorial</button>
                 <button onclick="window.dismissInstallBanner()" class="p-2 text-slate-400 hover:text-white rounded-xl active:scale-95 transition-transform"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
         </div>
 
         <!-- VIEW 1: HOME -->
-        <main id="view-home" class="flex-1 overflow-y-auto no-scrollbar pb-24">
+        <main id="view-home" class="flex-1 overflow-y-auto no-scrollbar pb-24 hidden">
             <div class="px-6 pt-10 pb-4 bg-white dark:bg-slate-900 relative">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
@@ -86,7 +93,7 @@
                             <p id="home-username" class="font-extrabold text-slate-900 dark:text-white text-lg tracking-tight">-</p>
                         </div>
                     </div>
-                    <div id="auth-status-icon" class="text-emerald-500 opacity-50"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                    <div id="auth-status-icon" class="text-emerald-500"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
                 </div>
             </div>
 
@@ -189,14 +196,15 @@
                     </button>
                 </div>
                 <h1 id="profile-username" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">-</h1>
-                <p id="profile-stats" class="text-xs font-bold text-slate-400 mt-1 uppercase tracking-widest">0 Tabungan Aktif</p>
+                <p id="profile-email" class="text-[10px] font-bold text-slate-400 mt-1 mb-2"></p>
+                <p id="profile-stats" class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 inline-block px-4 py-1.5 rounded-full">0 Tabungan Aktif</p>
             </div>
 
             <div class="p-6 space-y-8">
                 <div>
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="data_activities">Data & Aktivitas</h3>
                     <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                        <div onclick="window.switchView('view-archive')" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors">
+                        <div onclick="window.switchView('view-archive')" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800">
                             <div class="flex items-center gap-4">
                                 <div class="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-xl"><i data-lucide="archive" class="w-5 h-5"></i></div>
                                 <div>
@@ -205,6 +213,14 @@
                                 </div>
                             </div>
                             <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
+                        </div>
+                        
+                        <!-- LOGOUT BUTTON -->
+                        <div onclick="window.logoutGoogle()" class="flex items-center justify-between p-5 cursor-pointer active:bg-rose-50 dark:active:bg-rose-900/20 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-xl"><i data-lucide="log-out" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-rose-600 dark:text-rose-400" data-t="logout">Keluar (Logout)</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -305,7 +321,7 @@
         </main>
 
         <!-- FOOTER NAV -->
-        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-10 pb-safe">
+        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-10 pb-safe hidden">
             <button onclick="window.switchView('view-home', 'nav-home')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-indigo-600 transition-all" id="nav-home">
                 <i data-lucide="home" class="w-6 h-6"></i>
                 <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_home">Home</span>
@@ -323,22 +339,42 @@
         <!-- OVERLAY MODALS -->
         <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/80 backdrop-blur-sm z-[50] hidden transition-opacity" onclick="window.closeAllModals()"></div>
 
-        <!-- ONBOARDING -->
-        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto">
+        <!-- ONBOARDING (GOOGLE LOGIN) -->
+        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500">
             <div class="w-full text-center">
                 <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
                     <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
                 </div>
-                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Mulai Menabung!</h2>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter">Tabungan Bersama</h2>
+                
+                <div class="mb-10 text-center">
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.</p>
+                </div>
+                
+                <!-- Google Login Button -->
+                <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black text-lg rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
+                    <span data-t="login_google">Masuk dengan Google</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- NAME ENTRY (AFTER LOGIN) -->
+        <div id="modal-name-entry" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500">
+            <div class="w-full text-center">
+                <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Konfirmasi Profil</h2>
                 <div class="text-left mb-8 relative">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Nama Lengkap</label>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Nama Tampilan</label>
                     <input type="text" id="onboarding-name" placeholder="Contoh: Leonardo Suprayogi" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] font-bold text-xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-slate-900 dark:text-white">
                     <p class="text-[10px] text-rose-500 font-bold mt-3 px-2 flex items-start gap-1.5 leading-tight">
                         <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
-                        <span data-t="name_warning">*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon masukkan nama asli/lengkap Anda.</span>
+                        <span data-t="name_warning">*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.</span>
                     </p>
                 </div>
-                <button id="btn-onboarding" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Masuk Aplikasi</button>
+                <button id="btn-save-name" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Simpan Profil & Masuk</button>
             </div>
         </div>
 
@@ -477,8 +513,9 @@
     <!-- Firebase SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // Auth Imports
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // --- CONFIG ---
         const firebaseConfig = {
@@ -493,7 +530,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- DYNAMIC MANIFEST (For Standalone PWA Fullscreen) ---
+        // --- DYNAMIC MANIFEST (For Android WebAPK & Standalone Mode) ---
         const manifestData = {
             "name": "Tabungan Bersama",
             "short_name": "Tabungan",
@@ -525,13 +562,14 @@
                 continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
                 all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
                 no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Riwayat Kosong",
-                placeholder_goal: "Beli Laptop...", placeholder_name: "Contoh: Leonardo Suprayogi", install_app: "Install Aplikasi",
+                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi",
                 install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan",
                 share_title: "Undang Teman",
                 install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
                 install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
-                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon masukkan nama asli/lengkap Anda.",
-                install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial"
+                install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
+                login_desc: "Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
+                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda."
             },
             en: {
                 welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
@@ -544,13 +582,14 @@
                 continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
                 all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
                 no_goals: "No goals yet", no_archive: "No archived items", empty_history: "History Empty",
-                placeholder_goal: "Buy a Laptop...", placeholder_name: "e.g. Leonardo Suprayogi", install_app: "Install App",
+                placeholder_goal: "Buy a Laptop...", install_app: "Install App",
                 install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal",
                 share_title: "Invite Friends",
                 install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
                 install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen'",
-                name_warning: "*Warning: Name cannot be changed once saved. Please enter your real/full name.",
-                install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial"
+                install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
+                login_desc: "Save your savings data securely in the cloud using your Google account.", login_google: "Sign in with Google", logout: "Log Out",
+                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name."
             }
         };
 
@@ -558,6 +597,8 @@
         const DB_KEY = 'tabungan_app_v9_stable_fix_v4';
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
             user: '',
+            email: '',
+            uid: '',
             avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
             joinedRooms: [],
             darkMode: false,
@@ -571,7 +612,7 @@
         let isBalanceHidden = false;
         let currentHistoryFilter = 'all';
 
-        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-install'];
+        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-install', 'modal-name-entry'];
 
         // --- HELPERS ---
         window.saveLocal = () => localStorage.setItem(DB_KEY, JSON.stringify(appData));
@@ -585,7 +626,7 @@
                 const m = document.getElementById(id); 
                 if(m) {
                     m.classList.add('translate-y-full');
-                    if(id === 'modal-celebration') m.classList.add('hidden');
+                    if(id === 'modal-celebration' || id === 'modal-name-entry') m.classList.add('hidden');
                     else setTimeout(() => m.classList.add('hidden'), 300);
                 }
             });
@@ -595,7 +636,7 @@
         window.showModal = (id) => {
             const overlay = document.getElementById('modal-overlay');
             const m = document.getElementById(id);
-            if(id !== 'modal-celebration' && overlay) overlay.classList.remove('hidden');
+            if(id !== 'modal-celebration' && id !== 'modal-name-entry' && overlay) overlay.classList.remove('hidden');
             if(m) {
                 m.classList.remove('hidden');
                 setTimeout(() => m.classList.remove('translate-y-full'), 10);
@@ -617,8 +658,6 @@
             // Dynamic Placeholders
             const createNameInp = document.getElementById('create-name');
             if(createNameInp) createNameInp.placeholder = lang.placeholder_goal;
-            const onboardingNameInp = document.getElementById('onboarding-name');
-            if(onboardingNameInp) onboardingNameInp.placeholder = lang.placeholder_name;
 
             // Format nama bulan untuk Mutasi
             const monthStr = new Date().toLocaleString(appData.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
@@ -647,16 +686,163 @@
             else document.documentElement.classList.remove('dark');
         };
 
-        // --- FIREBASE SYNC & AUTH ---
-        async function initApp() {
-            try {
-                await signInAnonymously(auth);
-                startRealtimeSync();
-            } catch (error) {
-                console.error("Auth Error", error);
-                window.showToast("Database error");
+        // --- FIREBASE SYNC & AUTH CLOUD PROFILE ---
+        
+        async function syncJoinedRoomsToCloud() {
+            if(appData.uid) {
+                try {
+                    await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms });
+                } catch(e) { console.log("Gagal sync rooms ke awan"); }
             }
         }
+
+        // Listener Status Login
+        onAuthStateChanged(auth, async (user) => {
+            const modalLogin = document.getElementById('modal-onboarding');
+            const modalName = document.getElementById('modal-name-entry');
+            const viewHome = document.getElementById('view-home');
+            const bottomNav = document.getElementById('bottom-nav');
+
+            if (user) {
+                appData.email = user.email;
+                appData.uid = user.uid;
+                window.saveLocal();
+                if (modalLogin) modalLogin.classList.add('hidden');
+
+                // 1. CEK PROFIL DI CLOUD (Database)
+                try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userDocRef);
+
+                    if (userSnap.exists()) {
+                        // User LAMA: Tarik data dari Cloud (Nama, Avatar, Tabungan yang diikuti)
+                        const cloudData = userSnap.data();
+                        appData.user = cloudData.name || user.displayName || 'Pengguna';
+                        if (cloudData.avatar) appData.avatar = cloudData.avatar;
+                        
+                        // Gabungkan ruangan yang ada di Cloud dengan ruangan di Local (Jika klik link sebelum login)
+                        if (cloudData.joinedRooms) {
+                            const mergedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
+                            appData.joinedRooms = mergedRooms;
+                            
+                            // Jika ada ruangan baru dari local, update Cloud-nya
+                            if (appData.joinedRooms.length > cloudData.joinedRooms.length) {
+                                syncJoinedRoomsToCloud();
+                            }
+                        }
+                        
+                        window.saveLocal();
+
+                        if (modalName) modalName.classList.add('hidden');
+                        if (viewHome) viewHome.classList.remove('hidden');
+                        if (bottomNav) bottomNav.classList.remove('hidden');
+
+                        startRealtimeSync();
+                        updateUI();
+                    } else {
+                        // User BARU: Minta ketik nama
+                        if (modalName) {
+                            modalName.classList.remove('hidden');
+                            setTimeout(() => modalName.classList.remove('opacity-0'), 50);
+                            
+                            // Auto-fill dari Google
+                            const nameInput = document.getElementById('onboarding-name');
+                            if (nameInput && !nameInput.value && user.displayName) {
+                                nameInput.value = user.displayName;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error("Gagal mengambil profil cloud", error);
+                }
+
+            } else {
+                // Belum Login sama sekali
+                if (modalLogin) {
+                    modalLogin.classList.remove('hidden');
+                    setTimeout(() => modalLogin.classList.remove('opacity-0'), 50);
+                }
+                if (modalName) modalName.classList.add('hidden');
+                if (viewHome) viewHome.classList.add('hidden');
+                if (bottomNav) bottomNav.classList.add('hidden');
+            }
+        });
+
+        window.loginWithGoogle = async () => {
+            const btn = document.getElementById('btn-google-login');
+            btn.disabled = true; 
+            btn.innerHTML = createSpinner() + ' ...';
+            
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+                window.showToast("Autentikasi berhasil!");
+            } catch (error) {
+                console.error("Google Login Error", error);
+                if(error.code !== 'auth/popup-closed-by-user') {
+                    alert("Gagal login: " + error.message);
+                }
+                btn.disabled = false;
+                btn.innerHTML = `<svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg> <span data-t="login_google">${i18n[appData.language].login_google}</span>`;
+            }
+        };
+
+        window.saveOnboardingName = async () => {
+            const btn = document.getElementById('btn-save-name');
+            const nameEl = document.getElementById('onboarding-name');
+            if(!nameEl) return;
+            const name = nameEl.value.trim();
+            
+            if(!/^[a-zA-Z\s]+$/.test(name)) return alert("Nama hanya boleh berisi huruf.");
+            if(name.length < 3) return alert("Nama terlalu pendek.");
+            
+            btn.disabled = true; 
+            btn.innerHTML = createSpinner() + ' ...';
+            
+            appData.user = name; 
+            window.saveLocal();
+
+            // 2. SIMPAN PROFIL BARU KE CLOUD
+            try {
+                await setDoc(doc(db, "users", appData.uid), {
+                    name: appData.user,
+                    email: appData.email,
+                    avatar: appData.avatar,
+                    joinedRooms: appData.joinedRooms,
+                    createdAt: Date.now()
+                });
+            } catch(e) {
+                console.error("Gagal membuat dokumen pengguna di cloud", e);
+            }
+            
+            document.getElementById('modal-name-entry').classList.add('hidden');
+            
+            const viewHome = document.getElementById('view-home');
+            const bottomNav = document.getElementById('bottom-nav');
+            if(viewHome) viewHome.classList.remove('hidden');
+            if(bottomNav) bottomNav.classList.remove('hidden');
+
+            startRealtimeSync();
+            updateUI();
+            
+            btn.disabled = false;
+            btn.innerText = "Simpan Profil & Masuk";
+        };
+
+        window.logoutGoogle = async () => {
+            if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
+            try {
+                await signOut(auth);
+                appData.user = '';
+                appData.email = '';
+                appData.uid = '';
+                appData.joinedRooms = []; // Bersihkan cache lokal
+                window.saveLocal();
+                location.reload(); 
+            } catch (error) {
+                alert("Gagal keluar.");
+            }
+        };
 
         function startRealtimeSync() {
             onSnapshot(collection(db, "rooms"), (snap) => {
@@ -682,18 +868,6 @@
         }
 
         // --- CORE ACTIONS ---
-        window.saveOnboardingName = () => {
-            const btn = document.getElementById('btn-onboarding');
-            const nameEl = document.getElementById('onboarding-name');
-            if(!nameEl) return;
-            const name = nameEl.value.trim();
-            if(!/^[a-zA-Z\s]+$/.test(name)) return alert("Nama hanya boleh huruf.");
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
-            appData.user = name; window.saveLocal();
-            document.getElementById('modal-onboarding').classList.add('hidden');
-            initApp(); updateUI();
-        };
-
         window.addMilestoneRow = () => {
             const container = document.getElementById('milestone-rows-container');
             if(!container) return;
@@ -733,7 +907,11 @@
             }
 
             const newRoom = { id: roomId, name: name, balance: 0, hasTarget: targetVal > 0, target: targetVal, hasMilestones: milestones.length > 0, milestones: milestones, isArchived: false, createdAt: new Date().toISOString() };
-            appData.joinedRooms.push(roomId); window.saveLocal();
+            
+            appData.joinedRooms.push(roomId); 
+            window.saveLocal();
+            syncJoinedRoomsToCloud(); // Sync ke Cloud
+
             try {
                 await setDoc(doc(db, "rooms", roomId), newRoom);
                 window.switchView('view-home', 'nav-home');
@@ -836,11 +1014,13 @@
             const trxTitle = document.getElementById('trx-title');
             const trxUser = document.getElementById('trx-user-display');
             const trxNote = document.getElementById('trx-note');
+            
             if(trxAmount) trxAmount.value = '';
             if(trxType) trxType.value = type === 'nabung' ? 'in' : 'out';
             if(trxTitle) trxTitle.innerText = type === 'nabung' ? i18n[appData.language].save : i18n[appData.language].withdraw;
             if(trxUser) trxUser.value = appData.user;
-            if(trxNote) trxNote.value = ''; // Membersihkan catatan yang tersisa
+            if(trxNote) trxNote.value = ''; 
+            
             window.showModal('modal-transaction');
             setTimeout(() => { if(trxAmount) trxAmount.focus(); }, 400);
         };
@@ -949,8 +1129,13 @@
         window.deleteCurrentRoom = async () => {
             if(!confirm("Are you sure?")) return;
             await deleteDoc(doc(db, "rooms", roomToDelete));
+            
+            // Hapus dari local & cloud
             appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
-            window.saveLocal(); window.closeAllModals();
+            window.saveLocal(); 
+            syncJoinedRoomsToCloud();
+
+            window.closeAllModals();
         };
 
         window.completeAndArchiveRoom = async () => {
@@ -1002,14 +1187,19 @@
             const lang = i18n[appData.language];
             const initial = appData.user.charAt(0).toUpperCase();
             const displayChar = appData.avatar.emoji || initial;
+            
+            // UI Profile & Header Update
             const homeAv = document.getElementById('home-avatar');
             const profAv = document.getElementById('profile-avatar');
             const homeUser = document.getElementById('home-username');
             const profUser = document.getElementById('profile-username');
+            const profEmail = document.getElementById('profile-email');
+            
             if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
             if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; profAv.innerText = displayChar; }
             if(homeUser) homeUser.innerText = appData.user;
             if(profUser) profUser.innerText = appData.user;
+            if(profEmail) profEmail.innerText = appData.email || '';
 
             const active = globalRooms.filter(r => !r.isArchived);
             const total = active.reduce((acc, r) => acc + r.balance, 0);
@@ -1132,20 +1322,22 @@
             }
 
             document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
+            
+            // Handle Invite Link
             const urlParams = new URLSearchParams(window.location.search);
             const sharedId = urlParams.get('id');
-            if(sharedId && !appData.joinedRooms.includes(sharedId)) { appData.joinedRooms.push(sharedId); window.saveLocal(); }
-            if(!appData.user) { const onboarding = document.getElementById('modal-onboarding'); if(onboarding) onboarding.classList.remove('hidden'); }
-            else { initApp(); }
+            if(sharedId && !appData.joinedRooms.includes(sharedId)) { 
+                appData.joinedRooms.push(sharedId); 
+                window.saveLocal(); 
+                syncJoinedRoomsToCloud(); // Sync ke awan jika tekan link baru
+            }
 
             // Install Banner & Menu Logic
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (isStandalone) {
-                // Sembunyikan menu "Install Aplikasi" di profil jika sudah diinstall
                 const menuInstallApp = document.getElementById('menu-install-app');
                 if (menuInstallApp) menuInstallApp.classList.add('hidden');
             } else if (!appData.hideInstallBanner) {
-                // Tampilkan banner notifikasi satu kali
                 const banner = document.getElementById('install-banner');
                 if (banner) {
                     banner.classList.remove('hidden');
@@ -1165,7 +1357,19 @@
         };
 
         window.openAvatarModal = () => window.showModal('modal-avatar');
-        window.saveAvatarSelection = () => { window.saveLocal(); updateUI(); window.closeAllModals(); window.showToast("Berhasil disimpan!"); };
+        
+        window.saveAvatarSelection = async () => { 
+            window.saveLocal(); 
+            updateUI(); 
+            window.closeAllModals(); 
+            window.showToast("Berhasil disimpan!"); 
+            // Save to Cloud
+            if(appData.uid) {
+                try {
+                    await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar });
+                } catch(e) { console.log("Gagal sync avatar"); }
+            }
+        };
     </script>
 </body>
 </html>
