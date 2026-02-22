@@ -62,6 +62,21 @@
 <body class="bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
 
     <div class="app-container flex flex-col h-screen relative bg-slate-50 dark:bg-slate-900 shadow-2xl">
+        
+        <!-- SPLASH SCREEN -->
+        <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-700 max-w-[480px] mx-auto">
+            <div class="w-28 h-28 bg-white dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl shadow-indigo-500/20 animate-bounce">
+                <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+            </div>
+            <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Tabungan Bersama</h1>
+            <p class="text-xs font-bold text-slate-400 mt-2 tracking-widest uppercase">Memuat Data...</p>
+            <div class="mt-10 flex gap-2">
+                <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping"></div>
+                <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping" style="animation-delay: 0.2s"></div>
+                <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+
         <!-- Toast Notification -->
         <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 bg-slate-900 dark:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none">
             Pesan
@@ -340,7 +355,7 @@
         <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/80 backdrop-blur-sm z-[50] hidden transition-opacity" onclick="window.closeAllModals()"></div>
 
         <!-- ONBOARDING (GOOGLE LOGIN) -->
-        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500">
+        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0">
             <div class="w-full text-center">
                 <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
                     <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
@@ -360,7 +375,7 @@
         </div>
 
         <!-- NAME ENTRY (AFTER LOGIN) -->
-        <div id="modal-name-entry" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500">
+        <div id="modal-name-entry" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 opacity-0">
             <div class="w-full text-center">
                 <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
                     <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
@@ -514,7 +529,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        // Auth Imports
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // --- CONFIG ---
@@ -531,6 +545,7 @@
         const auth = getAuth(app);
 
         // --- DYNAMIC MANIFEST (For Android WebAPK & Standalone Mode) ---
+        // Menghapus 'maskable' agar ikon tidak ditarik penuh oleh Android, melainkan diberi padding otomatis (seperti logo Google Play Games)
         const manifestData = {
             "name": "Tabungan Bersama",
             "short_name": "Tabungan",
@@ -542,7 +557,7 @@
                 "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
                 "sizes": "512x512",
                 "type": "image/png",
-                "purpose": "any maskable"
+                "purpose": "any" 
             }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
@@ -645,7 +660,6 @@
         
         const createSpinner = () => `<svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>`;
 
-        // --- TRANSLATION ENGINE ---
         function applyTranslations() {
             const lang = i18n[appData.language];
             document.querySelectorAll('[data-t]').forEach(el => {
@@ -655,11 +669,9 @@
             const langDisp = document.getElementById('lang-display');
             if (langDisp) langDisp.innerText = appData.language.toUpperCase();
             
-            // Dynamic Placeholders
             const createNameInp = document.getElementById('create-name');
             if(createNameInp) createNameInp.placeholder = lang.placeholder_goal;
 
-            // Format nama bulan untuk Mutasi
             const monthStr = new Date().toLocaleString(appData.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
             const lblIn = document.getElementById('label-income');
             if (lblIn) lblIn.innerText = `${lang.income} (${monthStr})`;
@@ -676,7 +688,6 @@
             window.showToast(appData.language === 'id' ? "Bahasa diubah" : "Language changed");
         };
 
-        // --- DARK MODE ENGINE ---
         window.toggleDarkMode = () => {
             const toggle = document.getElementById('toggle-dark');
             if (!toggle) return;
@@ -686,8 +697,6 @@
             else document.documentElement.classList.remove('dark');
         };
 
-        // --- FIREBASE SYNC & AUTH CLOUD PROFILE ---
-        
         async function syncJoinedRoomsToCloud() {
             if(appData.uid) {
                 try {
@@ -696,12 +705,21 @@
             }
         }
 
-        // Listener Status Login
+        // --- FIREBASE AUTH LISTENER WITH SPLASH SCREEN LOGIC ---
         onAuthStateChanged(auth, async (user) => {
             const modalLogin = document.getElementById('modal-onboarding');
             const modalName = document.getElementById('modal-name-entry');
             const viewHome = document.getElementById('view-home');
             const bottomNav = document.getElementById('bottom-nav');
+            const splashScreen = document.getElementById('splash-screen');
+
+            // Hide Splash Screen gently after processing
+            const hideSplash = () => {
+                if (splashScreen) {
+                    splashScreen.classList.add('opacity-0');
+                    setTimeout(() => splashScreen.classList.add('hidden'), 700);
+                }
+            };
 
             if (user) {
                 appData.email = user.email;
@@ -709,23 +727,18 @@
                 window.saveLocal();
                 if (modalLogin) modalLogin.classList.add('hidden');
 
-                // 1. CEK PROFIL DI CLOUD (Database)
                 try {
                     const userDocRef = doc(db, "users", user.uid);
                     const userSnap = await getDoc(userDocRef);
 
                     if (userSnap.exists()) {
-                        // User LAMA: Tarik data dari Cloud (Nama, Avatar, Tabungan yang diikuti)
                         const cloudData = userSnap.data();
                         appData.user = cloudData.name || user.displayName || 'Pengguna';
                         if (cloudData.avatar) appData.avatar = cloudData.avatar;
                         
-                        // Gabungkan ruangan yang ada di Cloud dengan ruangan di Local (Jika klik link sebelum login)
                         if (cloudData.joinedRooms) {
                             const mergedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
                             appData.joinedRooms = mergedRooms;
-                            
-                            // Jika ada ruangan baru dari local, update Cloud-nya
                             if (appData.joinedRooms.length > cloudData.joinedRooms.length) {
                                 syncJoinedRoomsToCloud();
                             }
@@ -739,25 +752,25 @@
 
                         startRealtimeSync();
                         updateUI();
+                        hideSplash(); // Ready! Hide splash
                     } else {
-                        // User BARU: Minta ketik nama
                         if (modalName) {
                             modalName.classList.remove('hidden');
                             setTimeout(() => modalName.classList.remove('opacity-0'), 50);
                             
-                            // Auto-fill dari Google
                             const nameInput = document.getElementById('onboarding-name');
                             if (nameInput && !nameInput.value && user.displayName) {
                                 nameInput.value = user.displayName;
                             }
                         }
+                        hideSplash(); // Ready! Hide splash
                     }
                 } catch (error) {
                     console.error("Gagal mengambil profil cloud", error);
+                    hideSplash();
                 }
 
             } else {
-                // Belum Login sama sekali
                 if (modalLogin) {
                     modalLogin.classList.remove('hidden');
                     setTimeout(() => modalLogin.classList.remove('opacity-0'), 50);
@@ -765,6 +778,7 @@
                 if (modalName) modalName.classList.add('hidden');
                 if (viewHome) viewHome.classList.add('hidden');
                 if (bottomNav) bottomNav.classList.add('hidden');
+                hideSplash(); // Ready! Hide splash
             }
         });
 
@@ -802,7 +816,6 @@
             appData.user = name; 
             window.saveLocal();
 
-            // 2. SIMPAN PROFIL BARU KE CLOUD
             try {
                 await setDoc(doc(db, "users", appData.uid), {
                     name: appData.user,
@@ -836,7 +849,7 @@
                 appData.user = '';
                 appData.email = '';
                 appData.uid = '';
-                appData.joinedRooms = []; // Bersihkan cache lokal
+                appData.joinedRooms = []; 
                 window.saveLocal();
                 location.reload(); 
             } catch (error) {
@@ -910,7 +923,7 @@
             
             appData.joinedRooms.push(roomId); 
             window.saveLocal();
-            syncJoinedRoomsToCloud(); // Sync ke Cloud
+            syncJoinedRoomsToCloud(); 
 
             try {
                 await setDoc(doc(db, "rooms", roomId), newRoom);
@@ -1130,7 +1143,6 @@
             if(!confirm("Are you sure?")) return;
             await deleteDoc(doc(db, "rooms", roomToDelete));
             
-            // Hapus dari local & cloud
             appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
             window.saveLocal(); 
             syncJoinedRoomsToCloud();
@@ -1188,7 +1200,6 @@
             const initial = appData.user.charAt(0).toUpperCase();
             const displayChar = appData.avatar.emoji || initial;
             
-            // UI Profile & Header Update
             const homeAv = document.getElementById('home-avatar');
             const profAv = document.getElementById('profile-avatar');
             const homeUser = document.getElementById('home-username');
@@ -1323,16 +1334,14 @@
 
             document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
             
-            // Handle Invite Link
             const urlParams = new URLSearchParams(window.location.search);
             const sharedId = urlParams.get('id');
             if(sharedId && !appData.joinedRooms.includes(sharedId)) { 
                 appData.joinedRooms.push(sharedId); 
                 window.saveLocal(); 
-                syncJoinedRoomsToCloud(); // Sync ke awan jika tekan link baru
+                syncJoinedRoomsToCloud();
             }
 
-            // Install Banner & Menu Logic
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (isStandalone) {
                 const menuInstallApp = document.getElementById('menu-install-app');
@@ -1341,7 +1350,7 @@
                 const banner = document.getElementById('install-banner');
                 if (banner) {
                     banner.classList.remove('hidden');
-                    setTimeout(() => banner.classList.remove('-translate-y-[150%]'), 1500);
+                    setTimeout(() => banner.classList.remove('-translate-y-[150%]'), 3500); // Muncul setelah splash
                 }
             }
         };
@@ -1363,7 +1372,6 @@
             updateUI(); 
             window.closeAllModals(); 
             window.showToast("Berhasil disimpan!"); 
-            // Save to Cloud
             if(appData.uid) {
                 try {
                     await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar });
