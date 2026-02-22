@@ -102,13 +102,13 @@
                     
                     <div class="relative z-10 pt-5 border-t border-white/10 flex justify-between items-center">
                         <div>
-                            <p class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter" data-t="income">Masuk (Bln Ini)</p>
-                            <p id="mutasi-in" class="font-bold text-sm text-emerald-300">Rp 0</p>
+                            <p id="label-income" class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter">Masuk</p>
+                            <p id="mutasi-in" class="font-bold text-sm text-emerald-300" data-value="0">Rp 0</p>
                         </div>
                         <div class="w-px h-6 bg-white/10"></div>
                         <div class="text-right">
-                            <p class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter" data-t="outcome">Keluar (Bulan Ini)</p>
-                            <p id="mutasi-out" class="font-bold text-sm text-rose-300">Rp 0</p>
+                            <p id="label-outcome" class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter">Keluar</p>
+                            <p id="mutasi-out" class="font-bold text-sm text-rose-300" data-value="0">Rp 0</p>
                         </div>
                     </div>
                 </div>
@@ -493,10 +493,29 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- DYNAMIC MANIFEST (For Standalone PWA Fullscreen) ---
+        const manifestData = {
+            "name": "Tabungan Bersama",
+            "short_name": "Tabungan",
+            "start_url": window.location.pathname || "/",
+            "display": "standalone",
+            "background_color": "#f8fafc",
+            "theme_color": "#4f46e5",
+            "icons": [{
+                "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+                "sizes": "512x512",
+                "type": "image/png",
+                "purpose": "any maskable"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+        const manifestLink = document.getElementById('manifest-link');
+        if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
+
         // --- TRANSLATIONS ---
         const i18n = {
             id: {
-                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk (Bln Ini)", outcome: "Keluar (Bln Ini)",
+                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk", outcome: "Keluar",
                 savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
                 archive_now: "Arsipkan Sekarang", milestone_list: "Daftar Milestone", history: "Riwayat Transaksi",
                 withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
@@ -510,12 +529,12 @@
                 install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan",
                 share_title: "Undang Teman",
                 install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
-                install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama' / 'Instal Aplikasi'",
+                install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
                 name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon masukkan nama asli/lengkap Anda.",
                 install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial"
             },
             en: {
-                welcome: "Welcome,", total_balance: "Total Balance", income: "Income (This Month)", outcome: "Outcome (This Month)",
+                welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
                 savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
                 archive_now: "Archive Now", milestone_list: "Milestone List", history: "Transaction History",
                 withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
@@ -529,7 +548,7 @@
                 install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal",
                 share_title: "Invite Friends",
                 install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
-                install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen' or 'Install App'",
+                install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen'",
                 name_warning: "*Warning: Name cannot be changed once saved. Please enter your real/full name.",
                 install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial"
             }
@@ -600,6 +619,13 @@
             if(createNameInp) createNameInp.placeholder = lang.placeholder_goal;
             const onboardingNameInp = document.getElementById('onboarding-name');
             if(onboardingNameInp) onboardingNameInp.placeholder = lang.placeholder_name;
+
+            // Format nama bulan untuk Mutasi
+            const monthStr = new Date().toLocaleString(appData.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
+            const lblIn = document.getElementById('label-income');
+            if (lblIn) lblIn.innerText = `${lang.income} (${monthStr})`;
+            const lblOut = document.getElementById('label-outcome');
+            if (lblOut) lblOut.innerText = `${lang.outcome} (${monthStr})`;
         }
         window.applyTranslations = applyTranslations;
 
@@ -1040,18 +1066,36 @@
             });
             const inEl = document.getElementById('mutasi-in');
             const outEl = document.getElementById('mutasi-out');
-            if(inEl) inEl.innerText = 'Rp ' + mIn.toLocaleString('id-ID');
-            if(outEl) outEl.innerText = 'Rp ' + mOut.toLocaleString('id-ID');
+            if(inEl) {
+                inEl.setAttribute('data-value', mIn);
+                inEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mIn.toLocaleString('id-ID');
+            }
+            if(outEl) {
+                outEl.setAttribute('data-value', mOut);
+                outEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mOut.toLocaleString('id-ID');
+            }
             lucide.createIcons();
         }
 
         window.toggleBalance = () => {
             isBalanceHidden = !isBalanceHidden;
             const el = document.getElementById('total-balance');
+            const inEl = document.getElementById('mutasi-in');
+            const outEl = document.getElementById('mutasi-out');
             const icon = document.getElementById('eye-icon');
             if(!el || !icon) return;
-            if(isBalanceHidden) { el.innerText = 'Rp *********'; icon.setAttribute('data-lucide', 'eye-off'); }
-            else { el.innerText = 'Rp ' + parseInt(el.getAttribute('data-value')).toLocaleString('id-ID'); icon.setAttribute('data-lucide', 'eye'); }
+            
+            if(isBalanceHidden) { 
+                el.innerText = 'Rp *********'; 
+                if(inEl) inEl.innerText = 'Rp ***';
+                if(outEl) outEl.innerText = 'Rp ***';
+                icon.setAttribute('data-lucide', 'eye-off'); 
+            } else { 
+                el.innerText = 'Rp ' + parseInt(el.getAttribute('data-value')).toLocaleString('id-ID'); 
+                if(inEl) inEl.innerText = 'Rp ' + parseInt(inEl.getAttribute('data-value')).toLocaleString('id-ID');
+                if(outEl) outEl.innerText = 'Rp ' + parseInt(outEl.getAttribute('data-value')).toLocaleString('id-ID');
+                icon.setAttribute('data-lucide', 'eye'); 
+            }
             lucide.createIcons();
         };
 
@@ -1075,7 +1119,7 @@
                 });
             }
 
-            const EMOJIS = ['A', '🐱', '🐶', '🦊', '🦄', '🦖', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻'];
+            const EMOJIS = ['A', '🐱', '🐶', '🦊', '🦄', '🦖', '🐮', '🐸', '👽', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻', '🚀', '🎸', '⚽'];
             const emojiDiv = document.getElementById('emoji-options');
             if (emojiDiv) {
                 EMOJIS.forEach(e => {
