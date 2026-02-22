@@ -15,7 +15,6 @@
     <link rel="manifest" id="manifest-link">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2830/2830284.png">
 
-    <!-- Tailwind CSS with Dark Mode Support -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -44,30 +43,21 @@
         .celeb-ping { animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
         .toast-visible { opacity: 1 !important; transform: translate(-50%, -20px) !important; }
         
-        /* Spinner */
         .spinner { animation: rotate 2s linear infinite; width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; }
         .spinner .path { stroke: currentColor; stroke-linecap: round; animation: dash 1.5s ease-in-out infinite; }
         @keyframes rotate { 100% { transform: rotate(360deg); } }
         @keyframes dash { 0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; } 50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; } 100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; } }
         
         button:disabled { opacity: 0.7; cursor: not-allowed; }
-        
-        /* Modal selection style */
         .color-btn.selected { border-color: #1e293b; transform: scale(1.1); border-width: 4px; }
         .dark .color-btn.selected { border-color: #ffffff; }
         .emoji-btn.selected { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.1); border-width: 2px; }
         .dark .emoji-btn.selected { background-color: #312e81; }
 
-        /* Custom Animations */
-        @keyframes slideInDown { from { transform: translate(-50%, -150%); opacity: 0; } to { transform: translate(-50%, 16px); opacity: 1; } }
-        .notif-animate { animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        
+        /* Estetika Chat */
         .chat-bubble-me { border-bottom-right-radius: 4px; background: #4f46e5; color: white; margin-left: 20%; }
         .chat-bubble-other { border-bottom-left-radius: 4px; background: #f1f5f9; color: #1e293b; margin-right: 20%; }
         .dark .chat-bubble-other { background: #1e293b; color: #f8fafc; }
-        
-        /* Reaction tray animation */
-        .reaction-tray { transition: all 0.2s ease; transform-origin: left center; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
@@ -75,17 +65,12 @@
     <div class="app-container flex flex-col h-screen relative bg-slate-50 dark:bg-slate-900 shadow-2xl">
         
         <!-- SPLASH SCREEN -->
-        <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-700 max-w-[480px] mx-auto">
-            <div class="w-28 h-28 bg-white dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl shadow-indigo-500/20 animate-bounce">
+        <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-700 max-w-[480px] mx-auto text-center">
+            <div class="w-28 h-28 bg-white dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-8 shadow-2xl shadow-indigo-500/20 animate-bounce mx-auto">
                 <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
             </div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Tabungan Bersama</h1>
-            <p class="text-xs font-bold text-slate-400 mt-2 tracking-widest uppercase">Memuat Data...</p>
-            <div class="mt-10 flex gap-2">
-                <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping"></div>
-                <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping" style="animation-delay: 0.2s"></div>
-                <div class="w-2.5 h-2.5 bg-indigo-500 rounded-full animate-ping" style="animation-delay: 0.4s"></div>
-            </div>
+            <p id="splash-loading-text" class="text-xs font-bold text-slate-400 mt-2 tracking-widest uppercase">Memuat Data...</p>
         </div>
 
         <!-- REALTIME NOTIFICATION TOAST (Top) -->
@@ -97,29 +82,14 @@
             </div>
         </div>
 
-        <!-- Normal Toast Notification (Bottom) -->
+        <!-- Normal Toast Notification -->
         <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 bg-slate-900 dark:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none">
             Pesan
         </div>
 
-        <!-- INSTALL BANNER -->
-        <div id="install-banner" class="fixed top-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-[400px] bg-slate-900 dark:bg-slate-800 text-white p-3.5 rounded-2xl shadow-2xl z-50 flex items-center justify-between transition-transform duration-500 -translate-y-[150%] hidden border border-slate-700">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-500/20 text-indigo-400 p-2 rounded-xl"><i data-lucide="download" class="w-6 h-6"></i></div>
-                <div class="text-left">
-                    <p class="text-sm font-black" data-t="install_prompt_title">Install Aplikasi</p>
-                    <p class="text-[10px] text-slate-300 font-bold" data-t="install_prompt_desc">Akses lebih cepat & mudah</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2">
-                <button onclick="window.openInstallModal(); window.dismissInstallBanner();" class="text-xs bg-premium text-white font-black px-4 py-2 rounded-xl active:scale-95 transition-transform" data-t="install_btn">Lihat Tutorial</button>
-                <button onclick="window.dismissInstallBanner()" class="p-2 text-slate-400 hover:text-white rounded-xl active:scale-95 transition-transform"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-        </div>
-
         <!-- VIEW 1: HOME -->
         <main id="view-home" class="flex-1 overflow-y-auto no-scrollbar pb-24 hidden">
-            <div class="px-6 pt-10 pb-4 bg-white dark:bg-slate-900 relative">
+            <div class="px-6 pt-10 pb-4 bg-white dark:bg-slate-900 relative text-left">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-4">
                         <div id="home-avatar" class="w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold shadow-inner transition-all duration-500"></div>
@@ -128,25 +98,12 @@
                             <p id="home-username" class="font-extrabold text-slate-900 dark:text-white text-lg tracking-tight">-</p>
                         </div>
                     </div>
-                    <div id="auth-status-icon" class="text-emerald-500"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                    <div id="auth-status-icon" class="text-emerald-500 opacity-50"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
                 </div>
             </div>
 
-            <!-- DANA Style Updates Feed -->
-            <div class="px-6 mb-6">
-                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="p-1.5 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-lg"><i data-lucide="megaphone" class="w-3.5 h-3.5"></i></div>
-                        <h3 class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Updates Teman</h3>
-                    </div>
-                    <div id="home-updates-feed" class="space-y-3 h-20 overflow-y-auto no-scrollbar relative">
-                        <!-- Feed goes here -->
-                        <p class="text-xs text-slate-400 italic">Belum ada aktivitas terbaru...</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="px-6 pb-10 bg-white dark:bg-slate-900 rounded-b-[2.5rem] shadow-sm border-b border-slate-100 dark:border-slate-800">
+            <!-- Total Balance Card -->
+            <div class="px-6 pb-4 bg-white dark:bg-slate-900 rounded-b-[2.5rem] shadow-sm border-b border-slate-100 dark:border-slate-800 text-left">
                 <div class="bg-premium-gradient rounded-[2rem] p-7 shadow-xl shadow-indigo-200/40 dark:shadow-none text-white relative overflow-hidden">
                     <div class="relative z-10 flex justify-between items-center mb-1">
                         <p class="text-indigo-100 font-medium text-xs opacity-80 uppercase tracking-widest" data-t="total_balance">Total Saldo</p>
@@ -170,7 +127,20 @@
                 </div>
             </div>
 
-            <div class="p-6">
+            <!-- DANA Style Feed (Updates Teman) -->
+            <div class="px-6 mt-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div class="p-1.5 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-lg"><i data-lucide="megaphone" class="w-3 h-3"></i></div>
+                        <h3 class="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Updates Teman</h3>
+                    </div>
+                    <div id="home-updates-feed" class="space-y-2 max-h-24 overflow-y-auto no-scrollbar">
+                        <p class="text-[10px] text-slate-400 italic">Belum ada aktivitas terbaru...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 text-left">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="font-black text-slate-900 dark:text-white tracking-tight" data-t="savings_goal">Tujuan Tabungan</h2>
                     <button onclick="window.switchView('view-create')" class="bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 p-2 rounded-full active:scale-90 transition-transform">
@@ -182,16 +152,14 @@
         </main>
 
         <!-- VIEW 2: DETAIL ROOM -->
-        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-slate-50 dark:bg-slate-950 hidden relative flex flex-col h-full">
+        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-slate-50 dark:bg-slate-950 hidden relative flex flex-col h-full text-left">
             <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <button onclick="window.historyBackOverride('view-home')" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
-                    <h1 id="detail-title" class="font-bold text-lg text-slate-800 dark:text-white truncate max-w-[200px]">Detail</h1>
+                    <h1 id="detail-title" class="font-bold text-lg text-slate-800 dark:text-white truncate max-w-[150px]">Detail</h1>
                 </div>
-                <!-- Member Pile (Avatar Tumpuk) -->
-                <div id="detail-member-pile" class="flex -space-x-2 overflow-hidden mr-2">
-                    <!-- Avatars injected here -->
-                </div>
+                <!-- Member Pile -->
+                <div id="detail-member-pile" class="flex -space-x-2 overflow-hidden mr-2"></div>
                 <button onclick="window.openEditModal()" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
             </div>
 
@@ -207,37 +175,25 @@
                     <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
                         <div id="detail-progress-bar" class="bg-indigo-600 h-3 transition-all duration-1000 shadow-sm" style="width: 0%"></div>
                     </div>
-                    <div id="detail-archive-btn-container" class="mt-6 hidden">
-                        <button onclick="window.completeAndArchiveRoom()" class="w-full py-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-amber-100 dark:border-amber-900/30" data-t="archive_now">Arsipkan Sekarang</button>
-                    </div>
                 </div>
             </div>
 
-            <!-- TAB NAVIGATION -->
+            <!-- Tab Navigation -->
             <div class="flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
-                <button onclick="window.switchDetailTab('history')" id="tab-btn-history" class="flex-1 py-4 text-sm font-black text-indigo-600 border-b-2 border-indigo-600 transition-colors uppercase tracking-widest">Riwayat</button>
-                <button onclick="window.switchDetailTab('chat')" id="tab-btn-chat" class="flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent transition-colors uppercase tracking-widest flex items-center justify-center gap-2">Diskusi <i data-lucide="message-circle" class="w-4 h-4"></i></button>
+                <button onclick="window.switchDetailTab('history')" id="tab-btn-history" class="flex-1 py-4 text-xs font-black text-indigo-600 border-b-2 border-indigo-600 uppercase" data-t="history_tab">Riwayat</button>
+                <button onclick="window.switchDetailTab('chat')" id="tab-btn-chat" class="flex-1 py-4 text-xs font-bold text-slate-400 border-b-2 border-transparent uppercase flex items-center justify-center gap-2" data-t="chat_tab">Diskusi <i data-lucide="message-circle" class="w-3.5 h-3.5"></i></button>
             </div>
 
-            <!-- TAB 1: HISTORY -->
-            <div id="tab-content-history" class="flex-1">
-                <div id="detail-milestone-container" class="p-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
-                    <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
-                    <div id="detail-milestone-list" class="space-y-3"></div>
-                </div>
-                <div class="p-6">
-                    <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
-                </div>
+            <!-- Content Area -->
+            <div id="tab-content-history" class="flex-1 overflow-y-auto no-scrollbar p-6">
+                <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
             </div>
 
-            <!-- TAB 2: CHAT -->
             <div id="tab-content-chat" class="flex-1 hidden bg-slate-50 dark:bg-slate-950 p-4 pb-24 overflow-y-auto no-scrollbar flex flex-col">
-                <div id="chat-list" class="space-y-4 flex-1 mb-4 flex flex-col justify-end">
-                    <!-- Chat bubbles injected here -->
-                </div>
+                <div id="chat-list" class="space-y-4 flex-1 mb-4 flex flex-col justify-end text-left"></div>
             </div>
 
-            <!-- BOTTOM ACTION BARS -->
+            <!-- Floating Action Bar -->
             <div id="action-bar-history" class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-[480px] mx-auto z-20 flex gap-4">
                 <button onclick="window.openTransactionModal('tarik')" class="flex-1 py-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 font-black rounded-2xl active:bg-rose-100" data-t="withdraw">Tarik</button>
                 <button onclick="window.openTransactionModal('nabung')" class="flex-1 py-4 bg-premium text-white font-black rounded-2xl shadow-xl shadow-indigo-200 dark:shadow-none active:opacity-90" data-t="save">Nabung</button>
@@ -248,163 +204,6 @@
                     <input type="text" id="chat-input" class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-bold rounded-full py-3 px-5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ketik pesan..." autocomplete="off">
                     <button type="submit" class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white shrink-0 active:scale-90 transition-transform"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
                 </form>
-            </div>
-        </main>
-
-        <!-- VIEW 3: HISTORY -->
-        <main id="view-history" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-white dark:bg-slate-900 hidden">
-            <div class="px-6 pt-10 pb-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
-                <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-5 tracking-tight" data-t="history">Riwayat</h1>
-                
-                <!-- Filters Container -->
-                <div class="flex items-center justify-between gap-2">
-                    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                        <button onclick="window.filterHistory('all')" id="filter-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-black rounded-full whitespace-nowrap" data-t="all">Semua</button>
-                        <button onclick="window.filterHistory('in')" id="filter-in" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="in">Masuk</button>
-                        <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="out">Keluar</button>
-                    </div>
-                    
-                    <select id="time-filter" onchange="window.changeTimeFilter(this.value)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2 outline-none shrink-0 max-w-[120px]">
-                        <option value="all_time" data-t="filter_all_time">Semua Waktu</option>
-                        <option value="this_month" data-t="filter_this_month">Bulan Ini</option>
-                        <option value="last_month" data-t="filter_last_month">Bulan Lalu</option>
-                    </select>
-                </div>
-            </div>
-            <div id="global-history-container" class="p-6 space-y-4"></div>
-        </main>
-
-        <!-- VIEW 4: PROFILE -->
-        <main id="view-profile" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden">
-            <div class="p-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center relative">
-                <div class="relative inline-block mx-auto mb-5">
-                    <div id="profile-avatar" class="w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black border border-black/5 shadow-inner"></div>
-                    <button onclick="window.openAvatarModal()" class="absolute bottom-0 right-0 bg-slate-900 dark:bg-slate-700 text-white p-2.5 rounded-full border-4 border-white dark:border-slate-900 shadow-md active:scale-90 transition-transform">
-                        <i data-lucide="pencil" class="w-4 h-4"></i>
-                    </button>
-                </div>
-                <h1 id="profile-username" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">-</h1>
-                <p id="profile-email" class="text-[10px] font-bold text-slate-400 mt-1 mb-2"></p>
-                <p id="profile-stats" class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 inline-block px-4 py-1.5 rounded-full">0 Tabungan Aktif</p>
-            </div>
-
-            <div class="p-6 space-y-8">
-                <div>
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="data_activities">Data & Aktivitas</h3>
-                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                        <div onclick="window.switchView('view-archive')" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800">
-                            <div class="flex items-center gap-4">
-                                <div class="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-xl"><i data-lucide="archive" class="w-5 h-5"></i></div>
-                                <div>
-                                    <p class="text-sm font-black text-slate-700 dark:text-slate-200 tracking-tight" data-t="archive">Arsip Tabungan</p>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase" data-t="archive_desc">Target Selesai 100%</p>
-                                </div>
-                            </div>
-                            <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
-                        </div>
-                        
-                        <!-- LOGOUT BUTTON -->
-                        <div onclick="window.logoutGoogle()" class="flex items-center justify-between p-5 cursor-pointer active:bg-rose-50 dark:active:bg-rose-900/20 transition-colors">
-                            <div class="flex items-center gap-4">
-                                <div class="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-xl"><i data-lucide="log-out" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-black text-rose-600 dark:text-rose-400" data-t="logout">Keluar (Logout)</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="app_settings">Pengaturan Aplikasi</h3>
-                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
-                        <!-- Install App / PWA -->
-                        <div id="menu-install-app" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors" onclick="window.openInstallModal()">
-                            <div class="flex items-center gap-4">
-                                <div class="p-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 rounded-xl"><i data-lucide="download" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="install_app">Install Aplikasi</span>
-                            </div>
-                            <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
-                        </div>
-                        <!-- Dark Mode -->
-                        <div class="flex items-center justify-between p-5">
-                            <div class="flex items-center gap-4">
-                                <div class="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl"><i data-lucide="moon" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="dark_mode">Mode Gelap</span>
-                            </div>
-                            <div class="relative inline-block w-10 h-5">
-                                <input type="checkbox" id="toggle-dark" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer border-slate-200 transition-all" onchange="window.toggleDarkMode()"/>
-                                <label for="toggle-dark" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer transition-colors"></label>
-                            </div>
-                        </div>
-                        <!-- Language -->
-                        <div class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800" onclick="window.toggleLanguage()">
-                            <div class="flex items-center gap-4">
-                                <div class="p-2.5 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-xl"><i data-lucide="languages" class="w-5 h-5"></i></div>
-                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="language_name">Bahasa</span>
-                            </div>
-                            <span id="lang-display" class="text-[10px] font-black uppercase text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">ID</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- VIEW 5: ARCHIVE -->
-        <main id="view-archive" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden">
-            <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
-                <button onclick="window.switchView('view-profile', 'nav-profile')" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90 transition-transform"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
-                <h1 class="font-bold text-lg text-slate-800 dark:text-white" data-t="archive">Arsip Tabungan</h1>
-            </div>
-            <div class="p-6" id="archive-container"></div>
-        </main>
-
-        <!-- VIEW 6: CREATE -->
-        <main id="view-create" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-white dark:bg-slate-950 hidden relative">
-             <div class="sticky top-0 bg-white z-10 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 dark:bg-slate-900">
-                <button onclick="window.historyBackOverride('view-home')" class="p-2 text-slate-600 active:scale-90 dark:text-slate-400"><i data-lucide="x" class="w-7 h-7"></i></button>
-                <h1 class="font-bold text-lg text-slate-800 dark:text-white" data-t="savings_goal">Buat Tabungan</h1>
-            </div>
-            <div class="p-6 space-y-8">
-                <div>
-                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1" data-t="goal_name">Nama Tujuan</label>
-                    <input type="text" id="create-name" placeholder="Beli Laptop..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold text-slate-900 dark:text-white transition-all">
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm font-black text-slate-800 dark:text-slate-200" data-t="target_nominal">Target Nominal?</p>
-                        <div class="relative inline-block w-12 h-6">
-                            <input type="checkbox" id="toggle-target" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-200 transition-all duration-300" onchange="document.getElementById('target-input-div').classList.toggle('hidden')"/>
-                            <label for="toggle-target" class="toggle-label block h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
-                        </div>
-                    </div>
-                    <div id="target-input-div" class="hidden mt-6 relative text-center">
-                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">Rp</span>
-                        <input type="text" id="create-target" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none">
-                    </div>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm font-black text-slate-800 dark:text-slate-200">Milestone?</p>
-                        <div class="relative inline-block w-12 h-6">
-                            <input type="checkbox" id="toggle-milestone" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-200 transition-all duration-300" onchange="document.getElementById('milestone-input-div').classList.toggle('hidden')"/>
-                            <label for="toggle-milestone" class="toggle-label block h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
-                        </div>
-                    </div>
-                    <div id="milestone-input-div" class="hidden mt-6 space-y-4">
-                        <div id="milestone-rows-container">
-                            <div class="milestone-row bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-3 shadow-sm relative">
-                                <input type="text" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
-                                <div class="relative">
-                                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span>
-                                    <input type="text" inputmode="numeric" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white">
-                                </div>
-                            </div>
-                        </div>
-                        <button onclick="window.addMilestoneRow()" class="w-full py-3 border-2 border-dashed border-slate-300 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-colors">+ Tambah Rincian</button>
-                    </div>
-                </div>
-            </div>
-            <div class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 max-w-[480px] mx-auto z-20">
-                <button id="btn-save-room" onclick="window.handleCreateRoom()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-2xl active:scale-95 transition-all">Simpan</button>
             </div>
         </main>
 
@@ -431,14 +230,10 @@
         <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0">
             <div class="w-full text-center">
                 <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16 mx-auto">
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter">Tabungan Bersama</h2>
-                
-                <div class="mb-10 text-center">
-                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.</p>
-                </div>
-                
+                <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-10" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.</p>
                 <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black text-lg rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
                     <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
                     <span data-t="login_google">Masuk dengan Google</span>
@@ -446,11 +241,11 @@
             </div>
         </div>
 
-        <!-- NAME ENTRY (AFTER LOGIN) -->
+        <!-- NAME ENTRY -->
         <div id="modal-name-entry" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 opacity-0">
             <div class="w-full text-center">
                 <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16 mx-auto">
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Konfirmasi Profil</h2>
                 <div class="text-left mb-8 relative">
@@ -461,12 +256,12 @@
                         <span data-t="name_warning">*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.</span>
                     </p>
                 </div>
-                <button id="btn-save-name" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Simpan Profil & Masuk</button>
+                <button id="btn-save-name" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Simpan & Masuk</button>
             </div>
         </div>
 
         <!-- MODAL AVATAR -->
-        <div id="modal-avatar" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden flex flex-col max-h-[80vh]">
+        <div id="modal-avatar" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden flex flex-col max-h-[80vh] text-left">
             <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-800">
                 <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="choose_avatar">Pilih Avatar</h3>
                 <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
@@ -482,27 +277,32 @@
             </div>
         </div>
 
-        <!-- MODAL EDIT -->
-        <div id="modal-edit" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+        <!-- MODAL TRANSACTION -->
+        <div id="modal-transaction" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden text-left">
             <div class="p-8">
                 <div class="flex justify-between items-center mb-8">
-                    <h3 class="font-black text-2xl text-slate-900 dark:text-white" data-t="edit_goal">Ubah Tabungan</h3>
+                    <h3 id="trx-title" class="font-black text-2xl text-slate-900 dark:text-white">Transaksi</h3>
                     <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
                 </div>
-                <div class="space-y-6 mb-10 text-left">
+                <input type="hidden" id="trx-type" value="in">
+                <div class="space-y-6 mb-8">
                     <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="goal_name">Nama Tujuan</label>
-                        <input type="text" id="edit-name" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="target_nominal">Target Nominal</label>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Nominal</label>
                         <div class="relative">
                             <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                            <input type="text" id="edit-target" inputmode="numeric" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                            <input type="text" id="trx-amount" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10">
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="label_depositor">Penyetor</label>
+                        <input type="text" id="trx-user-display" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-500 dark:text-slate-400 outline-none" disabled>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="label_note">Catatan (Opsional)</label>
+                        <input type="text" id="trx-note" placeholder="..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                    </div>
                 </div>
-                <button id="btn-save-edit" onclick="window.handleEditSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl flex items-center justify-center gap-3" data-t="save_changes">Simpan Perubahan</button>
+                <button id="btn-submit-trx" onclick="window.handleTransactionSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl" data-t="confirm">Konfirmasi</button>
             </div>
         </div>
 
@@ -511,10 +311,9 @@
     <!-- Firebase SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // --- CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyDUPTlI50-ZrTwokK9A9S7MJr5iCmqqyT4",
             authDomain: "tabungan-bersama-e48da.firebaseapp.com",
@@ -527,31 +326,11 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- DYNAMIC MANIFEST ---
-        const manifestData = {
-            "name": "Tabungan Bersama",
-            "short_name": "Tabungan",
-            "start_url": window.location.pathname || "/",
-            "display": "standalone",
-            "background_color": "#f8fafc",
-            "theme_color": "#4f46e5",
-            "icons": [{
-                "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
-                "sizes": "512x512",
-                "type": "image/png",
-                "purpose": "any" 
-            }]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
-        const manifestLink = document.getElementById('manifest-link');
-        if (manifestLink) manifestLink.href = URL.createObjectURL(manifestBlob);
-
-        // --- TRANSLATIONS ---
         const i18n = {
             id: {
                 welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk", outcome: "Keluar",
                 savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
-                archive_now: "Arsipkan Sekarang", milestone_list: "Daftar Milestone", history: "Riwayat Transaksi",
+                archive_now: "Arsipkan Sekarang", history: "Riwayat Transaksi", history_tab: "Riwayat", chat_tab: "Diskusi",
                 withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
                 archive: "Arsip Tabungan", archive_desc: "Target 100% Selesai", dark_mode: "Mode Gelap", language_name: "Bahasa",
                 language_val: "ID", edit_goal: "Ubah Tabungan", goal_name: "Nama Tujuan", target_nominal: "Target Nominal",
@@ -567,14 +346,14 @@
                 install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
                 login_desc: "Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
                 name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
-                filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
+                filter_all_time: "Semua", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
                 empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
                 notif_title: "Aktivitas Baru!"
             },
             en: {
                 welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
                 savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
-                archive_now: "Archive Now", milestone_list: "Milestone List", history: "Transaction History",
+                archive_now: "Archive Now", history: "Transaction History", history_tab: "History", chat_tab: "Chat",
                 withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
                 archive: "Archive", archive_desc: "100% Goal Completed", dark_mode: "Dark Mode", language_name: "Language",
                 language_val: "EN", edit_goal: "Edit Saving", goal_name: "Goal Name", target_nominal: "Target Amount",
@@ -590,14 +369,13 @@
                 install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
                 login_desc: "Save your savings data securely in the cloud using your Google account.", login_google: "Sign in with Google", logout: "Log Out",
                 name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
-                filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
+                filter_all_time: "All", filter_this_month: "This Month", filter_last_month: "Last Month",
                 empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
                 notif_title: "New Activity!"
             }
         };
 
-        // --- APP STATE ---
-        const DB_KEY = 'tabungan_app_v9_stable_fix_v4';
+        const DB_KEY = 'tabungan_app_v10_stable';
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
             user: '', email: '', uid: '',
             avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
@@ -605,21 +383,16 @@
         };
         let globalRooms = [];
         let globalHistory = [];
-        let globalChats = []; // New state for chat
-        
+        let globalChats = []; 
         let currentRoomId = null;
-        let roomToDelete = null;
         let isBalanceHidden = false;
-        
         let currentHistoryFilter = 'all'; 
         let currentTimeFilter = 'all_time'; 
-        let currentDetailTab = 'history'; // history | chat
-        
+        let currentDetailTab = 'history'; 
         let isInitialHistoryLoad = true;
 
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-install', 'modal-name-entry'];
 
-        // --- HELPERS ---
         window.saveLocal = () => localStorage.setItem(DB_KEY, JSON.stringify(appData));
         window.showToast = (msg) => {
             const t = document.getElementById('toast');
@@ -633,19 +406,13 @@
                 textEl.innerText = msg;
                 notif.classList.remove('-translate-y-full');
                 notif.classList.add('translate-y-4');
-                
-                // Sound effect (Ring)
                 try {
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator();
                     osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
                     osc.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.1);
                 } catch(e) {}
-
-                setTimeout(() => {
-                    notif.classList.remove('translate-y-4');
-                    notif.classList.add('-translate-y-full');
-                }, 4000);
+                setTimeout(() => { notif.classList.remove('translate-y-4'); notif.classList.add('-translate-y-full'); }, 4000);
             }
         }
 
@@ -691,14 +458,12 @@
             const lblOut = document.getElementById('label-outcome');
             if (lblOut) lblOut.innerText = `${lang.outcome} (${monthStr})`;
         }
-        window.applyTranslations = applyTranslations;
 
         window.toggleLanguage = () => {
             appData.language = appData.language === 'id' ? 'en' : 'id';
             window.saveLocal();
             applyTranslations();
             updateUI();
-            window.showToast(appData.language === 'id' ? "Bahasa diubah" : "Language changed");
         };
 
         window.toggleDarkMode = () => {
@@ -710,900 +475,274 @@
             else document.documentElement.classList.remove('dark');
         };
 
-        // --- NEW: ROOM JOIN LOGIC WITH MEMBERS MAP ---
+        async function syncJoinedRoomsToCloud() {
+            if(appData.uid) {
+                try { await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms }); } catch(e) {}
+            }
+        }
+
         async function joinRoom(roomId) {
             if(!appData.joinedRooms.includes(roomId)) {
                 appData.joinedRooms.push(roomId);
                 window.saveLocal();
             }
             if(appData.uid) {
-                // Sync ke user profile (Daftar ruangan yang diikuti)
                 try { await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms }); } catch(e) {}
-                
-                // Masukkan user ke dalam ruangan (Untuk Member Pile)
-                try {
-                    await updateDoc(doc(db, "rooms", roomId), { 
-                        [`membersMap.${appData.uid}`]: { name: appData.user, avatar: appData.avatar }
-                    });
-                } catch(e) {}
+                try { await updateDoc(doc(db, "rooms", roomId), { [`membersMap.${appData.uid}`]: { name: appData.user, avatar: appData.avatar } }); } catch(e) {}
             }
         }
 
-        // --- FIREBASE AUTH LISTENER ---
         const splashStartTime = Date.now();
-        const MIN_SPLASH_TIME = 1500;
+        const MIN_SPLASH_TIME = 1800;
 
         onAuthStateChanged(auth, async (user) => {
-            const modalLogin = document.getElementById('modal-onboarding');
-            const modalName = document.getElementById('modal-name-entry');
-            const viewHome = document.getElementById('view-home');
-            const bottomNav = document.getElementById('bottom-nav');
             const splashScreen = document.getElementById('splash-screen');
-
             const hideSplash = (callback) => {
-                const elapsed = Date.now() - splashStartTime;
-                const delay = Math.max(0, MIN_SPLASH_TIME - elapsed);
+                const delay = Math.max(0, MIN_SPLASH_TIME - (Date.now() - splashStartTime));
                 setTimeout(() => {
-                    if (splashScreen && !splashScreen.classList.contains('hidden')) {
+                    if (splashScreen) {
                         splashScreen.classList.add('opacity-0');
-                        setTimeout(() => {
-                            splashScreen.classList.add('hidden');
-                            if (callback) callback();
-                        }, 700);
+                        setTimeout(() => { splashScreen.classList.add('hidden'); if (callback) callback(); }, 700);
                     } else if (callback) callback();
                 }, delay);
             };
 
             if (user) {
-                appData.email = user.email;
-                appData.uid = user.uid;
-                window.saveLocal();
-                if (modalLogin) modalLogin.classList.add('hidden');
-
+                appData.uid = user.uid; appData.email = user.email; window.saveLocal();
                 try {
-                    const userDocRef = doc(db, "users", user.uid);
-                    const userSnap = await getDoc(userDocRef);
-
-                    if (userSnap.exists()) {
-                        const cloudData = userSnap.data();
-                        appData.user = cloudData.name || user.displayName || 'Pengguna';
-                        if (cloudData.avatar) appData.avatar = cloudData.avatar;
-                        
-                        // Handle join room via URL before auth is fully ready
-                        const urlParams = new URLSearchParams(window.location.search);
-                        const sharedId = urlParams.get('id');
-                        if(sharedId) await joinRoom(sharedId);
-
-                        // Merge cloud rooms to local
-                        if (cloudData.joinedRooms) {
-                            appData.joinedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
-                        }
-                        
-                        window.saveLocal();
-                        startRealtimeSync();
-                        updateUI();
-
-                        hideSplash(() => {
-                            if (modalName) modalName.classList.add('hidden');
-                            if (viewHome) viewHome.classList.remove('hidden');
-                            if (bottomNav) bottomNav.classList.remove('hidden');
+                    const snap = await getDoc(doc(db, "users", user.uid));
+                    if (snap.exists()) {
+                        const data = snap.data();
+                        appData.user = data.name; appData.avatar = data.avatar || appData.avatar;
+                        if (data.joinedRooms) appData.joinedRooms = [...new Set([...appData.joinedRooms, ...data.joinedRooms])];
+                        window.saveLocal(); startRealtimeSync(); updateUI();
+                        hideSplash(() => { 
+                            document.getElementById('view-home').classList.remove('hidden'); 
+                            document.getElementById('bottom-nav').classList.remove('hidden'); 
                         });
-                    } else {
-                        // User Baru
-                        hideSplash(() => {
-                            if (modalName) {
-                                modalName.classList.remove('hidden');
-                                setTimeout(() => modalName.classList.remove('opacity-0'), 50);
-                                const nameInput = document.getElementById('onboarding-name');
-                                if (nameInput && !nameInput.value && user.displayName) nameInput.value = user.displayName;
-                            }
-                        });
-                    }
-                } catch (error) { hideSplash(); }
-            } else {
-                hideSplash(() => {
-                    if (modalLogin) {
-                        modalLogin.classList.remove('hidden');
-                        setTimeout(() => modalLogin.classList.remove('opacity-0'), 50);
-                    }
-                    if (modalName) modalName.classList.add('hidden');
-                    if (viewHome) viewHome.classList.add('hidden');
-                    if (bottomNav) bottomNav.classList.add('hidden');
-                });
-            }
+                    } else hideSplash(() => showModal('modal-name-entry'));
+                } catch (e) { hideSplash(); }
+            } else hideSplash(() => showModal('modal-onboarding'));
         });
 
         window.loginWithGoogle = async () => {
-            const btn = document.getElementById('btn-google-login');
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
-            try {
-                await signInWithPopup(auth, new GoogleAuthProvider());
-                window.showToast("Autentikasi berhasil!");
-            } catch (error) {
-                if(error.code !== 'auth/popup-closed-by-user') alert("Gagal login: " + error.message);
-                btn.disabled = false;
-                btn.innerHTML = `<svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg> <span data-t="login_google">${i18n[appData.language].login_google}</span>`;
-            }
+            const btn = document.getElementById('btn-google-login'); btn.disabled = true;
+            try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { btn.disabled = false; }
         };
 
         window.saveOnboardingName = async () => {
-            const btn = document.getElementById('btn-save-name');
-            const nameEl = document.getElementById('onboarding-name');
-            if(!nameEl) return;
-            const name = nameEl.value.trim();
-            if(!/^[a-zA-Z\s]+$/.test(name)) return alert("Nama hanya boleh berisi huruf.");
-            if(name.length < 3) return alert("Nama terlalu pendek.");
-            
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            const name = document.getElementById('onboarding-name').value.trim();
+            if(name.length < 3) return alert("Nama minimal 3 huruf.");
             appData.user = name; window.saveLocal();
-
             try {
-                await setDoc(doc(db, "users", appData.uid), {
-                    name: appData.user, email: appData.email, avatar: appData.avatar, joinedRooms: appData.joinedRooms, createdAt: Date.now()
-                });
-                // Handle late join
-                const urlParams = new URLSearchParams(window.location.search);
-                const sharedId = urlParams.get('id');
-                if(sharedId) await joinRoom(sharedId);
-            } catch(e) { }
-            
-            document.getElementById('modal-name-entry').classList.add('hidden');
-            const viewHome = document.getElementById('view-home');
-            const bottomNav = document.getElementById('bottom-nav');
-            if(viewHome) viewHome.classList.remove('hidden');
-            if(bottomNav) bottomNav.classList.remove('hidden');
-
-            startRealtimeSync();
-            updateUI();
+                await setDoc(doc(db, "users", appData.uid), { name: name, email: appData.email, avatar: appData.avatar, joinedRooms: appData.joinedRooms, createdAt: Date.now() });
+                location.reload();
+            } catch(e) {}
         };
 
         window.logoutGoogle = async () => {
-            if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
-            try {
-                await signOut(auth);
-                appData.user = ''; appData.email = ''; appData.uid = ''; appData.joinedRooms = []; 
-                window.saveLocal(); location.reload(); 
-            } catch (error) { alert("Gagal keluar."); }
+            if(!confirm("Keluar?")) return;
+            await signOut(auth); localStorage.removeItem(DB_KEY); location.reload();
         };
 
         function startRealtimeSync() {
             onSnapshot(collection(db, "rooms"), (snap) => {
-                globalRooms = [];
-                snap.forEach(doc => {
-                    const r = doc.data();
-                    if(appData.joinedRooms.includes(r.id)) globalRooms.push(r);
-                });
-                globalRooms.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
-                updateUI();
-                if(currentRoomId) refreshRoomUI(currentRoomId);
+                globalRooms = snap.docs.map(d => d.data()).filter(r => appData.joinedRooms.includes(r.id)).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+                updateUI(); if(currentRoomId) refreshRoomUI(currentRoomId);
             });
-
             onSnapshot(collection(db, "history"), (snap) => {
-                let hasNewContent = false; let latestTx = null;
+                let hasNewAdded = false; let latestTx = null;
                 snap.docChanges().forEach((change) => {
-                    if (change.type === "added") { hasNewContent = true; latestTx = change.doc.data(); }
+                    if (change.type === "added") { hasNewAdded = true; latestTx = change.doc.data(); }
                 });
 
-                globalHistory = [];
-                snap.forEach(doc => {
-                    const h = doc.data();
-                    if(appData.joinedRooms.includes(h.roomId)) globalHistory.push(h);
-                });
-                globalHistory.sort((a,b) => b.timestamp - a.timestamp);
-                
-                updateUI();
-                if(currentRoomId) refreshRoomUI(currentRoomId);
+                globalHistory = snap.docs.map(d => d.data()).filter(h => appData.joinedRooms.includes(h.roomId)).sort((a,b) => b.timestamp - a.timestamp);
+                updateUI(); if(currentRoomId) refreshRoomUI(currentRoomId);
 
-                // DANA Style Feed / Realtime Toast Notif
-                if (!isInitialHistoryLoad && hasNewContent && latestTx) {
+                if (!isInitialHistoryLoad && hasNewAdded && latestTx) {
                     if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
-                        const verb = latestTx.type === 'in' ? 'menabung' : 'menarik';
-                        const verbEn = latestTx.type === 'in' ? 'added' : 'withdrew';
-                        const v = appData.language === 'id' ? verb : verbEn;
+                        const v = appData.language === 'id' ? (latestTx.type === 'in' ? 'menabung' : 'menarik') : (latestTx.type === 'in' ? 'added' : 'withdrew');
                         window.showRealtimeNotif(`📢 ${latestTx.userName} ${v} Rp ${latestTx.amount.toLocaleString('id-ID')} di ${latestTx.roomName}`);
                     }
                 }
             });
-
             onSnapshot(collection(db, "chats"), (snap) => {
-                globalChats = [];
-                snap.forEach(doc => {
-                    const c = doc.data();
-                    if(appData.joinedRooms.includes(c.roomId)) globalChats.push(c);
-                });
-                globalChats.sort((a,b) => a.timestamp - b.timestamp); // Ascending for chat
+                globalChats = snap.docs.map(d => d.data()).filter(c => appData.joinedRooms.includes(c.roomId)).sort((a,b) => a.timestamp - b.timestamp);
                 if(currentRoomId && currentDetailTab === 'chat') refreshChatUI();
             });
-
-            setTimeout(() => { isInitialHistoryLoad = false; }, 2000);
+            setTimeout(() => { isInitialHistoryLoad = false; }, 2500);
         }
 
-        // --- CORE ACTIONS ---
         window.handleCreateRoom = async () => {
-            const btn = document.getElementById('btn-save-room');
-            const nameEl = document.getElementById('create-name');
-            if(!nameEl || !nameEl.value.trim()) return alert("Isi nama tabungan.");
-            const name = nameEl.value.trim();
-            if(globalRooms.some(r => r.name.toLowerCase() === name.toLowerCase())) return alert("Nama tabungan sudah ada!");
-
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
-            const roomId = 'room_' + Date.now();
-            const toggleTgt = document.getElementById('toggle-target');
-            const targetInp = document.getElementById('create-target');
-            const targetVal = (toggleTgt && toggleTgt.checked && targetInp) ? parseInt(targetInp.value.replace(/\D/g, '')) : 0;
-            
-            let milestones = [];
-            const toggleMs = document.getElementById('toggle-milestone');
-            if(toggleMs && toggleMs.checked) {
-                document.querySelectorAll('.milestone-row').forEach(row => {
-                    const mName = row.querySelector('.ms-name').value.trim();
-                    const mPrice = parseInt(row.querySelector('.ms-price').value.replace(/\D/g, '')) || 0;
-                    if(mName && mPrice > 0) milestones.push({ name: mName, price: mPrice, done: false });
-                });
-            }
-
-            const newRoom = { 
-                id: roomId, name: name, balance: 0, hasTarget: targetVal > 0, target: targetVal, 
-                hasMilestones: milestones.length > 0, milestones: milestones, isArchived: false, 
-                createdAt: new Date().toISOString(),
-                membersMap: { [appData.uid]: { name: appData.user, avatar: appData.avatar } } // Add self as first member
-            };
-            
-            appData.joinedRooms.push(roomId); 
-            window.saveLocal();
-            try { await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms }); } catch(e) {}
-
-            try {
-                await setDoc(doc(db, "rooms", roomId), newRoom);
-                window.switchView('view-home', 'nav-home');
-                window.showToast("Berhasil!");
-                nameEl.value = ''; btn.disabled = false; btn.innerText = 'Simpan';
-            } catch(e) { alert("Error."); btn.disabled = false; }
+            const name = document.getElementById('create-name').value.trim();
+            if(!name) return;
+            const btn = document.getElementById('btn-save-room'); btn.disabled = true;
+            const id = 'room_' + Date.now();
+            const r = { id, name, balance: 0, membersMap: { [appData.uid]: { name: appData.user, avatar: appData.avatar } }, createdAt: new Date().toISOString() };
+            try { await setDoc(doc(db, "rooms", id), r); await joinRoom(id); window.switchView('view-home', 'nav-home'); } finally { btn.disabled = false; }
         };
 
-        window.openEditModal = () => {
+        window.handleTransactionSubmit = async () => {
+            const amountInput = document.getElementById('trx-amount');
+            const amount = parseInt(amountInput.value.replace(/\D/g, ''));
             const r = globalRooms.find(x => x.id === currentRoomId);
-            if(!r) return;
-            const editName = document.getElementById('edit-name');
-            const editTarget = document.getElementById('edit-target');
-            if(editName) editName.value = r.name;
-            if(editTarget) editTarget.value = r.target ? r.target.toLocaleString('id-ID') : '';
-            window.showModal('modal-edit');
-        };
-
-        window.handleEditSubmit = async () => {
-            const btn = document.getElementById('btn-save-edit');
-            const nameEl = document.getElementById('edit-name');
-            const targetEl = document.getElementById('edit-target');
-            if(!nameEl || !targetEl) return;
-            const name = nameEl.value.trim();
-            const target = parseInt(targetEl.value.replace(/\D/g, '')) || 0;
-            if(!name) return alert("Isi nama tujuan.");
-
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            if(!amount || !r) return;
+            const type = document.getElementById('trx-type').value;
+            const newBal = type === 'in' ? r.balance + amount : r.balance - amount;
+            if(newBal < 0) return alert("Saldo kurang");
+            
+            const btn = document.getElementById('btn-submit-trx'); btn.disabled = true;
+            const txId = 'tx_' + Date.now();
             try {
-                await updateDoc(doc(db, "rooms", currentRoomId), { name: name, target: target, hasTarget: target > 0 });
+                await updateDoc(doc(db, "rooms", currentRoomId), { balance: newBal });
+                await setDoc(doc(db, "history", txId), { id: txId, roomId: currentRoomId, roomName: r.name, type, amount, userName: appData.user, timestamp: Date.now(), date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}), reactions: {} });
                 window.closeAllModals();
-                window.showToast("Success!");
-                btn.disabled = false; btn.innerText = i18n[appData.language].save_changes;
-            } catch(e) { alert("Error."); btn.disabled = false; }
+            } catch(e) {} finally { btn.disabled = false; }
         };
 
-        // UI TABS LOGIC
-        window.switchDetailTab = (tab) => {
-            currentDetailTab = tab;
-            const btnHist = document.getElementById('tab-btn-history');
-            const btnChat = document.getElementById('tab-btn-chat');
-            const contHist = document.getElementById('tab-content-history');
-            const contChat = document.getElementById('tab-content-chat');
-            const actHist = document.getElementById('action-bar-history');
-            const actChat = document.getElementById('action-bar-chat');
-
-            if(tab === 'history') {
-                btnHist.className = "flex-1 py-4 text-sm font-black text-indigo-600 border-b-2 border-indigo-600 transition-colors uppercase tracking-widest";
-                btnChat.className = "flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent transition-colors uppercase tracking-widest flex items-center justify-center gap-2";
-                contHist.classList.remove('hidden'); contChat.classList.add('hidden');
-                actHist.classList.remove('hidden'); actChat.classList.add('hidden');
-            } else {
-                btnChat.className = "flex-1 py-4 text-sm font-black text-indigo-600 border-b-2 border-indigo-600 transition-colors uppercase tracking-widest flex items-center justify-center gap-2";
-                btnHist.className = "flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent transition-colors uppercase tracking-widest";
-                contChat.classList.remove('hidden'); contHist.classList.add('hidden');
-                actChat.classList.remove('hidden'); actHist.classList.add('hidden');
-                refreshChatUI();
-            }
-        };
-
-        // CHAT LOGIC
         window.handleSendChat = async (e) => {
             e.preventDefault();
-            if(!currentRoomId) return;
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if(!text) return;
-
-            input.value = ''; // clear immediately for UX
-            
-            const ts = Date.now();
-            const chatId = 'msg_' + ts;
-            const chatObj = {
-                id: chatId, roomId: currentRoomId, uid: appData.uid, userName: appData.user, avatar: appData.avatar,
-                text: text, timestamp: ts, date: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})
-            };
-
-            try { await setDoc(doc(db, "chats", chatId), chatObj); } catch(err) { console.log("Gagal kirim chat"); }
+            const input = document.getElementById('chat-input'); const text = input.value.trim();
+            if(!text) return; input.value = '';
+            const id = 'msg_' + Date.now();
+            await setDoc(doc(db, "chats", id), { id, roomId: currentRoomId, uid: appData.uid, userName: appData.user, avatar: appData.avatar, text, timestamp: Date.now(), date: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}) });
         };
 
         function refreshChatUI() {
-            const list = document.getElementById('chat-list');
-            if(!list) return;
-            const roomChats = globalChats.filter(c => c.roomId === currentRoomId);
-            
-            list.innerHTML = '';
-            if(roomChats.length === 0) {
-                list.innerHTML = `<div class="text-center py-10 opacity-40 my-auto"><i data-lucide="messages-square" class="w-10 h-10 mx-auto mb-2 text-slate-400"></i><p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Belum ada obrolan</p></div>`;
-            } else {
-                roomChats.forEach(c => {
-                    const isMe = c.uid === appData.uid;
-                    if(isMe) {
-                        list.innerHTML += `<div class="flex flex-col items-end mb-1"><div class="chat-bubble-me py-2.5 px-4 text-sm font-medium shadow-sm">${c.text}</div><span class="text-[9px] font-bold text-slate-400 mt-1">${c.date}</span></div>`;
-                    } else {
-                        const av = `<div class="w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-[10px] font-black border border-white dark:border-slate-800 ${c.avatar.colorClass}">${c.avatar.emoji || c.userName.charAt(0)}</div>`;
-                        list.innerHTML += `<div class="flex items-end gap-2 mb-1">${av}<div class="flex flex-col items-start"><p class="text-[9px] font-bold text-slate-400 ml-1 mb-0.5">${c.userName}</p><div class="chat-bubble-other py-2.5 px-4 text-sm font-medium shadow-sm">${c.text}</div><span class="text-[9px] font-bold text-slate-400 mt-1 ml-1">${c.date}</span></div></div>`;
-                    }
-                });
-            }
+            const list = document.getElementById('chat-list'); if(!list) return;
+            const chats = globalChats.filter(c => c.roomId === currentRoomId);
+            list.innerHTML = chats.map(c => {
+                const isMe = c.uid === appData.uid;
+                return isMe ? `<div class="flex flex-col items-end mb-1"><div class="chat-bubble-me py-2 px-4 text-sm font-medium shadow-sm">${c.text}</div><span class="text-[8px] font-bold text-slate-400 mt-1">${c.date}</span></div>`
+                : `<div class="flex items-end gap-2 mb-1 text-left"><div class="w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-[10px] font-black ${c.avatar.colorClass}">${c.avatar.emoji || c.userName[0]}</div><div class="flex flex-col items-start"><p class="text-[8px] font-bold text-slate-400 ml-1 mb-0.5">${c.userName}</p><div class="chat-bubble-other py-2 px-4 text-sm font-medium shadow-sm text-left">${c.text}</div><span class="text-[8px] font-bold text-slate-400 mt-1 ml-1">${c.date}</span></div></div>`;
+            }).join('') || `<p class="text-center opacity-40 text-xs">Belum ada obrolan</p>`;
+            const container = document.getElementById('tab-content-chat'); if(container) container.scrollTop = container.scrollHeight;
             lucide.createIcons();
-            // Scroll to bottom
-            const contChat = document.getElementById('tab-content-chat');
-            if(contChat) contChat.scrollTop = contChat.scrollHeight;
         }
 
-        // REACTION LOGIC
-        window.toggleReaction = async (historyId, emoji) => {
-            const tx = globalHistory.find(h => h.id === historyId);
-            if(!tx) return;
-            
-            let currentReactions = tx.reactions || {};
-            // Toggle
-            if(currentReactions[appData.uid] === emoji) {
-                delete currentReactions[appData.uid]; // Remove if clicked same
-            } else {
-                currentReactions[appData.uid] = emoji; // Set new
-            }
-
-            try {
-                await updateDoc(doc(db, "history", historyId), { reactions: currentReactions });
-            } catch(e) {}
-        };
-
-        window.openRoomDetail = (id) => { 
-            currentRoomId = id; 
-            window.switchDetailTab('history'); // Default ke riwayat
-            refreshRoomUI(id); 
-            window.switchView('view-detail'); 
-        };
+        window.openRoomDetail = (id) => { currentRoomId = id; window.switchDetailTab('history'); refreshRoomUI(id); window.switchView('view-detail'); };
 
         function refreshRoomUI(id) {
             const lang = i18n[appData.language];
             const r = globalRooms.find(x => x.id === id); if(!r) return;
-            const titleEl = document.getElementById('detail-title');
-            const balanceEl = document.getElementById('detail-balance');
-            if(titleEl) titleEl.innerText = r.name;
-            if(balanceEl) balanceEl.innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
-
-            // Render Member Pile
-            const pileContainer = document.getElementById('detail-member-pile');
-            if(pileContainer) {
-                pileContainer.innerHTML = '';
-                if(r.membersMap) {
-                    Object.values(r.membersMap).forEach(m => {
-                        pileContainer.innerHTML += `<div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-black shadow-sm ${m.avatar.colorClass}">${m.avatar.emoji || m.name.charAt(0)}</div>`;
-                    });
-                }
-            }
-            
-            const tgtBox = document.getElementById('detail-target-container');
-            if(tgtBox) {
-                if(r.hasTarget) {
-                    tgtBox.classList.remove('hidden');
-                    const progressTxt = document.getElementById('detail-progress-text');
-                    const progressBr = document.getElementById('detail-progress-bar');
-                    const pct = Math.min(Math.round((r.balance/r.target)*100), 100);
-                    if(progressTxt) progressTxt.innerText = `${r.balance.toLocaleString('id-ID')} / ${r.target.toLocaleString('id-ID')}`;
-                    if(progressBr) progressBr.style.width = pct + '%';
-                    const archBtnBox = document.getElementById('detail-archive-btn-container');
-                    if (archBtnBox) {
-                        if (pct >= 100 && !r.isArchived) archBtnBox.classList.remove('hidden');
-                        else archBtnBox.classList.add('hidden');
-                    }
-                } else { 
-                    tgtBox.classList.add('hidden'); 
-                    const archBtnBox = document.getElementById('detail-archive-btn-container');
-                    if (archBtnBox) archBtnBox.classList.add('hidden');
-                }
-            }
-            
-            const msBox = document.getElementById('detail-milestone-container');
-            const msList = document.getElementById('detail-milestone-list');
-            if(msBox && msList) {
-                if(r.hasMilestones && r.milestones.length > 0) {
-                    msBox.classList.remove('hidden'); msList.innerHTML = '';
-                    r.milestones.forEach((m, idx) => {
-                        msList.innerHTML += `<div onclick="window.toggleMilestone(${idx})" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 active:scale-[0.98] transition-all cursor-pointer"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${m.done ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300'}">${m.done ? '<i data-lucide="check" class="w-4 h-4 text-white"></i>' : ''}</div><div class="flex-1"><p class="text-sm font-bold ${m.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${m.name}</p><p class="text-[10px] font-black text-slate-400 tracking-wider uppercase">RP ${m.price.toLocaleString('id-ID')}</p></div></div>`;
-                    });
-                } else msBox.classList.add('hidden');
-            }
-            
+            document.getElementById('detail-title').innerText = r.name;
+            document.getElementById('detail-balance').innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
+            const pile = document.getElementById('detail-member-pile');
+            if(pile && r.membersMap) pile.innerHTML = Object.values(r.membersMap).map(m => `<div class="w-7 h-7 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-black shadow-sm ${m.avatar.colorClass}">${m.avatar.emoji || m.name[0]}</div>`).join('');
             const histList = document.getElementById('detail-history-list');
-            if(histList) {
-                histList.innerHTML = '';
-                const filtered = globalHistory.filter(h => h.roomId === id);
-                if(filtered.length === 0) {
-                    histList.innerHTML = `
-                    <div class="text-center py-10 opacity-40">
-                        <i data-lucide="hourglass" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
-                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p>
-                    </div>`;
-                }
-                else filtered.forEach(h => {
-                    const isIn = h.type === 'in';
-                    const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">"${h.note}"</p>` : '';
-                    
-                    // Count Reactions
-                    let rxFire = 0, rxClap = 0, rxHeart = 0;
-                    let myRx = null;
-                    if(h.reactions) {
-                        Object.values(h.reactions).forEach(em => {
-                            if(em === '🔥') rxFire++; if(em === '👏') rxClap++; if(em === '❤️') rxHeart++;
-                        });
-                        myRx = h.reactions[appData.uid];
-                    }
-                    
-                    const btnClass = "text-[10px] font-black px-2 py-1 rounded-full border transition-colors active:scale-90 flex items-center gap-1";
-                    
-                    histList.innerHTML += `
-                    <div class="relative pl-8 mb-6 group">
-                        <span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-950"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span>
-                        <div class="flex justify-between items-start">
-                            <div class="flex-1 pr-2 overflow-hidden">
-                                <p class="text-sm font-black dark:text-white truncate">${h.userName}</p>
-                                <p class="text-[9px] font-bold text-slate-400">${h.date}</p>
-                                ${noteHtml}
-                            </div>
-                            <p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p>
-                        </div>
-                        
-                        <!-- Reaction Tray -->
-                        <div class="flex gap-1.5 mt-2.5 reaction-tray">
-                            <button onclick="window.toggleReaction('${h.id}', '🔥')" class="${btnClass} ${myRx==='🔥' ? 'bg-orange-100 border-orange-200 text-orange-700' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:bg-slate-100'}">🔥 ${rxFire > 0 ? rxFire : ''}</button>
-                            <button onclick="window.toggleReaction('${h.id}', '👏')" class="${btnClass} ${myRx==='👏' ? 'bg-amber-100 border-amber-200 text-amber-700' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:bg-slate-100'}">👏 ${rxClap > 0 ? rxClap : ''}</button>
-                            <button onclick="window.toggleReaction('${h.id}', '❤️')" class="${btnClass} ${myRx==='❤️' ? 'bg-rose-100 border-rose-200 text-rose-700' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:bg-slate-100'}">❤️ ${rxHeart > 0 ? rxHeart : ''}</button>
-                        </div>
-                    </div>`;
-                });
-            }
+            const filtered = globalHistory.filter(h => h.roomId === id);
+            histList.innerHTML = filtered.map(h => {
+                const isIn = h.type === 'in';
+                let fire = 0, clap = 0, heart = 0;
+                if(h.reactions) Object.values(h.reactions).forEach(e => { if(e==='🔥') fire++; if(e==='👏') clap++; if(e==='❤️') heart++; });
+                const myRx = h.reactions ? h.reactions[appData.uid] : null;
+                const btnStyle = "text-[9px] font-black px-2 py-1 rounded-full border transition-colors active:scale-90 flex items-center gap-1";
+                return `<div class="relative pl-8 mb-6"><span class="absolute -left-[20px] top-1 ${isIn?'bg-emerald-100 text-emerald-600':'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-950"><i data-lucide="${isIn?'arrow-down':'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p></div><p class="text-sm font-black ${isIn?'text-emerald-600':'text-rose-600'}">Rp ${h.amount.toLocaleString('id-ID')}</p></div><div class="flex gap-1.5 mt-2"><button onclick="window.toggleReaction('${h.id}', '🔥')" class="${btnStyle} ${myRx==='🔥'?'bg-orange-100 border-orange-200 text-orange-700':'bg-slate-50 dark:bg-slate-800 border-transparent'}">🔥 ${fire||''}</button><button onclick="window.toggleReaction('${h.id}', '👏')" class="${btnStyle} ${myRx==='👏'?'bg-amber-100 border-amber-200 text-amber-700':'bg-slate-50 dark:bg-slate-800 border-transparent'}">👏 ${clap||''}</button><button onclick="window.toggleReaction('${h.id}', '❤️')" class="${btnStyle} ${myRx==='❤️'?'bg-rose-100 border-rose-200 text-rose-700':'bg-slate-50 dark:bg-slate-800 border-transparent'}">❤️ ${heart||''}</button></div></div>`
+            }).join('') || `<p class="text-center opacity-40">Belum ada riwayat</p>`;
             lucide.createIcons();
         }
 
-        window.openTransactionModal = (type) => {
-            const trxAmount = document.getElementById('trx-amount');
-            const trxType = document.getElementById('trx-type');
-            const trxTitle = document.getElementById('trx-title');
-            const trxUser = document.getElementById('trx-user-display');
-            const trxNote = document.getElementById('trx-note');
-            
-            if(trxAmount) trxAmount.value = '';
-            if(trxType) trxType.value = type === 'nabung' ? 'in' : 'out';
-            if(trxTitle) trxTitle.innerText = type === 'nabung' ? i18n[appData.language].save : i18n[appData.language].withdraw;
-            if(trxUser) trxUser.value = appData.user;
-            if(trxNote) trxNote.value = ''; 
-            
-            window.showModal('modal-transaction');
-            setTimeout(() => { if(trxAmount) trxAmount.focus(); }, 400);
+        window.switchDetailTab = (tab) => {
+            currentDetailTab = tab;
+            document.getElementById('tab-content-history').classList.toggle('hidden', tab !== 'history');
+            document.getElementById('tab-content-chat').classList.toggle('hidden', tab !== 'chat');
+            document.getElementById('action-bar-history').classList.toggle('hidden', tab !== 'history');
+            document.getElementById('action-bar-chat').classList.toggle('hidden', tab !== 'chat');
+            document.getElementById('tab-btn-history').className = tab === 'history' ? "flex-1 py-4 text-xs font-black text-indigo-600 border-b-2 border-indigo-600 uppercase" : "flex-1 py-4 text-xs font-bold text-slate-400 border-b-2 border-transparent uppercase";
+            document.getElementById('tab-btn-chat').className = tab === 'chat' ? "flex-1 py-4 text-xs font-black text-indigo-600 border-b-2 border-indigo-600 uppercase flex items-center justify-center gap-2" : "flex-1 py-4 text-xs font-bold text-slate-400 border-b-2 border-transparent uppercase flex items-center justify-center gap-2";
+            if(tab === 'chat') refreshChatUI();
         };
-
-        window.handleTransactionSubmit = async () => {
-            const btn = document.getElementById('btn-submit-trx');
-            const r = globalRooms.find(x => x.id === currentRoomId);
-            const amountStr = document.getElementById('trx-amount').value.replace(/\D/g, '');
-            const amount = parseInt(amountStr);
-            if(!amount || !r) return;
-
-            const type = document.getElementById('trx-type').value;
-            let newBal = r.balance;
-            if(type === 'in') {
-                if(r.hasTarget && r.balance + amount > r.target) return alert("Melebihi target!");
-                newBal += amount;
-            } else {
-                if(amount > r.balance) return alert("Saldo kurang.");
-                newBal -= amount;
-            }
-
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
-            const reachedGoal = (r.hasTarget && newBal === r.target && type === 'in');
-            const ts = Date.now();
-            const trxId = 'trx_' + ts;
-            const noteEl = document.getElementById('trx-note');
-            const h = { 
-                id: trxId, roomId: currentRoomId, roomName: r.name, type: type, amount: amount, 
-                userName: appData.user, note: noteEl ? noteEl.value : '', timestamp: ts, 
-                date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}),
-                reactions: {}
-            };
-
-            try {
-                await updateDoc(doc(db, "rooms", currentRoomId), { balance: newBal });
-                await setDoc(doc(db, "history", trxId), h);
-                window.closeAllModals();
-                btn.disabled = false; btn.innerText = i18n[appData.language].confirm;
-                if(reachedGoal) {
-                    const celebName = document.getElementById('celeb-room-name');
-                    if(celebName) celebName.innerText = r.name;
-                    setTimeout(() => { window.showModal('modal-celebration'); }, 400);
-                }
-            } catch(e) { alert("Error."); btn.disabled = false; }
-        };
-
-        window.filterHistory = (type) => {
-            currentHistoryFilter = type;
-            ['all', 'in', 'out'].forEach(f => {
-                const btn = document.getElementById('filter-'+f);
-                if(!btn) return;
-                if(f === type) {
-                    btn.classList.add('bg-slate-900', 'text-white', 'dark:bg-indigo-600');
-                    btn.classList.remove('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
-                } else {
-                    btn.classList.remove('bg-slate-900', 'text-white', 'dark:bg-indigo-600');
-                    btn.classList.add('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
-                }
-            });
-            updateUI();
-        };
-
-        window.changeTimeFilter = (val) => { currentTimeFilter = val; updateUI(); }
 
         window.switchView = (viewId, navId = null) => {
-            const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
-            views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
-            const target = document.getElementById(viewId); if(target) target.classList.remove('hidden');
-            const nav = document.getElementById('bottom-nav');
-            if(nav) {
-                if (['view-detail', 'view-create', 'view-archive'].includes(viewId)) nav.classList.add('hidden');
-                else nav.classList.remove('hidden');
-            }
-            if(navId) {
-                document.querySelectorAll('.nav-btn').forEach(btn => {
-                    btn.classList.replace('text-indigo-600', 'text-slate-300');
-                    const span = btn.querySelector('span'); if(span) span.classList.replace('font-black', 'font-bold');
-                });
-                const active = document.getElementById(navId);
-                if(active) {
-                    active.classList.replace('text-slate-300', 'text-indigo-600');
-                    const span = active.querySelector('span'); if(span) span.classList.replace('font-bold', 'font-black');
-                }
-            }
+            ['view-home', 'view-detail', 'view-history', 'view-profile'].forEach(v => document.getElementById(v)?.classList.add('hidden'));
+            document.getElementById(viewId)?.classList.remove('hidden');
+            document.getElementById('bottom-nav')?.classList.toggle('hidden', ['view-detail'].includes(viewId));
             window.scrollTo(0,0);
         };
 
-        window.historyBackOverride = (fallback) => {
-            window.switchView(fallback, 'nav-' + fallback.split('-')[1]);
-        };
-
-        window.openManageModal = (id) => { roomToDelete = id; window.showModal('modal-manage'); };
-        window.openShareOptions = () => {
-            const mManage = document.getElementById('modal-manage');
-            if(mManage) mManage.classList.add('translate-y-full');
-            const baseUrl = window.location.origin + window.location.pathname;
-            const fullLink = baseUrl + "?id=" + roomToDelete;
-            const textEl = document.getElementById('share-link-text');
-            if(textEl) {
-                textEl.innerText = window.location.host + "/?id=" + roomToDelete.substring(0,8) + "...";
-                textEl.setAttribute('data-link', fullLink);
-            }
-            setTimeout(() => window.showModal('modal-share'), 350);
-        };
-        window.copyShareLink = () => {
-            const textEl = document.getElementById('share-link-text');
-            if(!textEl) return;
-            const link = textEl.getAttribute('data-link');
-            const el = document.createElement('textarea'); el.value = link;
-            document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            window.showToast("Copied!"); window.closeAllModals();
-        };
-        window.deleteCurrentRoom = async () => {
-            if(!confirm("Are you sure?")) return;
-            await deleteDoc(doc(db, "rooms", roomToDelete));
-            
-            appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
-            window.saveLocal(); 
-            syncJoinedRoomsToCloud();
-            window.closeAllModals();
-        };
-
-        window.completeAndArchiveRoom = async () => {
-            if(!currentRoomId) return;
-            try {
-                await updateDoc(doc(db, "rooms", currentRoomId), { isArchived: true });
-                window.closeAllModals();
-                window.switchView('view-home', 'nav-home');
-                window.showToast(appData.language === 'id' ? "Berhasil diarsipkan" : "Archived");
-            } catch(e) { alert("Error."); }
-        };
-
-        window.openInstallModal = () => {
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const container = document.getElementById('install-instructions');
-            const lang = i18n[appData.language];
-
-            if(isIOS) {
-                container.innerHTML = `
-                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">${lang.install_ios_desc}</p>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2">
-                        <i data-lucide="share" class="w-6 h-6 text-indigo-500"></i>
-                        <p class="text-sm font-black dark:text-white">1. ${lang.install_ios_step1}</p>
-                    </div>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                        <i data-lucide="plus-square" class="w-6 h-6 text-indigo-500"></i>
-                        <p class="text-sm font-black dark:text-white">2. ${lang.install_ios_step2}</p>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">${lang.install_android_desc}</p>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2">
-                        <i data-lucide="more-vertical" class="w-6 h-6 text-indigo-500"></i>
-                        <p class="text-sm font-black dark:text-white">1. ${lang.install_android_step1}</p>
-                    </div>
-                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
-                        <i data-lucide="download" class="w-6 h-6 text-indigo-500"></i>
-                        <p class="text-sm font-black dark:text-white">2. ${lang.install_android_step2}</p>
-                    </div>
-                `;
-            }
-            lucide.createIcons();
-            window.showModal('modal-install');
-        }
+        window.historyBackOverride = (fallback) => window.switchView(fallback, 'nav-' + fallback.split('-')[1]);
 
         function updateUI() {
             if(!appData.user) return;
             const lang = i18n[appData.language];
-            const initial = appData.user.charAt(0).toUpperCase();
-            const displayChar = appData.avatar.emoji || initial;
-            
-            const homeAv = document.getElementById('home-avatar');
-            const profAv = document.getElementById('profile-avatar');
-            const homeUser = document.getElementById('home-username');
-            const profUser = document.getElementById('profile-username');
-            const profEmail = document.getElementById('profile-email');
-            
-            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
-            if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; profAv.innerText = displayChar; }
-            if(homeUser) homeUser.innerText = appData.user;
-            if(profUser) profUser.innerText = appData.user;
-            if(profEmail) profEmail.innerText = appData.email || '';
-
+            ['home-avatar', 'profile-avatar'].forEach(id => {
+                const el = document.getElementById(id);
+                if(el) { el.className = `w-${id.includes('profile')?24:12} h-${id.includes('profile')?24:12} rounded-full flex items-center justify-center text-${id.includes('profile')?'5xl':'xl'} font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; el.innerText = appData.avatar.emoji || appData.user[0].toUpperCase(); }
+            });
+            document.getElementById('home-username').innerText = appData.user;
+            document.getElementById('profile-username').innerText = appData.user;
+            document.getElementById('profile-email').innerText = appData.email || '';
             const active = globalRooms.filter(r => !r.isArchived);
             const total = active.reduce((acc, r) => acc + r.balance, 0);
-            const totalEl = document.getElementById('total-balance');
-            if(totalEl) {
-                totalEl.setAttribute('data-value', total);
-                if(!isBalanceHidden) totalEl.innerText = 'Rp ' + total.toLocaleString('id-ID');
-            }
-            const profStats = document.getElementById('profile-stats');
-            if(profStats) profStats.innerText = `${active.length} Tabungan Aktif`;
-
-            // DANA-Style Updates Feed
-            const feedContainer = document.getElementById('home-updates-feed');
-            if(feedContainer) {
-                feedContainer.innerHTML = '';
-                // Ambil 10 transaksi terbaru dari gabungan tabungan, jangan miliknya sendiri (opsional)
-                const feedItems = globalHistory.slice(0, 10);
-                if(feedItems.length === 0) {
-                    feedContainer.innerHTML = `<p class="text-[10px] text-slate-400 italic">Belum ada aktivitas terbaru...</p>`;
-                } else {
-                    feedItems.forEach(h => {
-                        const v = h.type === 'in' ? 'menabung' : 'menarik';
-                        const vEn = h.type === 'in' ? 'added' : 'withdrew';
-                        const textVerb = appData.language === 'id' ? v : vEn;
-                        feedContainer.innerHTML += `
-                        <div class="flex items-start gap-2 border-b border-slate-50 dark:border-slate-800/50 pb-2 last:border-0 last:pb-0 cursor-pointer" onclick="window.openRoomDetail('${h.roomId}')">
-                            <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="${h.type==='in'?'arrow-down':'arrow-up'}" class="w-3 h-3 ${h.type==='in'?'text-emerald-500':'text-rose-500'}"></i></div>
-                            <div class="flex-1">
-                                <p class="text-xs font-medium text-slate-700 dark:text-slate-300 leading-snug"><span class="font-black text-slate-900 dark:text-white">${h.userName}</span> ${textVerb} <span class="font-black text-indigo-600 dark:text-indigo-400">Rp ${h.amount.toLocaleString('id-ID')}</span> di ${h.roomName}</p>
-                                <p class="text-[9px] font-bold text-slate-400 mt-0.5">${h.date.split(',')[0]}</p>
-                            </div>
-                        </div>`;
-                    });
-                }
-            }
-
+            document.getElementById('total-balance').innerText = isBalanceHidden ? 'Rp *********' : 'Rp ' + total.toLocaleString('id-ID');
+            
+            const feed = document.getElementById('home-updates-feed');
+            if(feed) feed.innerHTML = globalHistory.slice(0, 5).map(h => `<div class="flex items-center gap-2 pb-1 border-b border-slate-50 dark:border-slate-800/50 last:border-0"><div class="w-5 h-5 rounded-full ${h.type==='in'?'bg-emerald-50 text-emerald-500':'bg-rose-50 text-rose-500'} flex items-center justify-center shrink-0 text-[8px] font-black">${h.userName[0]}</div><p class="text-[10px] font-medium text-slate-600 dark:text-slate-300 truncate"><span class="font-black text-slate-900 dark:text-white">${h.userName}</span> ${h.type==='in'?'menabung':'menarik'} <span class="font-black text-indigo-600">Rp ${h.amount.toLocaleString('id-ID')}</span></p></div>`).join('') || `<p class="text-[10px] text-slate-400 italic">Belum ada aktivitas...</p>`;
+            
             const container = document.getElementById('rooms-container');
-            if(container) {
-                container.innerHTML = '';
-                if(active.length === 0) {
-                    container.innerHTML = `
-                    <div class="text-center py-16 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm">
-                        <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="target" class="w-8 h-8"></i>
-                        </div>
-                        <h3 class="font-black text-slate-700 dark:text-white mb-1">${lang.no_goals}</h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${lang.empty_goal_desc}</p>
-                    </div>`;
-                }
-                else active.forEach(r => {
-                    const pct = r.hasTarget ? Math.min(Math.round((r.balance/r.target)*100), 100) : 0;
-                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-center gap-4"><div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-2xl"><i data-lucide="target"></i></div><h3 class="font-black text-slate-800 dark:text-white text-lg">${r.name}</h3></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
-                });
-            }
-
-            const archContainer = document.getElementById('archive-container');
-            if(archContainer) {
-                archContainer.innerHTML = '';
-                const archived = globalRooms.filter(r => r.isArchived);
-                if(archived.length === 0) {
-                     archContainer.innerHTML = `
-                    <div class="text-center py-20 opacity-40">
-                        <i data-lucide="package-open" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
-                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.no_archive}</h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_archive_desc}</p>
-                    </div>`;
-                }
-                else archived.forEach(r => {
-                    archContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] opacity-70 mb-4 border border-slate-100 dark:border-slate-800 shadow-sm"><div class="flex items-center gap-4 mb-3"><div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-lg"><i data-lucide="award"></i></div><h3 class="font-black text-slate-800 dark:text-white">${r.name}</h3></div><p class="text-sm font-bold text-slate-500 dark:text-slate-400">Total: Rp ${r.balance.toLocaleString('id-ID')}</p></div>`;
-                });
-            }
-
-            const gHistContainer = document.getElementById('global-history-container');
-            if(gHistContainer) {
-                gHistContainer.innerHTML = '';
-                let filtered = globalHistory;
-                
-                if(currentHistoryFilter !== 'all') filtered = filtered.filter(h => h.type === currentHistoryFilter);
-                
-                const now = new Date();
-                if(currentTimeFilter === 'this_month') {
-                    filtered = filtered.filter(h => {
-                        const d = new Date(h.timestamp);
-                        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
-                    });
-                } else if(currentTimeFilter === 'last_month') {
-                    filtered = filtered.filter(h => {
-                        const d = new Date(h.timestamp);
-                        let lm = now.getMonth() - 1; let ly = now.getFullYear();
-                        if(lm < 0) { lm = 11; ly--; }
-                        return d.getMonth() === lm && d.getFullYear() === ly;
-                    });
-                }
-
-                if(filtered.length === 0) {
-                     gHistContainer.innerHTML = `
-                    <div class="text-center py-20 opacity-40">
-                        <i data-lucide="scroll" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
-                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3>
-                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p>
-                    </div>`;
-                }
-                else filtered.forEach(h => {
-                    const isIn = h.type === 'in';
-                    const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 truncate max-w-[150px]">"${h.note}"</p>` : '';
-                    gHistContainer.innerHTML += `<div class="flex justify-between items-center p-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800 shadow-sm active:bg-slate-50 dark:active:bg-slate-800 cursor-pointer" onclick="window.openRoomDetail('${h.roomId}')"><div class="flex items-center gap-4 flex-1 overflow-hidden"><div class="w-10 h-10 shrink-0 rounded-xl ${isIn ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5"></i></div><div class="overflow-hidden flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.roomName}</p><p class="text-[9px] font-bold text-slate-400 uppercase truncate">${h.userName} • ${h.date.split(',')[0]}</p>${noteHtml}</div></div><p class="text-sm font-black shrink-0 ${isIn ? 'text-emerald-600' : 'text-rose-600'} ml-2">${isIn?'+':'-'}Rp ${h.amount.toLocaleString('id-ID')}</p></div>`;
-                });
-            }
-
-            const now = new Date();
-            const curMonth = now.getMonth(); const curYear = now.getFullYear();
-            let mIn = 0, mOut = 0;
+            container.innerHTML = active.map(r => `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-center gap-4"><div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 flex items-center justify-center rounded-2xl"><i data-lucide="target"></i></div><h3 class="font-black text-slate-800 dark:text-white text-lg">${r.name}</h3></div></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div></div></div>`).join('') || `<div class="text-center py-10 opacity-40"><p class="text-xs font-bold">${lang.no_goals}</p></div>`;
+            const gHist = document.getElementById('global-history-container');
+            gHist.innerHTML = globalHistory.map(h => `<div class="flex justify-between items-center p-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 shadow-sm text-left"><div class="flex items-center gap-4 flex-1 overflow-hidden"><div class="w-10 h-10 rounded-xl ${h.type==='in'?'bg-emerald-50 text-emerald-600':'bg-rose-50 text-rose-600'} flex items-center justify-center shrink-0"><i data-lucide="${h.type==='in'?'arrow-down':'arrow-up'}" class="w-5 h-5"></i></div><div class="overflow-hidden flex-1"><p class="text-sm font-black dark:text-white truncate">${h.roomName}</p><p class="text-[9px] font-bold text-slate-400 uppercase truncate">${h.userName} • ${h.date.split(',')[0]}</p></div></div><p class="text-sm font-black ${h.type==='in'?'text-emerald-600':'text-rose-600'} ml-2">Rp ${h.amount.toLocaleString('id-ID')}</p></div>`).join('') || `<p class="text-center opacity-40">Belum ada riwayat</p>`;
+            
+            const now = new Date(); let mIn = 0, mOut = 0;
             globalHistory.forEach(h => {
-                const hDate = new Date(h.timestamp);
-                if(hDate.getMonth() === curMonth && hDate.getFullYear() === curYear) {
-                    if(h.type === 'in') mIn += h.amount;
-                    else mOut += h.amount;
-                }
+                const d = new Date(h.timestamp);
+                if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) { if(h.type === 'in') mIn += h.amount; else mOut += h.amount; }
             });
-            const inEl = document.getElementById('mutasi-in');
-            const outEl = document.getElementById('mutasi-out');
-            if(inEl) {
-                inEl.setAttribute('data-value', mIn);
-                inEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mIn.toLocaleString('id-ID');
-            }
-            if(outEl) {
-                outEl.setAttribute('data-value', mOut);
-                outEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mOut.toLocaleString('id-ID');
-            }
-            lucide.createIcons();
+            document.getElementById('mutasi-in').innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mIn.toLocaleString('id-ID');
+            document.getElementById('mutasi-out').innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mOut.toLocaleString('id-ID');
+            lucide.createIcons(); applyTranslations();
         }
 
-        window.toggleBalance = () => {
-            isBalanceHidden = !isBalanceHidden;
-            const el = document.getElementById('total-balance');
-            const inEl = document.getElementById('mutasi-in');
-            const outEl = document.getElementById('mutasi-out');
-            const icon = document.getElementById('eye-icon');
-            if(!el || !icon) return;
-            
-            if(isBalanceHidden) { 
-                el.innerText = 'Rp *********'; 
-                if(inEl) inEl.innerText = 'Rp ***';
-                if(outEl) outEl.innerText = 'Rp ***';
-                icon.setAttribute('data-lucide', 'eye-off'); 
-            } else { 
-                el.innerText = 'Rp ' + parseInt(el.getAttribute('data-value')).toLocaleString('id-ID'); 
-                if(inEl) inEl.innerText = 'Rp ' + parseInt(inEl.getAttribute('data-value')).toLocaleString('id-ID');
-                if(outEl) outEl.innerText = 'Rp ' + parseInt(outEl.getAttribute('data-value')).toLocaleString('id-ID');
-                icon.setAttribute('data-lucide', 'eye'); 
-            }
-            lucide.createIcons();
+        window.toggleBalance = () => { isBalanceHidden = !isBalanceHidden; updateUI(); };
+        window.openAvatarModal = () => window.showModal('modal-avatar');
+        window.saveAvatarSelection = async () => { window.saveLocal(); updateUI(); window.closeAllModals(); if(appData.uid) await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar }); };
+        window.toggleReaction = async (txId, emoji) => {
+            const tx = globalHistory.find(h => h.id === txId);
+            if(!tx) return;
+            let currentRx = tx.reactions || {};
+            if(currentRx[appData.uid] === emoji) delete currentRx[appData.uid];
+            else currentRx[appData.uid] = emoji;
+            try { await updateDoc(doc(db, "history", txId), { reactions: currentRx }); } catch(e) {}
         };
 
         window.onload = () => {
-            lucide.createIcons();
-            if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; }
-            applyTranslations();
-
-            const COLORS = [
-                {bg:'bg-indigo-100', txt:'text-indigo-700'}, {bg:'bg-rose-100', txt:'text-rose-700'}, 
-                {bg:'bg-emerald-100', txt:'text-emerald-700'}, {bg:'bg-amber-100', txt:'text-amber-700'}, 
-                {bg:'bg-purple-100', txt:'text-purple-700'}, {bg:'bg-slate-200', txt:'text-slate-700'},
-                {bg:'bg-sky-100', txt:'text-sky-700'}, {bg:'bg-fuchsia-100', txt:'text-fuchsia-700'}
-            ];
             const colorDiv = document.getElementById('color-options');
             if (colorDiv) {
+                const COLORS = [{bg:'bg-indigo-100', txt:'text-indigo-700'}, {bg:'bg-rose-100', txt:'text-rose-700'}, {bg:'bg-emerald-100', txt:'text-emerald-700'}, {bg:'bg-amber-100', txt:'text-amber-700'}, {bg:'bg-purple-100', txt:'text-purple-700'}, {bg:'bg-slate-200', txt:'text-slate-700'}, {bg:'bg-sky-100', txt:'text-sky-700'}, {bg:'bg-fuchsia-100', txt:'text-fuchsia-700'}];
                 COLORS.forEach(c => {
                     const b = document.createElement('button'); b.className = `color-btn w-14 h-14 rounded-full border-4 ${c.bg} shrink-0 transition-all active:scale-90`;
                     b.onclick = () => { document.querySelectorAll('#color-options button').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); appData.avatar.colorClass = c.bg; appData.avatar.textClass = c.txt; };
                     if(appData.avatar.colorClass === c.bg) b.classList.add('selected'); colorDiv.appendChild(b);
                 });
             }
-
-            const EMOJIS = ['A', '🐱', '🐶', '🦊', '🦄', '🦖', '🐮', '🐸', '👽', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻', '🚀', '🎸', '⚽'];
             const emojiDiv = document.getElementById('emoji-options');
             if (emojiDiv) {
+                const EMOJIS = ['🐱', '🐶', '🦊', '🦄', '🦖', '🐮', '🐸', '👽', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻', '🚀', '🎸', '⚽'];
                 EMOJIS.forEach(e => {
                     const b = document.createElement('button'); b.className = `emoji-btn p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-2xl border-2 border-transparent active:scale-90 flex items-center justify-center`;
-                    b.innerText = e === 'A' ? 'Ab' : e;
-                    b.onclick = () => { document.querySelectorAll('#emoji-options button').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); appData.avatar.emoji = (e === 'A') ? '' : e; };
-                    if((e === 'A' && !appData.avatar.emoji) || (e === appData.avatar.emoji)) b.classList.add('selected');
-                    emojiDiv.appendChild(b);
+                    b.innerText = e;
+                    b.onclick = () => { document.querySelectorAll('#emoji-options button').forEach(x => x.classList.remove('selected')); b.classList.add('selected'); appData.avatar.emoji = e; };
+                    if(e === appData.avatar.emoji) b.classList.add('selected'); emojiDiv.appendChild(b);
                 });
             }
-
-            document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
-            
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (isStandalone) {
-                const menuInstallApp = document.getElementById('menu-install-app');
-                if (menuInstallApp) menuInstallApp.classList.add('hidden');
-            } else if (!appData.hideInstallBanner) {
-                const banner = document.getElementById('install-banner');
-                if (banner) {
-                    banner.classList.remove('hidden');
-                    setTimeout(() => banner.classList.remove('-translate-y-[150%]'), 3500); 
-                }
-            }
+            document.querySelectorAll('.money-input').forEach(input => input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }));
         };
 
-        window.dismissInstallBanner = () => {
-            appData.hideInstallBanner = true;
-            window.saveLocal();
-            const banner = document.getElementById('install-banner');
-            if (banner) {
-                banner.classList.add('-translate-y-[150%]');
-                setTimeout(() => banner.classList.add('hidden'), 500);
-            }
+        window.openInstallModal = () => {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const container = document.getElementById('install-instructions');
+            const lang = i18n[appData.language];
+            if(isIOS) { container.innerHTML = `<p class="text-sm text-slate-500 mb-3">${lang.install_ios_desc}</p><div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2 flex items-center gap-3"><i data-lucide="share" class="text-indigo-500"></i><p class="text-sm font-black">1. ${lang.install_ios_step1}</p></div><div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center gap-3"><i data-lucide="plus-square" class="text-indigo-500"></i><p class="text-sm font-black">2. ${lang.install_ios_step2}</p></div>`; }
+            else { container.innerHTML = `<p class="text-sm text-slate-500 mb-3">${lang.install_android_desc}</p><div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2 flex items-center gap-3"><i data-lucide="more-vertical" class="text-indigo-500"></i><p class="text-sm font-black">1. ${lang.install_android_step1}</p></div><div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center gap-3"><i data-lucide="download" class="text-indigo-500"></i><p class="text-sm font-black">2. ${lang.install_android_step2}</p></div>`; }
+            lucide.createIcons(); showModal('modal-install');
         };
-
-        window.openAvatarModal = () => window.showModal('modal-avatar');
-        
-        window.saveAvatarSelection = async () => { 
-            window.saveLocal(); 
-            updateUI(); 
-            window.closeAllModals(); 
-            window.showToast("Berhasil disimpan!"); 
-            if(appData.uid) {
-                try { await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar }); } catch(e) {}
-            }
-        };
+        window.openTransactionModal = (type) => { document.getElementById('trx-amount').value = ''; document.getElementById('trx-type').value = type === 'nabung' ? 'in' : 'out'; document.getElementById('trx-title').innerText = type === 'nabung' ? i18n[appData.language].save : i18n[appData.language].withdraw; document.getElementById('trx-user-display').value = appData.user; document.getElementById('trx-note').value = ''; showModal('modal-transaction'); };
+        window.openEditModal = () => { const r = globalRooms.find(x => x.id === currentRoomId); if(r) { document.getElementById('edit-name').value = r.name; document.getElementById('edit-target').value = r.target ? r.target.toLocaleString('id-ID') : ''; showModal('modal-edit'); } };
+        window.openShareOptions = () => { const link = window.location.origin + window.location.pathname + "?id=" + roomToDelete; document.getElementById('share-link-text').innerText = link; showModal('modal-share'); };
+        window.copyShareLink = () => { const text = document.getElementById('share-link-text').innerText; const el = document.createElement('textarea'); el.value = text; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); window.showToast("Berhasil disalin!"); };
+        window.openManageModal = (id) => { roomToDelete = id; showModal('modal-manage'); };
+        window.dismissInstallBanner = () => { appData.hideInstallBanner = true; window.saveLocal(); document.getElementById('install-banner').classList.add('hidden'); };
     </script>
 </body>
 </html>
