@@ -57,6 +57,10 @@
         .dark .color-btn.selected { border-color: #ffffff; }
         .emoji-btn.selected { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.1); border-width: 2px; }
         .dark .emoji-btn.selected { background-color: #312e81; }
+
+        /* Notification Animation */
+        @keyframes slideInDown { from { transform: translate(-50%, -150%); opacity: 0; } to { transform: translate(-50%, 16px); opacity: 1; } }
+        .notif-animate { animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
@@ -77,7 +81,16 @@
             </div>
         </div>
 
-        <!-- Toast Notification -->
+        <!-- REALTIME NOTIFICATION TOAST (Top) -->
+        <div id="realtime-notif" class="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-[90%] max-w-[400px] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-[110] flex items-start gap-3 transition-transform duration-300">
+            <div class="bg-white/20 p-2 rounded-full shrink-0"><i data-lucide="bell-ring" class="w-5 h-5 text-white"></i></div>
+            <div>
+                <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-0.5" data-t="notif_title">Aktivitas Baru!</p>
+                <p id="realtime-notif-text" class="text-sm font-black leading-tight">Yogi baru saja menabung Rp 10.000</p>
+            </div>
+        </div>
+
+        <!-- Normal Toast Notification (Bottom) -->
         <div id="toast" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 bg-slate-900 dark:bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none">
             Pesan
         </div>
@@ -143,7 +156,9 @@
                         <i data-lucide="plus" class="w-6 h-6"></i>
                     </button>
                 </div>
-                <div id="rooms-container" class="space-y-4"></div>
+                <div id="rooms-container" class="space-y-4">
+                    <!-- Empty state is injected here by JS -->
+                </div>
             </div>
         </main>
 
@@ -192,10 +207,21 @@
         <main id="view-history" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-white dark:bg-slate-900 hidden">
             <div class="px-6 pt-10 pb-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
                 <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-5 tracking-tight" data-t="history">Riwayat</h1>
-                <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                    <button onclick="window.filterHistory('all')" id="filter-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-black rounded-full whitespace-nowrap" data-t="all">Semua</button>
-                    <button onclick="window.filterHistory('in')" id="filter-in" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="in">Masuk</button>
-                    <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="out">Keluar</button>
+                
+                <!-- Filters Container -->
+                <div class="flex items-center justify-between gap-2">
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                        <button onclick="window.filterHistory('all')" id="filter-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-black rounded-full whitespace-nowrap" data-t="all">Semua</button>
+                        <button onclick="window.filterHistory('in')" id="filter-in" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="in">Masuk</button>
+                        <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="out">Keluar</button>
+                    </div>
+                    
+                    <!-- TIME FILTER -->
+                    <select id="time-filter" onchange="window.changeTimeFilter(this.value)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2 outline-none">
+                        <option value="all_time" data-t="filter_all_time">Semua Waktu</option>
+                        <option value="this_month" data-t="filter_this_month">Bulan Ini</option>
+                        <option value="last_month" data-t="filter_last_month">Bulan Lalu</option>
+                    </select>
                 </div>
             </div>
             <div id="global-history-container" class="p-6 space-y-4"></div>
@@ -434,7 +460,7 @@
             </div>
         </div>
 
-        <!-- MODAL MANAGE ROOM (Edit, Share, Delete) -->
+        <!-- MODAL MANAGE ROOM -->
         <div id="modal-manage" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
             <div class="p-8">
                 <div class="flex justify-between items-center mb-6">
@@ -544,8 +570,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- DYNAMIC MANIFEST (For Android WebAPK & Standalone Mode) ---
-        // Menghapus 'maskable' agar ikon tidak ditarik penuh oleh Android, melainkan diberi padding otomatis (seperti logo Google Play Games)
+        // --- DYNAMIC MANIFEST ---
         const manifestData = {
             "name": "Tabungan Bersama",
             "short_name": "Tabungan",
@@ -576,7 +601,7 @@
                 save_changes: "Simpan Perubahan", goal_reached: "Tercapai!", celeb_desc: "Tabungan", celeb_done: "lunas 100%!",
                 continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
                 all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
-                no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Riwayat Kosong",
+                no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Belum ada riwayat",
                 placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi",
                 install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan",
                 share_title: "Undang Teman",
@@ -584,7 +609,10 @@
                 install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
                 install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
                 login_desc: "Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
-                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda."
+                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
+                filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
+                empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
+                notif_title: "Aktivitas Baru!"
             },
             en: {
                 welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
@@ -596,7 +624,7 @@
                 save_changes: "Save Changes", goal_reached: "Reached!", celeb_desc: "Saving", celeb_done: "is 100% completed!",
                 continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
                 all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
-                no_goals: "No goals yet", no_archive: "No archived items", empty_history: "History Empty",
+                no_goals: "No goals yet", no_archive: "No archived items", empty_history: "No history yet",
                 placeholder_goal: "Buy a Laptop...", install_app: "Install App",
                 install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal",
                 share_title: "Invite Friends",
@@ -604,28 +632,31 @@
                 install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen'",
                 install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
                 login_desc: "Save your savings data securely in the cloud using your Google account.", login_google: "Sign in with Google", logout: "Log Out",
-                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name."
+                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
+                filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
+                empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
+                notif_title: "New Activity!"
             }
         };
 
         // --- APP STATE ---
         const DB_KEY = 'tabungan_app_v9_stable_fix_v4';
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            user: '',
-            email: '',
-            uid: '',
+            user: '', email: '', uid: '',
             avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
-            joinedRooms: [],
-            darkMode: false,
-            language: 'id',
-            hideInstallBanner: false
+            joinedRooms: [], darkMode: false, language: 'id', hideInstallBanner: false
         };
         let globalRooms = [];
         let globalHistory = [];
         let currentRoomId = null;
         let roomToDelete = null;
         let isBalanceHidden = false;
-        let currentHistoryFilter = 'all';
+        
+        // Filter States
+        let currentHistoryFilter = 'all'; // in, out, all
+        let currentTimeFilter = 'all_time'; // all_time, this_month, last_month
+        
+        let isInitialHistoryLoad = true; // For Notifications
 
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-install', 'modal-name-entry'];
 
@@ -636,6 +667,28 @@
             if(t) { t.innerText = msg; t.classList.add('toast-visible'); setTimeout(() => t.classList.remove('toast-visible'), 2500); }
         };
         
+        window.showRealtimeNotif = (msg) => {
+            const notif = document.getElementById('realtime-notif');
+            const textEl = document.getElementById('realtime-notif-text');
+            if(notif && textEl) {
+                textEl.innerText = msg;
+                notif.classList.remove('-translate-y-full');
+                notif.classList.add('translate-y-4');
+                
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(880, ctx.currentTime);
+                    osc.connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.1);
+                } catch(e) {}
+
+                setTimeout(() => {
+                    notif.classList.remove('translate-y-4');
+                    notif.classList.add('-translate-y-full');
+                }, 4000);
+            }
+        }
+
         window.closeAllModals = () => {
             modalIds.forEach(id => { 
                 const m = document.getElementById(id); 
@@ -706,6 +759,11 @@
         }
 
         // --- FIREBASE AUTH LISTENER WITH SPLASH SCREEN LOGIC ---
+        
+        // Catat waktu mulai aplikasi dibuka
+        const splashStartTime = Date.now();
+        const MIN_SPLASH_TIME = 1500; // Splash minimal 1,5 detik
+
         onAuthStateChanged(auth, async (user) => {
             const modalLogin = document.getElementById('modal-onboarding');
             const modalName = document.getElementById('modal-name-entry');
@@ -713,12 +771,22 @@
             const bottomNav = document.getElementById('bottom-nav');
             const splashScreen = document.getElementById('splash-screen');
 
-            // Hide Splash Screen gently after processing
-            const hideSplash = () => {
-                if (splashScreen) {
-                    splashScreen.classList.add('opacity-0');
-                    setTimeout(() => splashScreen.classList.add('hidden'), 700);
-                }
+            // Fungsi cerdas hilangkan splash (Tunggu minimal 1.5 detik dulu)
+            const hideSplash = (callback) => {
+                const elapsed = Date.now() - splashStartTime;
+                const delay = Math.max(0, MIN_SPLASH_TIME - elapsed);
+                
+                setTimeout(() => {
+                    if (splashScreen && !splashScreen.classList.contains('hidden')) {
+                        splashScreen.classList.add('opacity-0');
+                        setTimeout(() => {
+                            splashScreen.classList.add('hidden');
+                            if (callback) callback();
+                        }, 700); // 700ms adalah waktu transisi CSS
+                    } else if (callback) {
+                        callback();
+                    }
+                }, delay);
             };
 
             if (user) {
@@ -745,25 +813,26 @@
                         }
                         
                         window.saveLocal();
-
-                        if (modalName) modalName.classList.add('hidden');
-                        if (viewHome) viewHome.classList.remove('hidden');
-                        if (bottomNav) bottomNav.classList.remove('hidden');
-
                         startRealtimeSync();
                         updateUI();
-                        hideSplash(); // Ready! Hide splash
+
+                        hideSplash(() => {
+                            if (modalName) modalName.classList.add('hidden');
+                            if (viewHome) viewHome.classList.remove('hidden');
+                            if (bottomNav) bottomNav.classList.remove('hidden');
+                        });
                     } else {
-                        if (modalName) {
-                            modalName.classList.remove('hidden');
-                            setTimeout(() => modalName.classList.remove('opacity-0'), 50);
-                            
-                            const nameInput = document.getElementById('onboarding-name');
-                            if (nameInput && !nameInput.value && user.displayName) {
-                                nameInput.value = user.displayName;
+                        hideSplash(() => {
+                            if (modalName) {
+                                modalName.classList.remove('hidden');
+                                setTimeout(() => modalName.classList.remove('opacity-0'), 50);
+                                
+                                const nameInput = document.getElementById('onboarding-name');
+                                if (nameInput && !nameInput.value && user.displayName) {
+                                    nameInput.value = user.displayName;
+                                }
                             }
-                        }
-                        hideSplash(); // Ready! Hide splash
+                        });
                     }
                 } catch (error) {
                     console.error("Gagal mengambil profil cloud", error);
@@ -771,14 +840,15 @@
                 }
 
             } else {
-                if (modalLogin) {
-                    modalLogin.classList.remove('hidden');
-                    setTimeout(() => modalLogin.classList.remove('opacity-0'), 50);
-                }
-                if (modalName) modalName.classList.add('hidden');
-                if (viewHome) viewHome.classList.add('hidden');
-                if (bottomNav) bottomNav.classList.add('hidden');
-                hideSplash(); // Ready! Hide splash
+                hideSplash(() => {
+                    if (modalLogin) {
+                        modalLogin.classList.remove('hidden');
+                        setTimeout(() => modalLogin.classList.remove('opacity-0'), 50);
+                    }
+                    if (modalName) modalName.classList.add('hidden');
+                    if (viewHome) viewHome.classList.add('hidden');
+                    if (bottomNav) bottomNav.classList.add('hidden');
+                });
             }
         });
 
@@ -792,10 +862,7 @@
                 await signInWithPopup(auth, provider);
                 window.showToast("Autentikasi berhasil!");
             } catch (error) {
-                console.error("Google Login Error", error);
-                if(error.code !== 'auth/popup-closed-by-user') {
-                    alert("Gagal login: " + error.message);
-                }
+                if(error.code !== 'auth/popup-closed-by-user') alert("Gagal login: " + error.message);
                 btn.disabled = false;
                 btn.innerHTML = `<svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg> <span data-t="login_google">${i18n[appData.language].login_google}</span>`;
             }
@@ -818,15 +885,9 @@
 
             try {
                 await setDoc(doc(db, "users", appData.uid), {
-                    name: appData.user,
-                    email: appData.email,
-                    avatar: appData.avatar,
-                    joinedRooms: appData.joinedRooms,
-                    createdAt: Date.now()
+                    name: appData.user, email: appData.email, avatar: appData.avatar, joinedRooms: appData.joinedRooms, createdAt: Date.now()
                 });
-            } catch(e) {
-                console.error("Gagal membuat dokumen pengguna di cloud", e);
-            }
+            } catch(e) { }
             
             document.getElementById('modal-name-entry').classList.add('hidden');
             
@@ -846,15 +907,10 @@
             if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
             try {
                 await signOut(auth);
-                appData.user = '';
-                appData.email = '';
-                appData.uid = '';
-                appData.joinedRooms = []; 
+                appData.user = ''; appData.email = ''; appData.uid = ''; appData.joinedRooms = []; 
                 window.saveLocal();
                 location.reload(); 
-            } catch (error) {
-                alert("Gagal keluar.");
-            }
+            } catch (error) { alert("Gagal keluar."); }
         };
 
         function startRealtimeSync() {
@@ -868,16 +924,41 @@
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
             });
+
             onSnapshot(collection(db, "history"), (snap) => {
+                let hasNewContent = false;
+                let latestTx = null;
+
+                // Cek perubahan data baru untuk In-App Notification
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        hasNewContent = true;
+                        latestTx = change.doc.data();
+                    }
+                });
+
                 globalHistory = [];
                 snap.forEach(doc => {
                     const h = doc.data();
                     if(appData.joinedRooms.includes(h.roomId)) globalHistory.push(h);
                 });
                 globalHistory.sort((a,b) => b.timestamp - a.timestamp);
+                
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
+
+                // Tampilkan notif jika bukan load pertama & pelakunya adalah orang lain
+                if (!isInitialHistoryLoad && hasNewContent && latestTx) {
+                    if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
+                        const verb = latestTx.type === 'in' ? 'menabung' : 'menarik';
+                        const verbEn = latestTx.type === 'in' ? 'added' : 'withdrew';
+                        const v = appData.language === 'id' ? verb : verbEn;
+                        window.showRealtimeNotif(`🔔 ${latestTx.userName} ${v} Rp ${latestTx.amount.toLocaleString('id-ID')} di ${latestTx.roomName}`);
+                    }
+                }
             });
+
+            setTimeout(() => { isInitialHistoryLoad = false; }, 2000);
         }
 
         // --- CORE ACTIONS ---
@@ -1005,7 +1086,14 @@
             if(histList) {
                 histList.innerHTML = '';
                 const filtered = globalHistory.filter(h => h.roomId === id);
-                if(filtered.length === 0) histList.innerHTML = `<div class="text-center py-6 opacity-30"><p class="text-[10px] font-black uppercase dark:text-slate-400">${lang.empty_history}</p></div>`;
+                if(filtered.length === 0) {
+                    histList.innerHTML = `
+                    <div class="text-center py-10 opacity-40">
+                        <i data-lucide="hourglass" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
+                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p>
+                    </div>`;
+                }
                 else filtered.forEach(h => {
                     const isIn = h.type === 'in';
                     const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">"${h.note}"</p>` : '';
@@ -1090,6 +1178,11 @@
             });
             updateUI();
         };
+
+        window.changeTimeFilter = (val) => {
+            currentTimeFilter = val;
+            updateUI();
+        }
 
         window.switchView = (viewId, navId = null) => {
             const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
@@ -1225,7 +1318,16 @@
             const container = document.getElementById('rooms-container');
             if(container) {
                 container.innerHTML = '';
-                if(active.length === 0) container.innerHTML = `<div class="text-center py-20 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-800"><p class="text-xs font-black text-slate-400 uppercase">${lang.no_goals}</p></div>`;
+                if(active.length === 0) {
+                    container.innerHTML = `
+                    <div class="text-center py-16 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="target" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="font-black text-slate-700 dark:text-white mb-1">${lang.no_goals}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${lang.empty_goal_desc}</p>
+                    </div>`;
+                }
                 else active.forEach(r => {
                     const pct = r.hasTarget ? Math.min(Math.round((r.balance/r.target)*100), 100) : 0;
                     container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-center gap-4"><div class="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center rounded-2xl"><i data-lucide="target"></i></div><h3 class="font-black text-slate-800 dark:text-white text-lg">${r.name}</h3></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
@@ -1236,7 +1338,14 @@
             if(archContainer) {
                 archContainer.innerHTML = '';
                 const archived = globalRooms.filter(r => r.isArchived);
-                if(archived.length === 0) archContainer.innerHTML = `<div class="text-center py-20 opacity-30 dark:text-slate-600"><p class="text-xs font-black uppercase">${lang.no_archive}</p></div>`;
+                if(archived.length === 0) {
+                     archContainer.innerHTML = `
+                    <div class="text-center py-20 opacity-40">
+                        <i data-lucide="package-open" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
+                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.no_archive}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_archive_desc}</p>
+                    </div>`;
+                }
                 else archived.forEach(r => {
                     archContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] opacity-70 mb-4 border border-slate-100 dark:border-slate-800 shadow-sm"><div class="flex items-center gap-4 mb-3"><div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-lg"><i data-lucide="award"></i></div><h3 class="font-black text-slate-800 dark:text-white">${r.name}</h3></div><p class="text-sm font-bold text-slate-500 dark:text-slate-400">Total: Rp ${r.balance.toLocaleString('id-ID')}</p></div>`;
                 });
@@ -1246,8 +1355,35 @@
             if(gHistContainer) {
                 gHistContainer.innerHTML = '';
                 let filtered = globalHistory;
-                if(currentHistoryFilter !== 'all') filtered = globalHistory.filter(h => h.type === currentHistoryFilter);
-                if(filtered.length === 0) gHistContainer.innerHTML = `<div class="text-center py-20 opacity-30 dark:text-slate-600"><p class="text-xs font-black uppercase">${lang.empty_history}</p></div>`;
+                
+                // 1. Tipe Filter (In/Out)
+                if(currentHistoryFilter !== 'all') filtered = filtered.filter(h => h.type === currentHistoryFilter);
+                
+                // 2. Waktu Filter
+                const now = new Date();
+                if(currentTimeFilter === 'this_month') {
+                    filtered = filtered.filter(h => {
+                        const d = new Date(h.timestamp);
+                        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                    });
+                } else if(currentTimeFilter === 'last_month') {
+                    filtered = filtered.filter(h => {
+                        const d = new Date(h.timestamp);
+                        let lm = now.getMonth() - 1;
+                        let ly = now.getFullYear();
+                        if(lm < 0) { lm = 11; ly--; }
+                        return d.getMonth() === lm && d.getFullYear() === ly;
+                    });
+                }
+
+                if(filtered.length === 0) {
+                     gHistContainer.innerHTML = `
+                    <div class="text-center py-20 opacity-40">
+                        <i data-lucide="scroll" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
+                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p>
+                    </div>`;
+                }
                 else filtered.forEach(h => {
                     const isIn = h.type === 'in';
                     const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 truncate max-w-[150px]">"${h.note}"</p>` : '';
@@ -1350,7 +1486,7 @@
                 const banner = document.getElementById('install-banner');
                 if (banner) {
                     banner.classList.remove('hidden');
-                    setTimeout(() => banner.classList.remove('-translate-y-[150%]'), 3500); // Muncul setelah splash
+                    setTimeout(() => banner.classList.remove('-translate-y-[150%]'), 3500); 
                 }
             }
         };
