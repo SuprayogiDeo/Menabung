@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, theme-color=#4f46e5">
     
-    <!-- PWA Meta Tags (Crucial for iOS/Safari Fullscreen) -->
+    <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Tabungan">
@@ -58,9 +58,16 @@
         .emoji-btn.selected { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.1); border-width: 2px; }
         .dark .emoji-btn.selected { background-color: #312e81; }
 
-        /* Notification Animation */
+        /* Custom Animations */
         @keyframes slideInDown { from { transform: translate(-50%, -150%); opacity: 0; } to { transform: translate(-50%, 16px); opacity: 1; } }
         .notif-animate { animation: slideInDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        
+        .chat-bubble-me { border-bottom-right-radius: 4px; background: #4f46e5; color: white; margin-left: 20%; }
+        .chat-bubble-other { border-bottom-left-radius: 4px; background: #f1f5f9; color: #1e293b; margin-right: 20%; }
+        .dark .chat-bubble-other { background: #1e293b; color: #f8fafc; }
+        
+        /* Reaction tray animation */
+        .reaction-tray { transition: all 0.2s ease; transform-origin: left center; }
     </style>
 </head>
 <body class="bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
@@ -82,11 +89,11 @@
         </div>
 
         <!-- REALTIME NOTIFICATION TOAST (Top) -->
-        <div id="realtime-notif" class="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-[90%] max-w-[400px] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-[110] flex items-start gap-3 transition-transform duration-300">
-            <div class="bg-white/20 p-2 rounded-full shrink-0"><i data-lucide="bell-ring" class="w-5 h-5 text-white"></i></div>
-            <div>
+        <div id="realtime-notif" class="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-[90%] max-w-[400px] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-[110] flex items-start gap-3 transition-transform duration-300 cursor-pointer" onclick="this.classList.add('-translate-y-full')">
+            <div class="bg-white/20 p-2 rounded-full shrink-0"><i data-lucide="bell-ring" class="w-5 h-5 text-white animate-pulse"></i></div>
+            <div class="flex-1 pr-2">
                 <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-0.5" data-t="notif_title">Aktivitas Baru!</p>
-                <p id="realtime-notif-text" class="text-sm font-black leading-tight">Yogi baru saja menabung Rp 10.000</p>
+                <p id="realtime-notif-text" class="text-sm font-black leading-tight"></p>
             </div>
         </div>
 
@@ -125,6 +132,20 @@
                 </div>
             </div>
 
+            <!-- DANA Style Updates Feed -->
+            <div class="px-6 mb-6">
+                <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="p-1.5 bg-rose-100 dark:bg-rose-900/30 text-rose-500 rounded-lg"><i data-lucide="megaphone" class="w-3.5 h-3.5"></i></div>
+                        <h3 class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Updates Teman</h3>
+                    </div>
+                    <div id="home-updates-feed" class="space-y-3 h-20 overflow-y-auto no-scrollbar relative">
+                        <!-- Feed goes here -->
+                        <p class="text-xs text-slate-400 italic">Belum ada aktivitas terbaru...</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="px-6 pb-10 bg-white dark:bg-slate-900 rounded-b-[2.5rem] shadow-sm border-b border-slate-100 dark:border-slate-800">
                 <div class="bg-premium-gradient rounded-[2rem] p-7 shadow-xl shadow-indigo-200/40 dark:shadow-none text-white relative overflow-hidden">
                     <div class="relative z-10 flex justify-between items-center mb-1">
@@ -156,24 +177,28 @@
                         <i data-lucide="plus" class="w-6 h-6"></i>
                     </button>
                 </div>
-                <div id="rooms-container" class="space-y-4">
-                    <!-- Empty state is injected here by JS -->
-                </div>
+                <div id="rooms-container" class="space-y-4"></div>
             </div>
         </main>
 
         <!-- VIEW 2: DETAIL ROOM -->
-        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-slate-50 dark:bg-slate-950 hidden relative">
+        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-slate-50 dark:bg-slate-950 hidden relative flex flex-col h-full">
             <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <button onclick="window.historyBackOverride('view-home')" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
-                    <h1 id="detail-title" class="font-bold text-lg text-slate-800 dark:text-white truncate">Detail</h1>
+                    <h1 id="detail-title" class="font-bold text-lg text-slate-800 dark:text-white truncate max-w-[200px]">Detail</h1>
+                </div>
+                <!-- Member Pile (Avatar Tumpuk) -->
+                <div id="detail-member-pile" class="flex -space-x-2 overflow-hidden mr-2">
+                    <!-- Avatars injected here -->
                 </div>
                 <button onclick="window.openEditModal()" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors"><i data-lucide="edit-2" class="w-5 h-5"></i></button>
             </div>
-            <div class="p-8 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center">
+
+            <div class="p-8 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center shrink-0">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2" data-t="available_balance">Saldo Tersedia</p>
                 <h2 id="detail-balance" class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Rp 0</h2>
+                
                 <div id="detail-target-container" class="mt-8 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
                     <div class="flex justify-between text-xs font-bold mb-3">
                         <span class="text-slate-400 uppercase" data-t="progress">Progres</span>
@@ -188,18 +213,41 @@
                 </div>
             </div>
 
-            <div id="detail-milestone-container" class="p-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
-                <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
-                <div id="detail-milestone-list" class="space-y-3"></div>
+            <!-- TAB NAVIGATION -->
+            <div class="flex bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shrink-0">
+                <button onclick="window.switchDetailTab('history')" id="tab-btn-history" class="flex-1 py-4 text-sm font-black text-indigo-600 border-b-2 border-indigo-600 transition-colors uppercase tracking-widest">Riwayat</button>
+                <button onclick="window.switchDetailTab('chat')" id="tab-btn-chat" class="flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent transition-colors uppercase tracking-widest flex items-center justify-center gap-2">Diskusi <i data-lucide="message-circle" class="w-4 h-4"></i></button>
             </div>
 
-            <div class="p-6">
-                <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="history" class="w-4 h-4"></i> <span data-t="history">Riwayat</span></h3>
-                <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
+            <!-- TAB 1: HISTORY -->
+            <div id="tab-content-history" class="flex-1">
+                <div id="detail-milestone-container" class="p-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
+                    <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
+                    <div id="detail-milestone-list" class="space-y-3"></div>
+                </div>
+                <div class="p-6">
+                    <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
+                </div>
             </div>
-            <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-[480px] mx-auto z-20 flex gap-4">
+
+            <!-- TAB 2: CHAT -->
+            <div id="tab-content-chat" class="flex-1 hidden bg-slate-50 dark:bg-slate-950 p-4 pb-24 overflow-y-auto no-scrollbar flex flex-col">
+                <div id="chat-list" class="space-y-4 flex-1 mb-4 flex flex-col justify-end">
+                    <!-- Chat bubbles injected here -->
+                </div>
+            </div>
+
+            <!-- BOTTOM ACTION BARS -->
+            <div id="action-bar-history" class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-[480px] mx-auto z-20 flex gap-4">
                 <button onclick="window.openTransactionModal('tarik')" class="flex-1 py-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 font-black rounded-2xl active:bg-rose-100" data-t="withdraw">Tarik</button>
                 <button onclick="window.openTransactionModal('nabung')" class="flex-1 py-4 bg-premium text-white font-black rounded-2xl shadow-xl shadow-indigo-200 dark:shadow-none active:opacity-90" data-t="save">Nabung</button>
+            </div>
+
+            <div id="action-bar-chat" class="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 max-w-[480px] mx-auto z-20 hidden">
+                <form id="chat-form" onsubmit="window.handleSendChat(event)" class="flex items-center gap-2 relative">
+                    <input type="text" id="chat-input" class="flex-1 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white text-sm font-bold rounded-full py-3 px-5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Ketik pesan..." autocomplete="off">
+                    <button type="submit" class="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white shrink-0 active:scale-90 transition-transform"><i data-lucide="send" class="w-5 h-5 ml-1"></i></button>
+                </form>
             </div>
         </main>
 
@@ -216,8 +264,7 @@
                         <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="out">Keluar</button>
                     </div>
                     
-                    <!-- TIME FILTER -->
-                    <select id="time-filter" onchange="window.changeTimeFilter(this.value)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2 outline-none">
+                    <select id="time-filter" onchange="window.changeTimeFilter(this.value)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2 outline-none shrink-0 max-w-[120px]">
                         <option value="all_time" data-t="filter_all_time">Semua Waktu</option>
                         <option value="this_month" data-t="filter_this_month">Bulan Ini</option>
                         <option value="last_month" data-t="filter_last_month">Bulan Lalu</option>
@@ -392,7 +439,6 @@
                     <p class="text-sm font-bold text-slate-500 dark:text-slate-400" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.</p>
                 </div>
                 
-                <!-- Google Login Button -->
                 <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black text-lg rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
                     <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
                     <span data-t="login_google">Masuk dengan Google</span>
@@ -460,101 +506,12 @@
             </div>
         </div>
 
-        <!-- MODAL MANAGE ROOM -->
-        <div id="modal-manage" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="options">Opsi</h3>
-                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
-                </div>
-                <div class="space-y-3">
-                    <button onclick="window.openShareOptions()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors">
-                        <div class="p-2 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="share-2" class="w-5 h-5"></i></div>
-                        <span class="font-bold text-slate-800 dark:text-white" data-t="share">Bagikan</span>
-                    </button>
-                    <button onclick="window.deleteCurrentRoom()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors">
-                        <div class="p-2 bg-rose-100 text-rose-600 rounded-xl"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
-                        <span class="font-bold text-rose-600" data-t="delete">Hapus Tabungan</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL SHARE LINK -->
-        <div id="modal-share" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="share_title">Undang Teman</h3>
-                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
-                </div>
-                <div class="bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 flex justify-between items-center mb-6">
-                    <p id="share-link-text" class="text-sm font-bold text-slate-500 truncate mr-4">link...</p>
-                    <button onclick="window.copyShareLink()" class="p-3 bg-indigo-100 text-indigo-600 rounded-xl active:scale-90 transition-transform"><i data-lucide="copy" class="w-5 h-5"></i></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL TRANSACTION -->
-        <div id="modal-transaction" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h3 id="trx-title" class="font-black text-2xl text-slate-900 dark:text-white">Transaksi</h3>
-                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
-                </div>
-                <input type="hidden" id="trx-type" value="in">
-                <div class="space-y-6 mb-8 text-left">
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Nominal</label>
-                        <div class="relative">
-                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                            <input type="text" id="trx-amount" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="label_depositor">Penyetor</label>
-                        <input type="text" id="trx-user-display" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-500 dark:text-slate-400 outline-none" disabled>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="label_note">Catatan (Opsional)</label>
-                        <input type="text" id="trx-note" placeholder="..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
-                    </div>
-                </div>
-                <button id="btn-submit-trx" onclick="window.handleTransactionSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl" data-t="confirm">Konfirmasi</button>
-            </div>
-        </div>
-
-        <!-- MODAL INSTALL (PWA Tutorial) -->
-        <div id="modal-install" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="install_title">Cara Install</h3>
-                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
-                </div>
-                <div id="install-instructions" class="space-y-4">
-                    <!-- Dynamic Install Info -->
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL CELEBRATION -->
-        <div id="modal-celebration" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-slate-900/90 max-w-[480px] mx-auto backdrop-blur-sm">
-            <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] w-full text-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-premium opacity-10 celeb-ping"></div>
-                <div class="relative z-10">
-                    <div class="text-6xl mb-4">🎉</div>
-                    <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2" data-t="goal_reached">Tercapai!</h2>
-                    <p class="text-slate-500 dark:text-slate-400 font-bold mb-8"><span data-t="celeb_desc">Tabungan</span> <span id="celeb-room-name" class="text-indigo-600 dark:text-indigo-400"></span> <span data-t="celeb_done">lunas 100%!</span></p>
-                    <button onclick="window.closeAllModals()" class="w-full py-4 bg-slate-900 dark:bg-indigo-600 text-white font-black rounded-2xl" data-t="continue">Lanjutkan</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <!-- Firebase SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // --- CONFIG ---
@@ -648,15 +605,17 @@
         };
         let globalRooms = [];
         let globalHistory = [];
+        let globalChats = []; // New state for chat
+        
         let currentRoomId = null;
         let roomToDelete = null;
         let isBalanceHidden = false;
         
-        // Filter States
-        let currentHistoryFilter = 'all'; // in, out, all
-        let currentTimeFilter = 'all_time'; // all_time, this_month, last_month
+        let currentHistoryFilter = 'all'; 
+        let currentTimeFilter = 'all_time'; 
+        let currentDetailTab = 'history'; // history | chat
         
-        let isInitialHistoryLoad = true; // For Notifications
+        let isInitialHistoryLoad = true;
 
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-install', 'modal-name-entry'];
 
@@ -675,6 +634,7 @@
                 notif.classList.remove('-translate-y-full');
                 notif.classList.add('translate-y-4');
                 
+                // Sound effect (Ring)
                 try {
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator();
@@ -750,19 +710,28 @@
             else document.documentElement.classList.remove('dark');
         };
 
-        async function syncJoinedRoomsToCloud() {
+        // --- NEW: ROOM JOIN LOGIC WITH MEMBERS MAP ---
+        async function joinRoom(roomId) {
+            if(!appData.joinedRooms.includes(roomId)) {
+                appData.joinedRooms.push(roomId);
+                window.saveLocal();
+            }
             if(appData.uid) {
+                // Sync ke user profile (Daftar ruangan yang diikuti)
+                try { await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms }); } catch(e) {}
+                
+                // Masukkan user ke dalam ruangan (Untuk Member Pile)
                 try {
-                    await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms });
-                } catch(e) { console.log("Gagal sync rooms ke awan"); }
+                    await updateDoc(doc(db, "rooms", roomId), { 
+                        [`membersMap.${appData.uid}`]: { name: appData.user, avatar: appData.avatar }
+                    });
+                } catch(e) {}
             }
         }
 
-        // --- FIREBASE AUTH LISTENER WITH SPLASH SCREEN LOGIC ---
-        
-        // Catat waktu mulai aplikasi dibuka
+        // --- FIREBASE AUTH LISTENER ---
         const splashStartTime = Date.now();
-        const MIN_SPLASH_TIME = 1500; // Splash minimal 1,5 detik
+        const MIN_SPLASH_TIME = 1500;
 
         onAuthStateChanged(auth, async (user) => {
             const modalLogin = document.getElementById('modal-onboarding');
@@ -771,21 +740,17 @@
             const bottomNav = document.getElementById('bottom-nav');
             const splashScreen = document.getElementById('splash-screen');
 
-            // Fungsi cerdas hilangkan splash (Tunggu minimal 1.5 detik dulu)
             const hideSplash = (callback) => {
                 const elapsed = Date.now() - splashStartTime;
                 const delay = Math.max(0, MIN_SPLASH_TIME - elapsed);
-                
                 setTimeout(() => {
                     if (splashScreen && !splashScreen.classList.contains('hidden')) {
                         splashScreen.classList.add('opacity-0');
                         setTimeout(() => {
                             splashScreen.classList.add('hidden');
                             if (callback) callback();
-                        }, 700); // 700ms adalah waktu transisi CSS
-                    } else if (callback) {
-                        callback();
-                    }
+                        }, 700);
+                    } else if (callback) callback();
                 }, delay);
             };
 
@@ -804,12 +769,14 @@
                         appData.user = cloudData.name || user.displayName || 'Pengguna';
                         if (cloudData.avatar) appData.avatar = cloudData.avatar;
                         
+                        // Handle join room via URL before auth is fully ready
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const sharedId = urlParams.get('id');
+                        if(sharedId) await joinRoom(sharedId);
+
+                        // Merge cloud rooms to local
                         if (cloudData.joinedRooms) {
-                            const mergedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
-                            appData.joinedRooms = mergedRooms;
-                            if (appData.joinedRooms.length > cloudData.joinedRooms.length) {
-                                syncJoinedRoomsToCloud();
-                            }
+                            appData.joinedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
                         }
                         
                         window.saveLocal();
@@ -822,23 +789,17 @@
                             if (bottomNav) bottomNav.classList.remove('hidden');
                         });
                     } else {
+                        // User Baru
                         hideSplash(() => {
                             if (modalName) {
                                 modalName.classList.remove('hidden');
                                 setTimeout(() => modalName.classList.remove('opacity-0'), 50);
-                                
                                 const nameInput = document.getElementById('onboarding-name');
-                                if (nameInput && !nameInput.value && user.displayName) {
-                                    nameInput.value = user.displayName;
-                                }
+                                if (nameInput && !nameInput.value && user.displayName) nameInput.value = user.displayName;
                             }
                         });
                     }
-                } catch (error) {
-                    console.error("Gagal mengambil profil cloud", error);
-                    hideSplash();
-                }
-
+                } catch (error) { hideSplash(); }
             } else {
                 hideSplash(() => {
                     if (modalLogin) {
@@ -854,12 +815,9 @@
 
         window.loginWithGoogle = async () => {
             const btn = document.getElementById('btn-google-login');
-            btn.disabled = true; 
-            btn.innerHTML = createSpinner() + ' ...';
-            
-            const provider = new GoogleAuthProvider();
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
             try {
-                await signInWithPopup(auth, provider);
+                await signInWithPopup(auth, new GoogleAuthProvider());
                 window.showToast("Autentikasi berhasil!");
             } catch (error) {
                 if(error.code !== 'auth/popup-closed-by-user') alert("Gagal login: " + error.message);
@@ -873,24 +831,23 @@
             const nameEl = document.getElementById('onboarding-name');
             if(!nameEl) return;
             const name = nameEl.value.trim();
-            
             if(!/^[a-zA-Z\s]+$/.test(name)) return alert("Nama hanya boleh berisi huruf.");
             if(name.length < 3) return alert("Nama terlalu pendek.");
             
-            btn.disabled = true; 
-            btn.innerHTML = createSpinner() + ' ...';
-            
-            appData.user = name; 
-            window.saveLocal();
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            appData.user = name; window.saveLocal();
 
             try {
                 await setDoc(doc(db, "users", appData.uid), {
                     name: appData.user, email: appData.email, avatar: appData.avatar, joinedRooms: appData.joinedRooms, createdAt: Date.now()
                 });
+                // Handle late join
+                const urlParams = new URLSearchParams(window.location.search);
+                const sharedId = urlParams.get('id');
+                if(sharedId) await joinRoom(sharedId);
             } catch(e) { }
             
             document.getElementById('modal-name-entry').classList.add('hidden');
-            
             const viewHome = document.getElementById('view-home');
             const bottomNav = document.getElementById('bottom-nav');
             if(viewHome) viewHome.classList.remove('hidden');
@@ -898,9 +855,6 @@
 
             startRealtimeSync();
             updateUI();
-            
-            btn.disabled = false;
-            btn.innerText = "Simpan Profil & Masuk";
         };
 
         window.logoutGoogle = async () => {
@@ -908,8 +862,7 @@
             try {
                 await signOut(auth);
                 appData.user = ''; appData.email = ''; appData.uid = ''; appData.joinedRooms = []; 
-                window.saveLocal();
-                location.reload(); 
+                window.saveLocal(); location.reload(); 
             } catch (error) { alert("Gagal keluar."); }
         };
 
@@ -926,15 +879,9 @@
             });
 
             onSnapshot(collection(db, "history"), (snap) => {
-                let hasNewContent = false;
-                let latestTx = null;
-
-                // Cek perubahan data baru untuk In-App Notification
+                let hasNewContent = false; let latestTx = null;
                 snap.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        hasNewContent = true;
-                        latestTx = change.doc.data();
-                    }
+                    if (change.type === "added") { hasNewContent = true; latestTx = change.doc.data(); }
                 });
 
                 globalHistory = [];
@@ -947,36 +894,31 @@
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
 
-                // Tampilkan notif jika bukan load pertama & pelakunya adalah orang lain
+                // DANA Style Feed / Realtime Toast Notif
                 if (!isInitialHistoryLoad && hasNewContent && latestTx) {
                     if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
                         const verb = latestTx.type === 'in' ? 'menabung' : 'menarik';
                         const verbEn = latestTx.type === 'in' ? 'added' : 'withdrew';
                         const v = appData.language === 'id' ? verb : verbEn;
-                        window.showRealtimeNotif(`🔔 ${latestTx.userName} ${v} Rp ${latestTx.amount.toLocaleString('id-ID')} di ${latestTx.roomName}`);
+                        window.showRealtimeNotif(`📢 ${latestTx.userName} ${v} Rp ${latestTx.amount.toLocaleString('id-ID')} di ${latestTx.roomName}`);
                     }
                 }
+            });
+
+            onSnapshot(collection(db, "chats"), (snap) => {
+                globalChats = [];
+                snap.forEach(doc => {
+                    const c = doc.data();
+                    if(appData.joinedRooms.includes(c.roomId)) globalChats.push(c);
+                });
+                globalChats.sort((a,b) => a.timestamp - b.timestamp); // Ascending for chat
+                if(currentRoomId && currentDetailTab === 'chat') refreshChatUI();
             });
 
             setTimeout(() => { isInitialHistoryLoad = false; }, 2000);
         }
 
         // --- CORE ACTIONS ---
-        window.addMilestoneRow = () => {
-            const container = document.getElementById('milestone-rows-container');
-            if(!container) return;
-            const row = document.createElement('div');
-            row.className = 'milestone-row bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-3 shadow-sm relative';
-            row.innerHTML = `
-                <button onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-slate-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                <input type="text" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
-                <div class="relative"><span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span><input type="text" inputmode="numeric" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white"></div>`;
-            container.appendChild(row); lucide.createIcons();
-            row.querySelector('.ms-price').addEventListener('input', function() {
-                const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : '';
-            });
-        };
-
         window.handleCreateRoom = async () => {
             const btn = document.getElementById('btn-save-room');
             const nameEl = document.getElementById('create-name');
@@ -1000,11 +942,16 @@
                 });
             }
 
-            const newRoom = { id: roomId, name: name, balance: 0, hasTarget: targetVal > 0, target: targetVal, hasMilestones: milestones.length > 0, milestones: milestones, isArchived: false, createdAt: new Date().toISOString() };
+            const newRoom = { 
+                id: roomId, name: name, balance: 0, hasTarget: targetVal > 0, target: targetVal, 
+                hasMilestones: milestones.length > 0, milestones: milestones, isArchived: false, 
+                createdAt: new Date().toISOString(),
+                membersMap: { [appData.uid]: { name: appData.user, avatar: appData.avatar } } // Add self as first member
+            };
             
             appData.joinedRooms.push(roomId); 
             window.saveLocal();
-            syncJoinedRoomsToCloud(); 
+            try { await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms }); } catch(e) {}
 
             try {
                 await setDoc(doc(db, "rooms", roomId), newRoom);
@@ -1042,7 +989,99 @@
             } catch(e) { alert("Error."); btn.disabled = false; }
         };
 
-        window.openRoomDetail = (id) => { currentRoomId = id; refreshRoomUI(id); window.switchView('view-detail'); };
+        // UI TABS LOGIC
+        window.switchDetailTab = (tab) => {
+            currentDetailTab = tab;
+            const btnHist = document.getElementById('tab-btn-history');
+            const btnChat = document.getElementById('tab-btn-chat');
+            const contHist = document.getElementById('tab-content-history');
+            const contChat = document.getElementById('tab-content-chat');
+            const actHist = document.getElementById('action-bar-history');
+            const actChat = document.getElementById('action-bar-chat');
+
+            if(tab === 'history') {
+                btnHist.className = "flex-1 py-4 text-sm font-black text-indigo-600 border-b-2 border-indigo-600 transition-colors uppercase tracking-widest";
+                btnChat.className = "flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent transition-colors uppercase tracking-widest flex items-center justify-center gap-2";
+                contHist.classList.remove('hidden'); contChat.classList.add('hidden');
+                actHist.classList.remove('hidden'); actChat.classList.add('hidden');
+            } else {
+                btnChat.className = "flex-1 py-4 text-sm font-black text-indigo-600 border-b-2 border-indigo-600 transition-colors uppercase tracking-widest flex items-center justify-center gap-2";
+                btnHist.className = "flex-1 py-4 text-sm font-bold text-slate-400 border-b-2 border-transparent transition-colors uppercase tracking-widest";
+                contChat.classList.remove('hidden'); contHist.classList.add('hidden');
+                actChat.classList.remove('hidden'); actHist.classList.add('hidden');
+                refreshChatUI();
+            }
+        };
+
+        // CHAT LOGIC
+        window.handleSendChat = async (e) => {
+            e.preventDefault();
+            if(!currentRoomId) return;
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if(!text) return;
+
+            input.value = ''; // clear immediately for UX
+            
+            const ts = Date.now();
+            const chatId = 'msg_' + ts;
+            const chatObj = {
+                id: chatId, roomId: currentRoomId, uid: appData.uid, userName: appData.user, avatar: appData.avatar,
+                text: text, timestamp: ts, date: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})
+            };
+
+            try { await setDoc(doc(db, "chats", chatId), chatObj); } catch(err) { console.log("Gagal kirim chat"); }
+        };
+
+        function refreshChatUI() {
+            const list = document.getElementById('chat-list');
+            if(!list) return;
+            const roomChats = globalChats.filter(c => c.roomId === currentRoomId);
+            
+            list.innerHTML = '';
+            if(roomChats.length === 0) {
+                list.innerHTML = `<div class="text-center py-10 opacity-40 my-auto"><i data-lucide="messages-square" class="w-10 h-10 mx-auto mb-2 text-slate-400"></i><p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Belum ada obrolan</p></div>`;
+            } else {
+                roomChats.forEach(c => {
+                    const isMe = c.uid === appData.uid;
+                    if(isMe) {
+                        list.innerHTML += `<div class="flex flex-col items-end mb-1"><div class="chat-bubble-me py-2.5 px-4 text-sm font-medium shadow-sm">${c.text}</div><span class="text-[9px] font-bold text-slate-400 mt-1">${c.date}</span></div>`;
+                    } else {
+                        const av = `<div class="w-6 h-6 rounded-full shrink-0 flex items-center justify-center text-[10px] font-black border border-white dark:border-slate-800 ${c.avatar.colorClass}">${c.avatar.emoji || c.userName.charAt(0)}</div>`;
+                        list.innerHTML += `<div class="flex items-end gap-2 mb-1">${av}<div class="flex flex-col items-start"><p class="text-[9px] font-bold text-slate-400 ml-1 mb-0.5">${c.userName}</p><div class="chat-bubble-other py-2.5 px-4 text-sm font-medium shadow-sm">${c.text}</div><span class="text-[9px] font-bold text-slate-400 mt-1 ml-1">${c.date}</span></div></div>`;
+                    }
+                });
+            }
+            lucide.createIcons();
+            // Scroll to bottom
+            const contChat = document.getElementById('tab-content-chat');
+            if(contChat) contChat.scrollTop = contChat.scrollHeight;
+        }
+
+        // REACTION LOGIC
+        window.toggleReaction = async (historyId, emoji) => {
+            const tx = globalHistory.find(h => h.id === historyId);
+            if(!tx) return;
+            
+            let currentReactions = tx.reactions || {};
+            // Toggle
+            if(currentReactions[appData.uid] === emoji) {
+                delete currentReactions[appData.uid]; // Remove if clicked same
+            } else {
+                currentReactions[appData.uid] = emoji; // Set new
+            }
+
+            try {
+                await updateDoc(doc(db, "history", historyId), { reactions: currentReactions });
+            } catch(e) {}
+        };
+
+        window.openRoomDetail = (id) => { 
+            currentRoomId = id; 
+            window.switchDetailTab('history'); // Default ke riwayat
+            refreshRoomUI(id); 
+            window.switchView('view-detail'); 
+        };
 
         function refreshRoomUI(id) {
             const lang = i18n[appData.language];
@@ -1051,6 +1090,17 @@
             const balanceEl = document.getElementById('detail-balance');
             if(titleEl) titleEl.innerText = r.name;
             if(balanceEl) balanceEl.innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
+
+            // Render Member Pile
+            const pileContainer = document.getElementById('detail-member-pile');
+            if(pileContainer) {
+                pileContainer.innerHTML = '';
+                if(r.membersMap) {
+                    Object.values(r.membersMap).forEach(m => {
+                        pileContainer.innerHTML += `<div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-black shadow-sm ${m.avatar.colorClass}">${m.avatar.emoji || m.name.charAt(0)}</div>`;
+                    });
+                }
+            }
             
             const tgtBox = document.getElementById('detail-target-container');
             if(tgtBox) {
@@ -1072,6 +1122,7 @@
                     if (archBtnBox) archBtnBox.classList.add('hidden');
                 }
             }
+            
             const msBox = document.getElementById('detail-milestone-container');
             const msList = document.getElementById('detail-milestone-list');
             if(msBox && msList) {
@@ -1082,6 +1133,7 @@
                     });
                 } else msBox.classList.add('hidden');
             }
+            
             const histList = document.getElementById('detail-history-list');
             if(histList) {
                 histList.innerHTML = '';
@@ -1097,17 +1149,42 @@
                 else filtered.forEach(h => {
                     const isIn = h.type === 'in';
                     const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight overflow-hidden text-ellipsis whitespace-nowrap max-w-[150px]">"${h.note}"</p>` : '';
-                    histList.innerHTML += `<div class="relative pl-8"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-950"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2 overflow-hidden"><p class="text-sm font-black dark:text-white truncate">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml}</div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                    
+                    // Count Reactions
+                    let rxFire = 0, rxClap = 0, rxHeart = 0;
+                    let myRx = null;
+                    if(h.reactions) {
+                        Object.values(h.reactions).forEach(em => {
+                            if(em === '🔥') rxFire++; if(em === '👏') rxClap++; if(em === '❤️') rxHeart++;
+                        });
+                        myRx = h.reactions[appData.uid];
+                    }
+                    
+                    const btnClass = "text-[10px] font-black px-2 py-1 rounded-full border transition-colors active:scale-90 flex items-center gap-1";
+                    
+                    histList.innerHTML += `
+                    <div class="relative pl-8 mb-6 group">
+                        <span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-950"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span>
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1 pr-2 overflow-hidden">
+                                <p class="text-sm font-black dark:text-white truncate">${h.userName}</p>
+                                <p class="text-[9px] font-bold text-slate-400">${h.date}</p>
+                                ${noteHtml}
+                            </div>
+                            <p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p>
+                        </div>
+                        
+                        <!-- Reaction Tray -->
+                        <div class="flex gap-1.5 mt-2.5 reaction-tray">
+                            <button onclick="window.toggleReaction('${h.id}', '🔥')" class="${btnClass} ${myRx==='🔥' ? 'bg-orange-100 border-orange-200 text-orange-700' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:bg-slate-100'}">🔥 ${rxFire > 0 ? rxFire : ''}</button>
+                            <button onclick="window.toggleReaction('${h.id}', '👏')" class="${btnClass} ${myRx==='👏' ? 'bg-amber-100 border-amber-200 text-amber-700' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:bg-slate-100'}">👏 ${rxClap > 0 ? rxClap : ''}</button>
+                            <button onclick="window.toggleReaction('${h.id}', '❤️')" class="${btnClass} ${myRx==='❤️' ? 'bg-rose-100 border-rose-200 text-rose-700' : 'bg-slate-50 dark:bg-slate-800 border-transparent text-slate-500 hover:bg-slate-100'}">❤️ ${rxHeart > 0 ? rxHeart : ''}</button>
+                        </div>
+                    </div>`;
                 });
             }
             lucide.createIcons();
         }
-
-        window.toggleMilestone = async (idx) => {
-            const r = globalRooms.find(x => x.id === currentRoomId); if(!r) return;
-            r.milestones[idx].done = !r.milestones[idx].done;
-            await updateDoc(doc(db, "rooms", currentRoomId), { milestones: r.milestones });
-        };
 
         window.openTransactionModal = (type) => {
             const trxAmount = document.getElementById('trx-amount');
@@ -1148,7 +1225,12 @@
             const ts = Date.now();
             const trxId = 'trx_' + ts;
             const noteEl = document.getElementById('trx-note');
-            const h = { id: trxId, roomId: currentRoomId, roomName: r.name, type: type, amount: amount, userName: appData.user, note: noteEl ? noteEl.value : '', timestamp: ts, date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}) };
+            const h = { 
+                id: trxId, roomId: currentRoomId, roomName: r.name, type: type, amount: amount, 
+                userName: appData.user, note: noteEl ? noteEl.value : '', timestamp: ts, 
+                date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}),
+                reactions: {}
+            };
 
             try {
                 await updateDoc(doc(db, "rooms", currentRoomId), { balance: newBal });
@@ -1179,10 +1261,7 @@
             updateUI();
         };
 
-        window.changeTimeFilter = (val) => {
-            currentTimeFilter = val;
-            updateUI();
-        }
+        window.changeTimeFilter = (val) => { currentTimeFilter = val; updateUI(); }
 
         window.switchView = (viewId, navId = null) => {
             const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
@@ -1239,7 +1318,6 @@
             appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
             window.saveLocal(); 
             syncJoinedRoomsToCloud();
-
             window.closeAllModals();
         };
 
@@ -1315,6 +1393,31 @@
             const profStats = document.getElementById('profile-stats');
             if(profStats) profStats.innerText = `${active.length} Tabungan Aktif`;
 
+            // DANA-Style Updates Feed
+            const feedContainer = document.getElementById('home-updates-feed');
+            if(feedContainer) {
+                feedContainer.innerHTML = '';
+                // Ambil 10 transaksi terbaru dari gabungan tabungan, jangan miliknya sendiri (opsional)
+                const feedItems = globalHistory.slice(0, 10);
+                if(feedItems.length === 0) {
+                    feedContainer.innerHTML = `<p class="text-[10px] text-slate-400 italic">Belum ada aktivitas terbaru...</p>`;
+                } else {
+                    feedItems.forEach(h => {
+                        const v = h.type === 'in' ? 'menabung' : 'menarik';
+                        const vEn = h.type === 'in' ? 'added' : 'withdrew';
+                        const textVerb = appData.language === 'id' ? v : vEn;
+                        feedContainer.innerHTML += `
+                        <div class="flex items-start gap-2 border-b border-slate-50 dark:border-slate-800/50 pb-2 last:border-0 last:pb-0 cursor-pointer" onclick="window.openRoomDetail('${h.roomId}')">
+                            <div class="w-6 h-6 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="${h.type==='in'?'arrow-down':'arrow-up'}" class="w-3 h-3 ${h.type==='in'?'text-emerald-500':'text-rose-500'}"></i></div>
+                            <div class="flex-1">
+                                <p class="text-xs font-medium text-slate-700 dark:text-slate-300 leading-snug"><span class="font-black text-slate-900 dark:text-white">${h.userName}</span> ${textVerb} <span class="font-black text-indigo-600 dark:text-indigo-400">Rp ${h.amount.toLocaleString('id-ID')}</span> di ${h.roomName}</p>
+                                <p class="text-[9px] font-bold text-slate-400 mt-0.5">${h.date.split(',')[0]}</p>
+                            </div>
+                        </div>`;
+                    });
+                }
+            }
+
             const container = document.getElementById('rooms-container');
             if(container) {
                 container.innerHTML = '';
@@ -1356,10 +1459,8 @@
                 gHistContainer.innerHTML = '';
                 let filtered = globalHistory;
                 
-                // 1. Tipe Filter (In/Out)
                 if(currentHistoryFilter !== 'all') filtered = filtered.filter(h => h.type === currentHistoryFilter);
                 
-                // 2. Waktu Filter
                 const now = new Date();
                 if(currentTimeFilter === 'this_month') {
                     filtered = filtered.filter(h => {
@@ -1369,8 +1470,7 @@
                 } else if(currentTimeFilter === 'last_month') {
                     filtered = filtered.filter(h => {
                         const d = new Date(h.timestamp);
-                        let lm = now.getMonth() - 1;
-                        let ly = now.getFullYear();
+                        let lm = now.getMonth() - 1; let ly = now.getFullYear();
                         if(lm < 0) { lm = 11; ly--; }
                         return d.getMonth() === lm && d.getFullYear() === ly;
                     });
@@ -1470,14 +1570,6 @@
 
             document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
             
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedId = urlParams.get('id');
-            if(sharedId && !appData.joinedRooms.includes(sharedId)) { 
-                appData.joinedRooms.push(sharedId); 
-                window.saveLocal(); 
-                syncJoinedRoomsToCloud();
-            }
-
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (isStandalone) {
                 const menuInstallApp = document.getElementById('menu-install-app');
@@ -1509,9 +1601,7 @@
             window.closeAllModals(); 
             window.showToast("Berhasil disimpan!"); 
             if(appData.uid) {
-                try {
-                    await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar });
-                } catch(e) { console.log("Gagal sync avatar"); }
+                try { await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar }); } catch(e) {}
             }
         };
     </script>
