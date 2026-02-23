@@ -35,6 +35,7 @@
         .toggle-checkbox:checked + .toggle-label { background-color: #4f46e5; }
         .bg-premium-gradient { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); }
         .toast-visible { opacity: 1 !important; transform: translate(-50%, -20px) !important; }
+        .celeb-ping { animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
         
         /* Loading Animations (Floating Money & Coins) */
         @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
@@ -82,15 +83,10 @@
         <!-- SPLASH SCREEN (FLOATING MONEY & COINS) -->
         <div id="splash-screen" class="fixed inset-0 z-[100] bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center transition-opacity duration-700 max-w-[480px] mx-auto overflow-hidden">
             <div class="relative w-32 h-32 flex justify-center items-center mb-8">
-                <!-- Floating Coins -->
                 <div class="absolute top-2 left-1 text-2xl anim-coin-1 drop-shadow-md">🪙</div>
                 <div class="absolute top-10 right-0 text-xl anim-coin-2 drop-shadow-md">🪙</div>
                 <div class="absolute bottom-4 left-4 text-lg anim-coin-3 z-20 drop-shadow-md">🪙</div>
-
-                <!-- Floating Icon -->
                 <div class="relative z-10 text-7xl anim-float drop-shadow-xl">💸</div>
-                
-                <!-- Dynamic Shadow -->
                 <div class="absolute -bottom-2 w-16 h-2 bg-slate-300 dark:bg-slate-900 rounded-[50%] blur-[2px] anim-shadow"></div>
             </div>
             <h1 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Tabungan Bersama</h1>
@@ -168,9 +164,9 @@
                 
                 <!-- ROOM FILTERS -->
                 <div class="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-1">
-                    <button onclick="window.filterRooms('all')" id="filter-room-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors">Semua</button>
-                    <button onclick="window.filterRooms('personal')" id="filter-room-personal" class="px-5 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors">Pribadi</button>
-                    <button onclick="window.filterRooms('shared')" id="filter-room-shared" class="px-5 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors">Bersama</button>
+                    <button onclick="window.filterRooms('all')" id="filter-room-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="filter_room_all">Semua</button>
+                    <button onclick="window.filterRooms('personal')" id="filter-room-personal" class="px-5 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="filter_room_personal">Pribadi</button>
+                    <button onclick="window.filterRooms('shared')" id="filter-room-shared" class="px-5 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="filter_room_shared">Bersama</button>
                 </div>
 
                 <div id="rooms-container" class="space-y-4"></div>
@@ -196,55 +192,80 @@
                 <p class="text-[10px] text-slate-400 font-bold mt-2 uppercase tracking-widest flex items-center gap-1" id="member-count-text">0 Anggota <i data-lucide="users" class="w-3 h-3"></i></p>
             </div>
 
-            <div class="px-8 pb-8 pt-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center">
+            <!-- BALANCE -->
+            <div class="px-8 pb-4 pt-2 bg-white dark:bg-slate-900 text-center">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2" data-t="available_balance">Saldo Tersedia</p>
-                <h2 id="detail-balance" class="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Rp 0</h2>
-                <div id="detail-target-container" class="mt-8 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
-                    <div class="flex justify-between text-xs font-bold mb-3">
-                        <span class="text-slate-400 uppercase" data-t="progress">Progres</span>
-                        <span id="detail-progress-text" class="text-indigo-600 dark:text-indigo-400">0 / 0</span>
+                <h2 id="detail-balance" class="text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-2">Rp 0</h2>
+            </div>
+
+            <!-- TAB NAVIGATOR (RINGKASAN VS DISKUSI) -->
+            <div class="px-8 pb-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <div class="flex gap-2 overflow-x-auto no-scrollbar justify-center">
+                    <button onclick="window.switchRoomTab('ringkasan')" id="tab-ringkasan" class="px-6 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="tab_summary">Ringkasan</button>
+                    <button onclick="window.switchRoomTab('diskusi')" id="tab-diskusi" class="px-6 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="tab_discussion">Diskusi</button>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 1: RINGKASAN (Target, Milestone, History) -->
+            <div id="room-tab-ringkasan">
+                <div class="px-8 pb-6 pt-6 bg-white dark:bg-slate-900">
+                    <div id="detail-target-container" class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
+                        <div class="flex justify-between text-xs font-bold mb-3">
+                            <span class="text-slate-400 uppercase" data-t="progress">Progres</span>
+                            <span id="detail-progress-text" class="text-indigo-600 dark:text-indigo-400">0 / 0</span>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
+                            <div id="detail-progress-bar" class="bg-indigo-600 h-3 transition-all duration-1000 shadow-sm" style="width: 0%"></div>
+                        </div>
+                        <div id="detail-archive-btn-container" class="mt-6 hidden">
+                            <button onclick="window.completeAndArchiveRoom()" class="w-full py-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-amber-100 dark:border-amber-900/30" data-t="archive_now">Arsipkan Sekarang</button>
+                        </div>
                     </div>
-                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
-                        <div id="detail-progress-bar" class="bg-indigo-600 h-3 transition-all duration-1000 shadow-sm" style="width: 0%"></div>
+                </div>
+
+                <div id="detail-milestone-container" class="p-6 pt-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
+                    <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
+                    <div id="detail-milestone-list" class="space-y-3"></div>
+                </div>
+
+                <div class="p-6">
+                    <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="history" class="w-4 h-4"></i> <span data-t="history">Riwayat</span></h3>
+                    <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 2: DISKUSI (Chat Panel) -->
+            <div id="room-tab-diskusi" class="hidden">
+                <div class="p-6 relative flex flex-col h-[55vh]">
+                    <div id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar pb-2 space-y-4 pr-2">
+                        <!-- Chats injected here -->
                     </div>
-                    <div id="detail-archive-btn-container" class="mt-6 hidden">
-                        <button onclick="window.completeAndArchiveRoom()" class="w-full py-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-amber-100 dark:border-amber-900/30" data-t="archive_now">Arsipkan Sekarang</button>
+
+                    <!-- Sticker Panel -->
+                    <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden grid-cols-4 gap-3 z-30 transition-all justify-items-center">
+                        <button onclick="window.sendSticker('💸')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💸</button>
+                        <button onclick="window.sendSticker('🤑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤑</button>
+                        <button onclick="window.sendSticker('🚀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚀</button>
+                        <button onclick="window.sendSticker('💰')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💰</button>
+                        <button onclick="window.sendSticker('📈')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">📈</button>
+                        <button onclick="window.sendSticker('📉')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">📉</button>
+                        <button onclick="window.sendSticker('🔥')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🔥</button>
+                        <button onclick="window.sendSticker('🏃‍♂️')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🏃‍♂️</button>
+                        <button onclick="window.sendSticker('🙏')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🙏</button>
+                        <button onclick="window.sendSticker('😭')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">😭</button>
+                        <button onclick="window.sendSticker('💀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💀</button>
+                        <button onclick="window.sendSticker('🤡')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤡</button>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-4 relative z-20 mt-auto bg-slate-50 dark:bg-slate-950">
+                        <button onclick="window.toggleStickerPanel()" class="p-3 text-slate-400 hover:text-indigo-500 bg-white dark:bg-slate-800 rounded-xl transition-colors shadow-sm"><i data-lucide="smile" class="w-6 h-6"></i></button>
+                        <input type="text" id="chat-input" placeholder="Ketik pesan..." data-t="type_message" class="flex-1 p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-bold text-slate-900 dark:text-white shadow-sm">
+                        <button onclick="window.sendChatMessage()" class="p-3.5 bg-indigo-600 text-white rounded-xl active:scale-90 transition-transform shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="send" class="w-5 h-5"></i></button>
                     </div>
                 </div>
             </div>
 
-            <div id="detail-milestone-container" class="p-6 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
-                <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
-                <div id="detail-milestone-list" class="space-y-3"></div>
-            </div>
-
-            <div class="p-6">
-                <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="history" class="w-4 h-4"></i> <span data-t="history">Riwayat</span></h3>
-                <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-8 pb-4"></div>
-            </div>
-
-            <!-- MINI CHAT SECTION -->
-            <div class="p-6 border-t-8 border-slate-100 dark:border-slate-950 bg-white dark:bg-slate-900 relative">
-                <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="message-circle" class="w-4 h-4"></i> Diskusi</h3>
-                
-                <div id="chat-messages" class="space-y-4 mb-4 max-h-[300px] overflow-y-auto no-scrollbar pb-2"></div>
-
-                <!-- Sticker Panel (Hidden by default) -->
-                <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-3 z-30 transition-all">
-                    <button onclick="window.sendSticker('💸')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💸</button>
-                    <button onclick="window.sendSticker('🤑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤑</button>
-                    <button onclick="window.sendSticker('😭')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">😭</button>
-                    <button onclick="window.sendSticker('🚀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚀</button>
-                    <button onclick="window.sendSticker('🙏')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🙏</button>
-                </div>
-
-                <div class="flex items-center gap-2 relative z-20 bg-white dark:bg-slate-900">
-                    <button onclick="window.toggleStickerPanel()" class="p-3 text-slate-400 hover:text-indigo-500 bg-slate-50 dark:bg-slate-800 rounded-xl transition-colors"><i data-lucide="smile" class="w-6 h-6"></i></button>
-                    <input type="text" id="chat-input" placeholder="Ketik pesan atau @Nama..." class="flex-1 p-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-bold text-slate-900 dark:text-white">
-                    <button onclick="window.sendChatMessage()" class="p-3.5 bg-indigo-600 text-white rounded-xl active:scale-90 transition-transform shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="send" class="w-5 h-5"></i></button>
-                </div>
-            </div>
-
+            <!-- GLOBAL BOTTOM ACTION BUTTONS -->
             <div class="fixed bottom-0 left-0 right-0 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 max-w-[480px] mx-auto z-40 flex gap-4">
                 <button onclick="window.openTransactionModal('tarik')" class="flex-1 py-4 bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 font-black rounded-2xl active:bg-rose-100" data-t="withdraw">Tarik</button>
                 <button onclick="window.openTransactionModal('nabung')" class="flex-1 py-4 bg-premium text-white font-black rounded-2xl shadow-xl shadow-indigo-200 dark:shadow-none active:opacity-90" data-t="save">Nabung</button>
@@ -285,7 +306,6 @@
                 <p id="profile-stats" class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 inline-block px-4 py-1.5 rounded-full">0 Tabungan Aktif</p>
             </div>
 
-            <!-- ANALISIS KATEGORI (PIE CHART) -->
             <div class="p-6 pb-0">
                 <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4">Analisis Saldo</h3>
                 <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
@@ -365,12 +385,9 @@
                     <input type="text" id="create-name" placeholder="Beli Laptop..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold text-slate-900 dark:text-white transition-all">
                 </div>
                 
-                <!-- KATEGORI SELECTION -->
                 <div>
                     <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Kategori</label>
-                    <div id="create-categories" class="flex gap-3 overflow-x-auto no-scrollbar pb-2">
-                        <!-- Injected by JS -->
-                    </div>
+                    <div id="create-categories" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
                 </div>
 
                 <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
@@ -439,11 +456,9 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter">Tabungan Bersama</h2>
-                
                 <div class="mb-10 text-center">
                     <p class="text-sm font-bold text-slate-500 dark:text-slate-400" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.</p>
                 </div>
-                
                 <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black text-lg rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
                     <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
                     <span data-t="login_google">Masuk dengan Google</span>
@@ -523,7 +538,6 @@
                         <div class="p-2 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="share-2" class="w-5 h-5"></i></div>
                         <span class="font-bold text-slate-800 dark:text-white" data-t="share">Bagikan</span>
                     </button>
-                    <!-- Admin or Member buttons injected here -->
                 </div>
             </div>
         </div>
@@ -634,7 +648,9 @@
                 name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
                 filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
                 empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
-                notif_title: "Aktivitas Baru!"
+                notif_title: "Aktivitas Baru!",
+                filter_room_all: "Semua", filter_room_personal: "Pribadi", filter_room_shared: "Bersama",
+                type_message: "Ketik pesan...", tab_summary: "Ringkasan", tab_discussion: "Diskusi"
             },
             en: {
                 welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
@@ -655,7 +671,9 @@
                 name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
                 filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
                 empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
-                notif_title: "New Activity!"
+                notif_title: "New Activity!",
+                filter_room_all: "All", filter_room_personal: "Personal", filter_room_shared: "Shared",
+                type_message: "Type message...", tab_summary: "Summary", tab_discussion: "Discussion"
             }
         };
 
@@ -669,14 +687,14 @@
         ];
 
         // --- APP STATE ---
-        const DB_KEY = 'tabungan_app_v11_pro';
+        const DB_KEY = 'tabungan_app_v1_release_final';
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
             user: '', email: '', uid: '',
             avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
             joinedRooms: [], darkMode: false, language: 'id', hideInstallBanner: false
         };
         let tempAvatarSelection = { ...appData.avatar };
-        let tempCategorySelection = 'lainnya'; // Default category
+        let tempCategorySelection = 'lainnya'; 
 
         let globalRooms = [];
         let globalHistory = [];
@@ -787,6 +805,9 @@
             const createNameInp = document.getElementById('create-name');
             if(createNameInp) createNameInp.placeholder = lang.placeholder_goal;
 
+            const chatInp = document.getElementById('chat-input');
+            if(chatInp) chatInp.placeholder = lang.type_message;
+
             const monthStr = new Date().toLocaleString(appData.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
             const lblIn = document.getElementById('label-income');
             if (lblIn) lblIn.innerText = `${lang.income} (${monthStr})`;
@@ -837,7 +858,7 @@
 
         // --- FIREBASE AUTH & INIT ---
         const splashStartTime = Date.now();
-        const MIN_SPLASH_TIME = 2000; // Increased for animation
+        const MIN_SPLASH_TIME = 2000;
 
         onAuthStateChanged(auth, async (user) => {
             const modalLogin = document.getElementById('modal-onboarding');
@@ -1075,7 +1096,6 @@
 
             const me = { uid: appData.uid, name: appData.user, avatar: appData.avatar };
             
-            // Add Category and Admin Uid
             const newRoom = { 
                 id: roomId, name: name, category: tempCategorySelection, adminUid: appData.uid, 
                 balance: 0, hasTarget: targetVal > 0, target: targetVal, 
@@ -1098,7 +1118,6 @@
         window.openEditModal = () => {
             const r = globalRooms.find(x => x.id === currentRoomId);
             if(!r) return;
-            // Admin Check
             const isAdmin = !r.adminUid || r.adminUid === appData.uid;
             if(!isAdmin) return alert("Hanya pembuat tabungan yang bisa mengubah ini.");
 
@@ -1127,9 +1146,56 @@
             } catch(e) { alert("Error."); btn.disabled = false; }
         };
 
+        // --- ROOM TABS SWITCHING ---
+        window.switchRoomTab = (tab) => {
+            const tRingkasan = document.getElementById('tab-ringkasan');
+            const tDiskusi = document.getElementById('tab-diskusi');
+            const cRingkasan = document.getElementById('room-tab-ringkasan');
+            const cDiskusi = document.getElementById('room-tab-diskusi');
+
+            if(!tRingkasan || !tDiskusi || !cRingkasan || !cDiskusi) return;
+
+            if(tab === 'ringkasan') {
+                tRingkasan.classList.replace('bg-white', 'bg-slate-900');
+                tRingkasan.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600');
+                tRingkasan.classList.replace('text-slate-600', 'text-white');
+                tRingkasan.classList.replace('dark:text-slate-400', 'text-white');
+                tRingkasan.classList.remove('border', 'border-slate-200', 'dark:border-slate-700');
+
+                tDiskusi.classList.replace('bg-slate-900', 'bg-white');
+                tDiskusi.classList.replace('dark:bg-indigo-600', 'dark:bg-slate-800');
+                tDiskusi.classList.replace('text-white', 'text-slate-600');
+                tDiskusi.classList.replace('text-white', 'dark:text-slate-400');
+                if(!tDiskusi.classList.contains('border')) tDiskusi.classList.add('border', 'border-slate-200', 'dark:border-slate-700');
+
+                cRingkasan.classList.remove('hidden');
+                cDiskusi.classList.add('hidden');
+            } else {
+                tDiskusi.classList.replace('bg-white', 'bg-slate-900');
+                tDiskusi.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600');
+                tDiskusi.classList.replace('text-slate-600', 'text-white');
+                tDiskusi.classList.replace('dark:text-slate-400', 'text-white');
+                tDiskusi.classList.remove('border', 'border-slate-200', 'dark:border-slate-700');
+
+                tRingkasan.classList.replace('bg-slate-900', 'bg-white');
+                tRingkasan.classList.replace('dark:bg-indigo-600', 'dark:bg-slate-800');
+                tRingkasan.classList.replace('text-white', 'text-slate-600');
+                tRingkasan.classList.replace('text-white', 'dark:text-slate-400');
+                if(!tRingkasan.classList.contains('border')) tRingkasan.classList.add('border', 'border-slate-200', 'dark:border-slate-700');
+
+                cRingkasan.classList.add('hidden');
+                cDiskusi.classList.remove('hidden');
+                
+                // Scroll down
+                const box = document.getElementById('chat-messages');
+                if(box) box.scrollTop = box.scrollHeight;
+            }
+        };
+
         window.openRoomDetail = (id) => { 
             currentRoomId = id; 
             refreshRoomUI(id); 
+            window.switchRoomTab('ringkasan');
             window.switchView('view-detail'); 
             history.pushState(null, null, location.href);
             
@@ -1146,7 +1212,7 @@
             const box = document.getElementById('chat-messages');
             if(!box) return;
             if(msgs.length === 0) {
-                box.innerHTML = `<p class="text-center text-xs text-slate-400 font-bold italic py-4">Belum ada diskusi. Jadilah yang pertama!</p>`;
+                box.innerHTML = `<p class="text-center text-xs text-slate-400 font-bold italic py-4 mt-8">Belum ada diskusi. Jadilah yang pertama!</p>`;
                 return;
             }
             box.innerHTML = '';
@@ -1163,12 +1229,11 @@
                     });
                 }
                 
-                // Highlight full box if mentioned
                 const isMentioned = m.type === 'text' && formattedMsg.includes('mention-me');
 
                 if(isMe) {
                     box.innerHTML += `
-                    <div class="flex flex-col items-end w-full mb-3 pl-8">
+                    <div class="flex flex-col items-end w-full pl-8">
                         <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1">Anda</span>
                         ${m.type === 'sticker' 
                             ? `<div class="text-6xl anim-float">${m.message}</div>` 
@@ -1177,9 +1242,9 @@
                     </div>`;
                 } else {
                     box.innerHTML += `
-                    <div class="flex flex-col items-start w-full mb-3 pr-8">
+                    <div class="flex flex-col items-start w-full pr-8">
                         <div class="flex items-center gap-2 mb-1">
-                            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
+                            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
                             <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
                         </div>
                          ${m.type === 'sticker' 
@@ -1268,7 +1333,6 @@
             if(titleEl) titleEl.innerText = r.name;
             if(balanceEl) balanceEl.innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
             
-            // Show category badge if exists
             const catBadge = document.getElementById('detail-category-badge');
             if(catBadge) {
                 if(r.category) {
@@ -1280,7 +1344,6 @@
                 }
             }
 
-            // Role based UI
             const btnEdit = document.getElementById('btn-edit-room');
             const isAdmin = !r.adminUid || r.adminUid === appData.uid;
             if(btnEdit) {
@@ -1288,7 +1351,6 @@
                 else btnEdit.classList.add('hidden');
             }
 
-            // Member Pile
             const pile = document.getElementById('member-pile-container');
             const countText = document.getElementById('member-count-text');
             if(pile && r.members) {
@@ -1312,7 +1374,7 @@
                     if(progressBr) progressBr.style.width = pct + '%';
                     const archBtnBox = document.getElementById('detail-archive-btn-container');
                     if (archBtnBox) {
-                        if (pct >= 100 && !r.isArchived && isAdmin) archBtnBox.classList.remove('hidden'); // Only admin can archive
+                        if (pct >= 100 && !r.isArchived && isAdmin) archBtnBox.classList.remove('hidden'); 
                         else archBtnBox.classList.add('hidden');
                     }
                 } else { 
@@ -1581,7 +1643,6 @@
             appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
             window.saveLocal(); syncJoinedRoomsToCloud();
             
-            // Remove from members array in cloud
             try {
                 const rRef = doc(db, "rooms", roomToDelete);
                 const snap = await getDoc(rRef);
@@ -1762,15 +1823,13 @@
                         avPileHtml += `</div>`;
                     }
 
-                    // Get category Icon
                     let catIcon = '🎯';
-                    let catColor = 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400';
                     if(r.category) {
                         const c = CATEGORIES.find(x => x.id === r.category);
-                        if(c) { catIcon = c.icon; catColor = `bg-[${c.color}]/10 text-[${c.color}] border border-[${c.color}]/20`; } // Simple fallback style, using standard colors below
+                        if(c) catIcon = c.icon;
                     }
 
-                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-start gap-4"><div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 flex items-center justify-center rounded-2xl shrink-0 text-xl shadow-inner">${r.category ? CATEGORIES.find(x=>x.id===r.category)?.icon || '🎯' : '🎯'}</div><div class="flex-1"><h3 class="font-black text-slate-800 dark:text-white text-lg leading-tight truncate">${r.name}</h3>${avPileHtml}</div></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2 shrink-0"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
+                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-start gap-4"><div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 flex items-center justify-center rounded-2xl shrink-0 text-xl shadow-inner">${catIcon}</div><div class="flex-1"><h3 class="font-black text-slate-800 dark:text-white text-lg leading-tight truncate">${r.name}</h3>${avPileHtml}</div></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2 shrink-0"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
                 });
             }
 
