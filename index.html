@@ -42,9 +42,9 @@
         @keyframes shadowScale { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(0.5); opacity: 0.15; } }
         @keyframes floatCoin { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(15deg); } }
         
-        /* Sticker Temp Animation (Moves for a few seconds then stops) */
+        /* Sticker Temp Animation */
         @keyframes floatYTemp { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-10px) rotate(-5deg); } 75% { transform: translateY(-5px) rotate(5deg); } }
-        .anim-float-temp { animation: floatYTemp 1.2s ease-in-out 2; } /* Runs twice, approx 2.4s total */
+        .anim-float-temp { animation: floatYTemp 1.2s ease-in-out 2; }
 
         .anim-float { animation: floatY 2.5s ease-in-out infinite; }
         .anim-shadow { animation: shadowScale 2.5s ease-in-out infinite; }
@@ -214,7 +214,7 @@
                 </div>
             </div>
 
-            <!-- TAB CONTENT 1: RINGKASAN (Target, Milestone, History) -->
+            <!-- TAB CONTENT 1: RINGKASAN -->
             <div id="room-tab-ringkasan">
                 <div class="px-8 pb-6 pt-6 bg-white dark:bg-slate-900">
                     <div id="detail-target-container" class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
@@ -242,7 +242,7 @@
                 </div>
             </div>
 
-            <!-- TAB CONTENT 2: DISKUSI (Chat Panel) -->
+            <!-- TAB CONTENT 2: DISKUSI -->
             <div id="room-tab-diskusi" class="hidden">
                 <div class="p-6 relative flex flex-col min-h-[55vh]">
                     <div id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar pb-2 space-y-4 pr-2">
@@ -403,7 +403,7 @@
                 </div>
                 
                 <div>
-                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Kategori</label>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1" data-t="category">Kategori</label>
                     <div id="create-categories" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
                 </div>
 
@@ -466,17 +466,53 @@
         <!-- OVERLAY MODALS -->
         <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/80 backdrop-blur-sm z-[50] hidden transition-opacity" onclick="window.closeAllModals()"></div>
 
-        <!-- ONBOARDING (GOOGLE LOGIN) -->
-        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-8 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0">
-            <div class="w-full text-center">
-                <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
-                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+        <!-- ONBOARDING (EMAIL/PASS & GOOGLE) -->
+        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0 overflow-y-auto no-scrollbar">
+            <div class="w-full text-center py-8">
+                <div class="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-6 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-14 h-14">
                 </div>
-                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-3 tracking-tighter">Tabungan Bersama</h2>
-                <div class="mb-10 text-center">
-                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.</p>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">Tabungan Bersama</h2>
+                <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-8" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan.</p>
+                
+                <!-- Email/Pass Form -->
+                <div class="text-left space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="email_label">Email</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                            <input type="email" id="auth-email" placeholder="nama@email.com" class="w-full p-4 pl-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="pass_label">Password</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                            <input type="password" id="auth-pass" placeholder="••••••••" class="w-full p-4 pl-12 pr-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            <button onclick="window.togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors">
+                                <i id="auth-pass-eye" data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-end" id="forgot-pass-container">
+                        <button onclick="window.handleForgotPassword()" id="btn-forgot-pass" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline" data-t="forgot_pass">Lupa Password?</button>
+                    </div>
                 </div>
-                <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black text-lg rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
+
+                <button id="btn-email-auth" onclick="window.handleEmailAuth()" class="w-full py-4 mt-6 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl transition-all active:scale-95" data-t="login_btn">Masuk</button>
+                
+                <p class="mt-5 text-xs font-bold text-slate-500 dark:text-slate-400">
+                    <span id="auth-switch-text" data-t="no_account">Belum punya akun?</span> 
+                    <button onclick="window.toggleAuthMode()" class="text-indigo-600 dark:text-indigo-400 ml-1 hover:underline" id="auth-switch-btn" data-t="register_link">Daftar Sekarang</button>
+                </p>
+
+                <div class="flex items-center my-6 gap-3">
+                    <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" data-t="or">ATAU</span>
+                    <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                </div>
+
+                <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
                     <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
                     <span data-t="login_google">Masuk dengan Google</span>
                 </button>
@@ -543,19 +579,14 @@
             </div>
         </div>
 
-        <!-- MODAL MANAGE ROOM (ROLES APLIED) -->
+        <!-- MODAL MANAGE ROOM -->
         <div id="modal-manage" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
             <div class="p-8">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="options">Opsi</h3>
                     <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
                 </div>
-                <div class="space-y-3" id="manage-options-container">
-                    <button onclick="window.openShareOptions()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors">
-                        <div class="p-2 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="share-2" class="w-5 h-5"></i></div>
-                        <span class="font-bold text-slate-800 dark:text-white" data-t="share">Bagikan</span>
-                    </button>
-                </div>
+                <div class="space-y-3" id="manage-options-container"></div>
             </div>
         </div>
 
@@ -628,8 +659,8 @@
     <!-- Firebase SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // --- CONFIG ---
         const firebaseConfig = {
@@ -657,17 +688,21 @@
                 continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
                 all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
                 no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Belum ada riwayat",
-                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi",
+                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi", category: "Kategori",
                 install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan", leave: "Keluar Tabungan",
                 share_title: "Undang Teman",
                 install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
-                login_desc: "Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
+                login_desc: "Simpan data tabungan Anda dengan aman di awan.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
                 name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
                 filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
                 empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
                 notif_title: "Aktivitas Baru!",
                 filter_room_all: "Semua", filter_room_personal: "Pribadi", filter_room_shared: "Bersama",
-                type_message: "Ketik pesan...", tab_summary: "Ringkasan", tab_discussion: "Diskusi"
+                type_message: "Ketik pesan...", tab_summary: "Ringkasan", tab_discussion: "Diskusi",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Lupa Password?",
+                login_btn: "Masuk", register_btn: "Daftar Akun", no_account: "Belum punya akun?",
+                register_link: "Daftar Sekarang", has_account: "Sudah punya akun?", login_link: "Masuk di sini", or: "ATAU",
+                pass_reset_sent: "Email reset password telah dikirim!"
             },
             en: {
                 welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
@@ -680,21 +715,24 @@
                 continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
                 all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
                 no_goals: "No goals yet", no_archive: "No archived items", empty_history: "No history yet",
-                placeholder_goal: "Buy a Laptop...", install_app: "Install App",
+                placeholder_goal: "Buy a Laptop...", install_app: "Install App", category: "Category",
                 install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal", leave: "Leave Goal",
                 share_title: "Invite Friends",
                 install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
-                login_desc: "Save your savings data securely in the cloud using your Google account.", login_google: "Sign in with Google", logout: "Log Out",
+                login_desc: "Save your savings data securely in the cloud.", login_google: "Sign in with Google", logout: "Log Out",
                 name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
                 filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
                 empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
                 notif_title: "New Activity!",
                 filter_room_all: "All", filter_room_personal: "Personal", filter_room_shared: "Shared",
-                type_message: "Type message...", tab_summary: "Summary", tab_discussion: "Discussion"
+                type_message: "Type message...", tab_summary: "Summary", tab_discussion: "Discussion",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Forgot Password?",
+                login_btn: "Login", register_btn: "Register Account", no_account: "Don't have an account?",
+                register_link: "Register Now", has_account: "Already have an account?", login_link: "Login here", or: "OR",
+                pass_reset_sent: "Password reset email sent!"
             }
         };
 
-        // --- CATEGORIES ---
         const CATEGORIES = [
             { id: 'liburan', label: 'Liburan', icon: '✈️', color: '#3b82f6' },
             { id: 'gadget', label: 'Gadget', icon: '💻', color: '#8b5cf6' },
@@ -726,14 +764,17 @@
         
         let chatUnsubscribe = null; 
         let lastBackPress = 0; 
-        let lastChatCounts = {}; // Tracker for unread badge
+        let lastChatCounts = {}; 
+
+        // Auth States
+        let isLoginMode = true;
 
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-name-entry'];
 
         // --- ROUTING / HARDWARE BACK BUTTON ---
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', (e) => {
-            const currentView = document.querySelector('main:not(.hidden)').id;
+            const currentView = document.querySelector('main:not(.hidden)')?.id;
             let isModalOpen = false;
             modalIds.forEach(id => {
                 const m = document.getElementById(id);
@@ -746,10 +787,10 @@
                 return;
             }
 
-            if (currentView !== 'view-home') {
+            if (currentView && currentView !== 'view-home') {
                 history.pushState(null, null, location.href);
                 window.switchView('view-home', 'nav-home');
-            } else {
+            } else if (currentView === 'view-home') {
                 const now = Date.now();
                 if (now - lastBackPress < 2000) history.go(-1);
                 else {
@@ -831,6 +872,17 @@
             if (lblIn) lblIn.innerText = `${lang.income} (${monthStr})`;
             const lblOut = document.getElementById('label-outcome');
             if (lblOut) lblOut.innerText = `${lang.outcome} (${monthStr})`;
+
+            // Auth specific updates
+            if(!isLoginMode) {
+                document.getElementById('auth-switch-text').innerText = lang.has_account;
+                document.getElementById('auth-switch-btn').innerText = lang.login_link;
+                document.getElementById('btn-email-auth').innerText = lang.register_btn;
+            } else {
+                document.getElementById('auth-switch-text').innerText = lang.no_account;
+                document.getElementById('auth-switch-btn').innerText = lang.register_link;
+                document.getElementById('btn-email-auth').innerText = lang.login_btn;
+            }
         }
         window.applyTranslations = applyTranslations;
 
@@ -874,7 +926,74 @@
             } catch(e) {}
         }
 
-        // --- FIREBASE AUTH & INIT ---
+        // --- AUTH LOGIC (EMAIL + GOOGLE) ---
+        window.togglePasswordVisibility = () => {
+            const input = document.getElementById('auth-pass');
+            const icon = document.getElementById('auth-pass-eye');
+            if(input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
+        };
+
+        window.toggleAuthMode = () => {
+            isLoginMode = !isLoginMode;
+            const fpContainer = document.getElementById('forgot-pass-container');
+            if(isLoginMode) fpContainer.classList.remove('hidden');
+            else fpContainer.classList.add('hidden');
+            applyTranslations();
+        };
+
+        window.handleForgotPassword = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            if(!email) return alert(appData.language === 'id' ? 'Masukkan email Anda terlebih dahulu.' : 'Please enter your email first.');
+            try {
+                await sendPasswordResetEmail(auth, email);
+                window.showToast(i18n[appData.language].pass_reset_sent);
+            } catch(e) { alert("Error: " + e.message); }
+        };
+
+        window.handleEmailAuth = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            if(!email || !pass) return alert("Email dan password harus diisi.");
+
+            const btn = document.getElementById('btn-email-auth');
+            const origText = btn.innerText;
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+
+            try {
+                if(isLoginMode) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                }
+                // onAuthStateChanged will catch the success
+            } catch(error) {
+                alert("Gagal: " + error.message);
+                btn.disabled = false;
+                btn.innerText = origText;
+            }
+        };
+
+        window.loginWithGoogle = async () => {
+            const btn = document.getElementById('btn-google-login');
+            const origHTML = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                if(error.code !== 'auth/popup-closed-by-user') alert("Gagal login: " + error.message);
+                btn.disabled = false;
+                btn.innerHTML = origHTML;
+            }
+        };
+
         const splashStartTime = Date.now();
         const MIN_SPLASH_TIME = 2000;
 
@@ -965,20 +1084,6 @@
                 });
             }
         });
-
-        window.loginWithGoogle = async () => {
-            const btn = document.getElementById('btn-google-login');
-            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
-            const provider = new GoogleAuthProvider();
-            try {
-                await signInWithPopup(auth, provider);
-                window.showToast("Autentikasi berhasil!");
-            } catch (error) {
-                if(error.code !== 'auth/popup-closed-by-user') alert("Gagal login: " + error.message);
-                btn.disabled = false;
-                btn.innerHTML = `<svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg> <span data-t="login_google">${i18n[appData.language].login_google}</span>`;
-            }
-        };
 
         window.saveOnboardingName = async () => {
             const btn = document.getElementById('btn-save-name');
@@ -1269,7 +1374,7 @@
 
         window.animateSticker = (el) => {
             el.classList.remove('anim-float-temp');
-            void el.offsetWidth; // trigger reflow
+            void el.offsetWidth; 
             el.classList.add('anim-float-temp');
         };
 
@@ -1483,7 +1588,7 @@
                 else filtered.forEach(h => {
                     const isIn = h.type === 'in';
                     const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight whitespace-pre-wrap">"${h.note}"</p>` : '';
-                    histList.innerHTML += `<div class="relative pl-8 mb-6 last:mb-0"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-900"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml} ${getReactionHTML(h.id, h.reactions)}</div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                    histList.innerHTML += `<div class="relative pl-8 mb-6 last:mb-0"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-900"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml} ${getReactionHTML(h.id, h.reactions)}</div><p class="text-sm font-black ${isIn ? 'textemerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
                 });
             }
             lucide.createIcons();
@@ -1815,7 +1920,7 @@
             const profUser = document.getElementById('profile-username');
             const profEmail = document.getElementById('profile-email');
             
-            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner cursor-pointer active:scale-90 transition-transform ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
+            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner cursor-pointer active:scale-90 transition-transform border-2 border-transparent hover:border-indigo-200 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
             if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; profAv.innerText = displayChar; }
             if(homeUser) homeUser.innerText = appData.user;
             if(profUser) profUser.innerText = appData.user;
