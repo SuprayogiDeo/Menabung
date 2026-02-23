@@ -488,15 +488,28 @@
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="pass_label">Password</label>
                         <div class="relative">
                             <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
-                            <input type="password" id="auth-pass" placeholder="••••••••" class="w-full p-4 pl-12 pr-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            <input type="password" id="auth-pass" placeholder="••••••••" oninput="window.checkPasswordStrength()" class="w-full p-4 pl-12 pr-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
                             <button onclick="window.togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors">
                                 <i id="auth-pass-eye" data-lucide="eye" class="w-5 h-5"></i>
                             </button>
                         </div>
+                        
+                        <!-- Password Validation Hints (Visible on Register) -->
+                        <div id="pass-hints" class="hidden mt-3 px-2 space-y-1.5 text-[10px] font-bold">
+                            <p id="hint-length" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Minimal 6 karakter</span></p>
+                            <p id="hint-case" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Terdapat huruf besar & kecil</span></p>
+                            <p id="hint-number" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Terdapat angka</span></p>
+                        </div>
                     </div>
-                    <div class="flex justify-end" id="forgot-pass-container">
+                    
+                    <div class="flex justify-between items-center" id="forgot-pass-container">
+                        <div></div>
                         <button onclick="window.handleForgotPassword()" id="btn-forgot-pass" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline" data-t="forgot_pass">Lupa Password?</button>
                     </div>
+
+                    <!-- In-App Error / Success Messages -->
+                    <p id="auth-error-msg" class="text-xs text-rose-500 font-bold hidden text-center px-2 mt-2 leading-tight"></p>
+                    <p id="auth-success-msg" class="text-xs text-emerald-500 font-bold hidden text-center px-2 mt-2 leading-tight"></p>
                 </div>
 
                 <button id="btn-email-auth" onclick="window.handleEmailAuth()" class="w-full py-4 mt-6 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl transition-all active:scale-95" data-t="login_btn">Masuk</button>
@@ -526,13 +539,14 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Konfirmasi Profil</h2>
-                <div class="text-left mb-8 relative">
+                <div class="text-left mb-6 relative">
                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Nama Tampilan</label>
                     <input type="text" id="onboarding-name" placeholder="Contoh: Leonardo Suprayogi" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] font-bold text-xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-slate-900 dark:text-white">
-                    <p class="text-[10px] text-rose-500 font-bold mt-3 px-2 flex items-start gap-1.5 leading-tight">
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-3 px-2 flex items-start gap-1.5 leading-tight">
                         <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
                         <span data-t="name_warning">*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.</span>
                     </p>
+                    <p id="name-error-msg" class="text-xs text-rose-500 font-bold hidden text-left px-2 mt-3 leading-tight"></p>
                 </div>
                 <button id="btn-save-name" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Simpan Profil & Masuk</button>
             </div>
@@ -579,7 +593,7 @@
             </div>
         </div>
 
-        <!-- MODAL MANAGE ROOM -->
+        <!-- MODAL MANAGE ROOM (ROLES APLIED) -->
         <div id="modal-manage" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
             <div class="p-8">
                 <div class="flex justify-between items-center mb-6">
@@ -801,11 +815,48 @@
             }
         });
 
-        // --- HELPERS ---
+        // --- HELPERS (Replaced Default Alerts) ---
         window.saveLocal = () => localStorage.setItem(DB_KEY, JSON.stringify(appData));
-        window.showToast = (msg) => {
+        
+        // Custom Generic Toast
+        window.showToast = (msg, isError = false) => {
             const t = document.getElementById('toast');
-            if(t) { t.innerText = msg; t.classList.add('toast-visible'); setTimeout(() => t.classList.remove('toast-visible'), 2500); }
+            if(t) { 
+                t.innerText = msg; 
+                t.className = `fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 ${isError ? 'bg-rose-600' : 'bg-slate-900 dark:bg-slate-800'} text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none`;
+                void t.offsetWidth; // Trigger reflow
+                t.classList.add('toast-visible'); 
+                setTimeout(() => t.classList.remove('toast-visible'), 3000); 
+            }
+        };
+
+        // Custom Auth Error Display
+        window.showAuthError = (msg) => {
+            const el = document.getElementById('auth-error-msg');
+            const sEl = document.getElementById('auth-success-msg');
+            if (el && sEl) {
+                sEl.classList.add('hidden');
+                if (msg) {
+                    el.innerText = msg;
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            }
+        };
+        
+        window.showAuthSuccess = (msg) => {
+            const el = document.getElementById('auth-success-msg');
+            const eEl = document.getElementById('auth-error-msg');
+            if (el && eEl) {
+                eEl.classList.add('hidden');
+                if (msg) {
+                    el.innerText = msg;
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            }
         };
         
         window.showRealtimeNotif = (msg) => {
@@ -875,13 +926,13 @@
 
             // Auth specific updates
             if(!isLoginMode) {
-                document.getElementById('auth-switch-text').innerText = lang.has_account;
-                document.getElementById('auth-switch-btn').innerText = lang.login_link;
-                document.getElementById('btn-email-auth').innerText = lang.register_btn;
+                const asText = document.getElementById('auth-switch-text'); if(asText) asText.innerText = lang.has_account;
+                const asBtn = document.getElementById('auth-switch-btn'); if(asBtn) asBtn.innerText = lang.login_link;
+                const eaBtn = document.getElementById('btn-email-auth'); if(eaBtn) eaBtn.innerText = lang.register_btn;
             } else {
-                document.getElementById('auth-switch-text').innerText = lang.no_account;
-                document.getElementById('auth-switch-btn').innerText = lang.register_link;
-                document.getElementById('btn-email-auth').innerText = lang.login_btn;
+                const asText = document.getElementById('auth-switch-text'); if(asText) asText.innerText = lang.no_account;
+                const asBtn = document.getElementById('auth-switch-btn'); if(asBtn) asBtn.innerText = lang.register_link;
+                const eaBtn = document.getElementById('btn-email-auth'); if(eaBtn) eaBtn.innerText = lang.login_btn;
             }
         }
         window.applyTranslations = applyTranslations;
@@ -927,6 +978,29 @@
         }
 
         // --- AUTH LOGIC (EMAIL + GOOGLE) ---
+        window.checkPasswordStrength = () => {
+            if (isLoginMode) return; 
+            const pass = document.getElementById('auth-pass').value;
+            
+            const updateHint = (id, isValid) => {
+                const p = document.getElementById('hint-' + id);
+                if (!p) return;
+                const text = p.querySelector('span').innerText;
+                if (isValid) {
+                    p.classList.replace('text-rose-500', 'text-emerald-500');
+                    p.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> <span>${text}</span>`;
+                } else {
+                    p.classList.replace('text-emerald-500', 'text-rose-500');
+                    p.innerHTML = `<i data-lucide="x" class="w-3.5 h-3.5"></i> <span>${text}</span>`;
+                }
+            };
+            
+            updateHint('length', pass.length >= 6);
+            updateHint('case', /[a-z]/.test(pass) && /[A-Z]/.test(pass));
+            updateHint('number', /[0-9]/.test(pass));
+            lucide.createIcons();
+        };
+
         window.togglePasswordVisibility = () => {
             const input = document.getElementById('auth-pass');
             const icon = document.getElementById('auth-pass-eye');
@@ -943,24 +1017,56 @@
         window.toggleAuthMode = () => {
             isLoginMode = !isLoginMode;
             const fpContainer = document.getElementById('forgot-pass-container');
-            if(isLoginMode) fpContainer.classList.remove('hidden');
-            else fpContainer.classList.add('hidden');
+            const passHints = document.getElementById('pass-hints');
+            
+            if(isLoginMode) {
+                fpContainer.classList.remove('hidden');
+                passHints.classList.add('hidden');
+            } else {
+                fpContainer.classList.add('hidden');
+                passHints.classList.remove('hidden');
+                window.checkPasswordStrength();
+            }
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
             applyTranslations();
         };
 
         window.handleForgotPassword = async () => {
             const email = document.getElementById('auth-email').value.trim();
-            if(!email) return alert(appData.language === 'id' ? 'Masukkan email Anda terlebih dahulu.' : 'Please enter your email first.');
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+
+            if(!email) {
+                window.showAuthError(appData.language === 'id' ? 'Tulis email Anda di kolom atas terlebih dahulu.' : 'Please enter your email above first.');
+                return;
+            }
+            
             try {
                 await sendPasswordResetEmail(auth, email);
-                window.showToast(i18n[appData.language].pass_reset_sent);
-            } catch(e) { alert("Error: " + e.message); }
+                window.showAuthSuccess(appData.language === 'id' ? "Email reset terkirim! Silakan cek kotak masuk atau folder SPAM Anda." : "Password reset email sent! Check your inbox or SPAM folder.");
+            } catch(e) { 
+                let msg = "Gagal mengirim email reset.";
+                if(e.code === 'auth/user-not-found') msg = "Email tidak terdaftar.";
+                else if(e.code === 'auth/invalid-email') msg = "Format email tidak valid.";
+                window.showAuthError(msg); 
+            }
         };
 
         window.handleEmailAuth = async () => {
             const email = document.getElementById('auth-email').value.trim();
             const pass = document.getElementById('auth-pass').value.trim();
-            if(!email || !pass) return alert("Email dan password harus diisi.");
+            
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+
+            if(!email || !pass) return window.showAuthError("Email dan password harus diisi lengkap.");
+
+            if(!isLoginMode) {
+                if(pass.length < 6 || !/[a-z]/.test(pass) || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass)) {
+                    return window.showAuthError("Password belum memenuhi syarat (cek indikator di atas).");
+                }
+            }
 
             const btn = document.getElementById('btn-email-auth');
             const origText = btn.innerText;
@@ -972,9 +1078,15 @@
                 } else {
                     await createUserWithEmailAndPassword(auth, email, pass);
                 }
-                // onAuthStateChanged will catch the success
+                // onAuthStateChanged will handle the rest
             } catch(error) {
-                alert("Gagal: " + error.message);
+                let msg = "Terjadi kesalahan. Silakan coba lagi.";
+                if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') msg = "Email atau password yang Anda masukkan salah.";
+                else if(error.code === 'auth/email-already-in-use') msg = "Email sudah terdaftar. Silakan pindah ke mode Masuk (Login).";
+                else if(error.code === 'auth/invalid-email') msg = "Format email tidak valid.";
+                else if(error.code === 'auth/too-many-requests') msg = "Terlalu banyak percobaan. Silakan coba beberapa saat lagi.";
+                
+                window.showAuthError(msg);
                 btn.disabled = false;
                 btn.innerText = origText;
             }
@@ -983,12 +1095,15 @@
         window.loginWithGoogle = async () => {
             const btn = document.getElementById('btn-google-login');
             const origHTML = btn.innerHTML;
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+
             btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
             const provider = new GoogleAuthProvider();
             try {
                 await signInWithPopup(auth, provider);
             } catch (error) {
-                if(error.code !== 'auth/popup-closed-by-user') alert("Gagal login: " + error.message);
+                if(error.code !== 'auth/popup-closed-by-user') window.showAuthError("Gagal login dengan Google.");
                 btn.disabled = false;
                 btn.innerHTML = origHTML;
             }
@@ -1088,10 +1203,22 @@
         window.saveOnboardingName = async () => {
             const btn = document.getElementById('btn-save-name');
             const nameEl = document.getElementById('onboarding-name');
-            if(!nameEl) return;
+            const errEl = document.getElementById('name-error-msg');
+            
+            if(!nameEl || !errEl) return;
             const name = nameEl.value.trim();
-            if(!/^[a-zA-Z0-9\s]+$/.test(name)) return alert("Nama hanya boleh berisi huruf dan angka.");
-            if(name.length < 3) return alert("Nama terlalu pendek.");
+            errEl.classList.add('hidden');
+
+            if(name.length < 3) {
+                errEl.innerText = "Nama terlalu pendek (minimal 3 karakter).";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if(!/^[a-zA-Z0-9\s_]+$/.test(name)) {
+                errEl.innerText = "Nama hanya boleh berisi huruf, angka, dan spasi/underscore.";
+                errEl.classList.remove('hidden');
+                return;
+            }
             
             btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
             appData.user = name; window.saveLocal();
@@ -1120,7 +1247,7 @@
                 appData.user = ''; appData.email = ''; appData.uid = ''; appData.joinedRooms = []; 
                 window.saveLocal();
                 location.reload(); 
-            } catch (error) { alert("Gagal keluar."); }
+            } catch (error) { window.showToast("Gagal keluar.", true); }
         };
 
         function startRealtimeSync() {
@@ -1197,9 +1324,9 @@
         window.handleCreateRoom = async () => {
             const btn = document.getElementById('btn-save-room');
             const nameEl = document.getElementById('create-name');
-            if(!nameEl || !nameEl.value.trim()) return alert("Isi nama tabungan.");
+            if(!nameEl || !nameEl.value.trim()) return window.showToast("Isi nama tabungan terlebih dahulu.", true);
             const name = nameEl.value.trim();
-            if(globalRooms.some(r => r.name.toLowerCase() === name.toLowerCase())) return alert("Nama tabungan sudah ada!");
+            if(globalRooms.some(r => r.name.toLowerCase() === name.toLowerCase())) return window.showToast("Nama tabungan sudah ada!", true);
 
             btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
             const roomId = 'room_' + Date.now();
@@ -1235,14 +1362,14 @@
                 window.switchView('view-home', 'nav-home');
                 window.showToast("Berhasil dibuat!");
                 nameEl.value = ''; btn.disabled = false; btn.innerText = 'Simpan';
-            } catch(e) { alert("Error."); btn.disabled = false; }
+            } catch(e) { window.showToast("Terjadi kesalahan.", true); btn.disabled = false; }
         };
 
         window.openEditModal = () => {
             const r = globalRooms.find(x => x.id === currentRoomId);
             if(!r) return;
             const isAdmin = !r.adminUid || r.adminUid === appData.uid;
-            if(!isAdmin) return alert("Hanya pembuat tabungan yang bisa mengubah ini.");
+            if(!isAdmin) return window.showToast("Hanya pembuat tabungan yang bisa mengubah ini.", true);
 
             const editName = document.getElementById('edit-name');
             const editTarget = document.getElementById('edit-target');
@@ -1258,7 +1385,7 @@
             if(!nameEl || !targetEl) return;
             const name = nameEl.value.trim();
             const target = parseInt(targetEl.value.replace(/\D/g, '')) || 0;
-            if(!name) return alert("Isi nama tujuan.");
+            if(!name) return window.showToast("Isi nama tujuan terlebih dahulu.", true);
 
             btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
             try {
@@ -1266,7 +1393,7 @@
                 window.closeAllModals();
                 window.showToast("Disimpan!");
                 btn.disabled = false; btn.innerText = i18n[appData.language].save_changes;
-            } catch(e) { alert("Error."); btn.disabled = false; }
+            } catch(e) { window.showToast("Terjadi kesalahan.", true); btn.disabled = false; }
         };
 
         // --- ROOM TABS SWITCHING ---
@@ -1588,7 +1715,7 @@
                 else filtered.forEach(h => {
                     const isIn = h.type === 'in';
                     const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight whitespace-pre-wrap">"${h.note}"</p>` : '';
-                    histList.innerHTML += `<div class="relative pl-8 mb-6 last:mb-0"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-900"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml} ${getReactionHTML(h.id, h.reactions)}</div><p class="text-sm font-black ${isIn ? 'textemerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                    histList.innerHTML += `<div class="relative pl-8 mb-6 last:mb-0"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-900"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml} ${getReactionHTML(h.id, h.reactions)}</div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
                 });
             }
             lucide.createIcons();
@@ -1649,10 +1776,10 @@
             const type = document.getElementById('trx-type').value;
             let newBal = r.balance;
             if(type === 'in') {
-                if(r.hasTarget && r.balance + amount > r.target) return alert("Melebihi target!");
+                if(r.hasTarget && r.balance + amount > r.target) return window.showToast("Melebihi target nominal!", true);
                 newBal += amount;
             } else {
-                if(amount > r.balance) return alert("Saldo kurang.");
+                if(amount > r.balance) return window.showToast("Saldo tabungan kurang.", true);
                 newBal -= amount;
             }
 
@@ -1683,7 +1810,7 @@
                     if(celebName) celebName.innerText = r.name;
                     setTimeout(() => { window.showModal('modal-celebration'); }, 400);
                 }
-            } catch(e) { alert("Error."); btn.disabled = false; }
+            } catch(e) { window.showToast("Terjadi kesalahan sistem.", true); btn.disabled = false; }
         };
 
         window.filterRooms = (type) => {
@@ -1842,7 +1969,7 @@
                 window.closeAllModals();
                 window.switchView('view-home', 'nav-home');
                 window.showToast(appData.language === 'id' ? "Berhasil diarsipkan" : "Archived");
-            } catch(e) { alert("Error."); }
+            } catch(e) { window.showToast("Gagal mengarsipkan.", true); }
         };
 
         function renderCategoryOptions() {
