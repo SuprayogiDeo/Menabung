@@ -390,6 +390,56 @@
         const DB_KEY = 'tabungan_app_v10_stable';
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-install', 'modal-name-entry'];
 
+        // --- TRANSLATIONS (KAMUS BAHASA YANG HILANG) ---
+        const i18n = {
+            id: {
+                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk", outcome: "Keluar",
+                savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
+                archive_now: "Arsipkan Sekarang", history: "Riwayat Transaksi", history_tab: "Riwayat", chat_tab: "Diskusi",
+                withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
+                archive: "Arsip Tabungan", archive_desc: "Target 100% Selesai", dark_mode: "Mode Gelap", language_name: "Bahasa",
+                language_val: "ID", edit_goal: "Ubah Tabungan", goal_name: "Nama Tujuan", target_nominal: "Target Nominal",
+                save_changes: "Simpan Perubahan", goal_reached: "Tercapai!", celeb_desc: "Tabungan", celeb_done: "lunas 100%!",
+                continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
+                all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
+                no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Belum ada riwayat",
+                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi",
+                choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan",
+                share_title: "Undang Teman",
+                install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
+                install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
+                install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
+                login_desc: "Simpan data tabungan Anda dengan aman di awan menggunakan akun Google.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
+                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
+                filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
+                empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
+                notif_title: "Aktivitas Baru!"
+            },
+            en: {
+                welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
+                savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
+                archive_now: "Archive Now", history: "Transaction History", history_tab: "History", chat_tab: "Chat",
+                withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
+                archive: "Archive", archive_desc: "100% Goal Completed", dark_mode: "Dark Mode", language_name: "Language",
+                language_val: "EN", edit_goal: "Edit Saving", goal_name: "Goal Name", target_nominal: "Target Amount",
+                save_changes: "Save Changes", goal_reached: "Reached!", celeb_desc: "Saving", celeb_done: "is 100% completed!",
+                continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
+                all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
+                no_goals: "No goals yet", no_archive: "No archived items", empty_history: "No history yet",
+                placeholder_goal: "Buy a Laptop...", install_app: "Install App",
+                choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal",
+                share_title: "Invite Friends",
+                install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
+                install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen'",
+                install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
+                login_desc: "Save your savings data securely in the cloud using your Google account.", login_google: "Sign in with Google", logout: "Log Out",
+                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
+                filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
+                empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
+                notif_title: "New Activity!"
+            }
+        };
+
         // --- APP STATE ---
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
             user: '', email: '', uid: '',
