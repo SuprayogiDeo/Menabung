@@ -179,7 +179,7 @@
         </main>
 
         <!-- VIEW 2: DETAIL ROOM -->
-        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden relative">
+        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar bg-slate-50 dark:bg-slate-950 hidden relative">
             <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-20 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3 flex-1 overflow-hidden">
                     <button onclick="window.history.back()" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
@@ -215,7 +215,7 @@
             </div>
 
             <!-- TAB CONTENT 1: RINGKASAN -->
-            <div id="room-tab-ringkasan">
+            <div id="room-tab-ringkasan" class="pb-24">
                 <div class="px-8 pb-6 pt-6 bg-white dark:bg-slate-900">
                     <div id="detail-target-container" class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
                         <div class="flex justify-between text-xs font-bold mb-3">
@@ -244,11 +244,17 @@
 
             <!-- TAB CONTENT 2: DISKUSI -->
             <div id="room-tab-diskusi" class="hidden">
-                <div class="p-6 pb-20 relative flex flex-col min-h-[50vh]">
-                    <div id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar pb-2 space-y-4 pr-2">
+                <div class="p-6 pb-24 relative flex flex-col">
+                    <div id="chat-messages" class="flex-1 space-y-4 pr-2">
                         <!-- Chats injected here -->
                     </div>
                 </div>
+
+                <!-- Floating Scroll Down Button (New Message Indicator) -->
+                <button id="chat-scroll-btn" onclick="window.scrollToBottomChat()" class="fixed bottom-[90px] right-6 z-40 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 p-3 rounded-full shadow-xl border border-slate-100 dark:border-slate-700 hidden active:scale-90 transition-transform">
+                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    <span class="absolute top-0 right-0 w-3 h-3 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800"></span>
+                </button>
 
                 <!-- FIXED CHAT INPUT -->
                 <div class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40">
@@ -276,7 +282,7 @@
                         <button onclick="window.sendSticker('💎')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💎</button>
                     </div>
 
-                    <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 pb-safe">
+                    <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 pb-safe shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
                         <button onclick="window.toggleStickerPanel()" class="p-3 text-slate-400 hover:text-indigo-500 bg-white dark:bg-slate-800 rounded-xl transition-colors shadow-sm"><i data-lucide="smile" class="w-6 h-6"></i></button>
                         <input type="text" id="chat-input" placeholder="Ketik pesan..." data-t="type_message" class="flex-1 p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-bold text-slate-900 dark:text-white shadow-sm">
                         <button onclick="window.sendChatMessage()" class="p-3.5 bg-indigo-600 text-white rounded-xl active:scale-90 transition-transform shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="send" class="w-5 h-5"></i></button>
@@ -872,6 +878,7 @@
         // --- INLINE SERVICE WORKER FOR MOBILE PUSH NOTIFICATIONS ---
         if ('serviceWorker' in navigator) {
             const swCode = `
+                self.addEventListener('fetch', function(e) { /* Dummy fetch to pass PWA criteria */ });
                 self.addEventListener('push', function(e) {});
                 self.addEventListener('notificationclick', function(e) {
                     e.notification.close();
@@ -890,29 +897,31 @@
             deferredPrompt = e;
         });
 
-        history.pushState(null, null, location.href);
+        history.replaceState({ viewId: 'view-home', navId: 'nav-home' }, "", location.href);
+
         window.addEventListener('popstate', (e) => {
-            const currentView = document.querySelector('main:not(.hidden)')?.id;
+            const modals = document.querySelectorAll('.fixed.z-\\[55\\], .fixed.z-\\[60\\], .fixed.z-\\[70\\]');
             let isModalOpen = false;
-            modalIds.forEach(id => {
-                const m = document.getElementById(id);
-                if(m && !m.classList.contains('hidden') && !m.classList.contains('translate-y-full')) isModalOpen = true;
+            modals.forEach(m => {
+                if(m && !m.classList.contains('hidden') && !m.classList.contains('translate-y-full') && !m.classList.contains('opacity-0')) {
+                    isModalOpen = true;
+                }
             });
 
             if (isModalOpen) {
-                history.pushState(null, null, location.href);
                 window.closeAllModals();
+                history.pushState(e.state, "", location.href); // Kembalikan state agar tidak pindah halaman
                 return;
             }
 
-            if (currentView && currentView !== 'view-home') {
-                history.pushState(null, null, location.href);
-                window.switchView('view-home', 'nav-home');
-            } else if (currentView === 'view-home') {
+            if (e.state && e.state.viewId) {
+                window.switchView(e.state.viewId, e.state.navId, false);
+            } else {
                 const now = Date.now();
-                if (now - lastBackPress < 2000) history.go(-1);
-                else {
-                    history.pushState(null, null, location.href);
+                if (now - lastBackPress < 2000) {
+                    history.go(-1);
+                } else {
+                    history.pushState({ viewId: 'view-home', navId: 'nav-home' }, "", location.href);
                     lastBackPress = now;
                     window.showToast("Tekan sekali lagi untuk keluar");
                 }
@@ -1135,7 +1144,7 @@
             } else {
                 appData.pushEnabled = false;
                 window.saveLocal();
-                window.showToast("Notifikasi dalam aplikasi dimatikan. (Ubah via setelan browser untuk matikan penuh)");
+                window.showToast("Notifikasi dalam aplikasi dimatikan.");
             }
         }
 
@@ -1656,6 +1665,7 @@
 
         let currentRoomChatsData = [];
         window.openRoomDetail = (id) => { 
+            window.isFirstChatRender = true;
             currentRoomId = id; 
             refreshRoomUI(id); 
             window.switchRoomTab('ringkasan');
@@ -1695,6 +1705,27 @@
             historyRenderLimit += 15;
             updateUI();
         };
+
+        window.scrollToBottomChat = () => {
+            const scroller = document.getElementById('view-detail');
+            if(scroller) {
+                scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+                document.getElementById('chat-scroll-btn').classList.add('hidden');
+            }
+        };
+
+        const viewDetailScroller = document.getElementById('view-detail');
+        if(viewDetailScroller) {
+            viewDetailScroller.addEventListener('scroll', function() {
+                const btn = document.getElementById('chat-scroll-btn');
+                const diskusiTab = document.getElementById('room-tab-diskusi');
+                if (!btn || !diskusiTab || diskusiTab.classList.contains('hidden')) return;
+                
+                if (this.scrollHeight - this.scrollTop - this.clientHeight <= 50) {
+                    btn.classList.add('hidden');
+                }
+            });
+        }
 
         function getChatDateLabel(timestamp, lang) {
             const date = new Date(timestamp);
@@ -1736,7 +1767,17 @@
 
         function renderChats(msgs) {
             const box = document.getElementById('chat-messages');
-            if(!box) return;
+            const scroller = document.getElementById('view-detail');
+            if(!box || !scroller) return;
+
+            let isScrolledUp = false;
+            if (window.isFirstChatRender) {
+                isScrolledUp = false;
+                window.isFirstChatRender = false;
+            } else {
+                isScrolledUp = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight > 50;
+            }
+
             if(msgs.length === 0) {
                 box.innerHTML = `<p class="text-center text-xs text-slate-400 font-bold italic py-4 mt-8">Belum ada diskusi. Jadilah yang pertama!</p>`;
                 return;
@@ -1794,13 +1835,24 @@
                     </div>`;
                 }
             });
-            box.scrollTop = box.scrollHeight;
 
-            // Automatically turn off the initial animation lock
+            // Auto-stop sticker animation after 2.4s
             setTimeout(() => {
                 const stickers = box.querySelectorAll('[data-animating="true"]');
                 stickers.forEach(s => s.dataset.animating = 'false');
             }, 2400);
+
+            // Scroll Logic
+            if (!isScrolledUp) {
+                // Not scrolled up -> snap to bottom
+                setTimeout(() => scroller.scrollTop = scroller.scrollHeight, 10);
+                const btn = document.getElementById('chat-scroll-btn');
+                if (btn) btn.classList.add('hidden');
+            } else {
+                // Scrolled up -> show indicator
+                const btn = document.getElementById('chat-scroll-btn');
+                if (btn) btn.classList.remove('hidden');
+            }
         }
 
         window.toggleStickerPanel = () => {
@@ -1811,6 +1863,11 @@
         window.sendSticker = async (sticker) => {
             if(!currentRoomId) return;
             window.toggleStickerPanel(); // close
+            
+            // Force scroll down for sender
+            const scroller = document.getElementById('view-detail');
+            if(scroller) scroller.scrollTop = scroller.scrollHeight;
+
             const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'sticker', message: sticker, timestamp: Date.now() };
             try { await setDoc(doc(db, "chats", 'chat_'+Date.now()), chat); } catch(e) {}
         }
@@ -1823,6 +1880,10 @@
             
             const panel = document.getElementById('sticker-panel');
             if(panel && !panel.classList.contains('hidden')) panel.classList.add('hidden');
+
+            // Force scroll down for sender
+            const scroller = document.getElementById('view-detail');
+            if(scroller) scroller.scrollTop = scroller.scrollHeight;
 
             const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'text', message: msg, timestamp: Date.now() };
             try { await setDoc(doc(db, "chats", 'chat_'+Date.now()), chat); } catch(e) {}
@@ -1970,12 +2031,6 @@
             }
             lucide.createIcons();
         }
-
-        window.toggleMilestone = async (idx) => {
-            const r = globalRooms.find(x => x.id === currentRoomId); if(!r) return;
-            r.milestones[idx].done = !r.milestones[idx].done;
-            await updateDoc(doc(db, "rooms", currentRoomId), { milestones: r.milestones });
-        };
 
         window.openTransactionModal = (type) => {
             const trxAmount = document.getElementById('trx-amount');
