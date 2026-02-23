@@ -14,6 +14,8 @@
     
     <!-- Dynamic Manifest Link -->
     <link rel="manifest" id="manifest-link">
+    <!-- Icon for iOS with built-in padding (Play Games Style) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2VlZjJmZiIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyOCwgMTI4KSBzY2FsZSgwLjUpIj48cGF0aCBmaWxsPSIjNGY0NmU1IiBkPSJNMjU2IDk2TDY0IDE5MnY0Mi42aDM4NFYxOTJMMjU2IDk2em0tMTQ5LjMgMTgxLjN2MTQ5LjRoNDIuNlYyNzcuM2gtNDIuNnptMTA2LjYgMHYxNDkuNGg0Mi42VjI3Ny4zaC00Mi42em0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNIMzIwem0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNoLTQyLjZ6TTY0IDQ2OS4zdjQyLjZoMzg0di00Mi42SDY0eiIvPjwvZz48L3N2Zz4=">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -95,7 +97,7 @@
         </div>
 
         <!-- REALTIME NOTIFICATION TOAST -->
-        <div id="realtime-notif" class="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-[90%] max-w-[400px] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-[110] flex items-start gap-3 transition-transform duration-300">
+        <div id="realtime-notif" class="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-[90%] max-w-[400px] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-[110] flex items-start gap-3 transition-transform duration-300 cursor-pointer" onclick="this.classList.replace('translate-y-4', '-translate-y-full')">
             <div class="bg-white/20 p-2 rounded-full shrink-0"><i data-lucide="bell-ring" class="w-5 h-5 text-white"></i></div>
             <div>
                 <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-0.5" data-t="notif_title">Aktivitas Baru!</p>
@@ -241,14 +243,13 @@
 
             <!-- TAB CONTENT 2: DISKUSI (Zero Gap & Fixed Input) -->
             <div id="room-tab-diskusi" class="hidden">
-                <!-- Padding bottom ditambah agar chat tidak tertutup input -->
                 <div class="p-6 pb-28 relative flex flex-col justify-end min-h-[calc(100vh-220px)]">
                     <div id="chat-messages" class="w-full space-y-4 pr-2">
                         <!-- Chats injected here -->
                     </div>
                 </div>
 
-                <!-- Floating Scroll Down Button (New Message Indicator) -->
+                <!-- Floating Scroll Down Button -->
                 <button id="chat-scroll-btn" onclick="window.scrollToBottomChat(false)" class="fixed bottom-[90px] right-6 z-40 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 p-3 rounded-full shadow-xl border border-slate-100 dark:border-slate-700 hidden active:scale-90 transition-transform">
                     <i data-lucide="chevron-down" class="w-5 h-5"></i>
                     <span id="chat-unread-dot-hint" class="absolute top-0 right-0 w-3 h-3 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800 hidden"></span>
@@ -284,13 +285,12 @@
                         <button onpointerdown="event.preventDefault(); window.toggleStickerPanel()" class="p-3 text-slate-400 hover:text-indigo-500 bg-white dark:bg-slate-800 rounded-xl transition-colors shadow-sm"><i data-lucide="smile" class="w-6 h-6"></i></button>
                         <!-- Autocomplete OFF & Spellcheck False -->
                         <input type="text" id="chat-input" autocomplete="off" spellcheck="false" placeholder="Ketik pesan..." data-t="type_message" class="flex-1 p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-bold text-slate-900 dark:text-white shadow-sm">
-                        <!-- Gunakan onpointerdown agar input tidak kehilangan fokus (Keyboard tidak turun) saat diklik -->
                         <button onpointerdown="event.preventDefault(); window.sendChatMessage()" class="p-3.5 bg-indigo-600 text-white rounded-xl active:scale-90 transition-transform shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="send" class="w-5 h-5"></i></button>
                     </div>
                 </div>
             </div>
 
-            <!-- FAB TRANSACTION (Hanya muncul di Tab Ringkasan) -->
+            <!-- FAB TRANSACTION -->
             <button id="fab-trx" onclick="window.showModal('modal-action-sheet')" class="fixed bottom-6 right-6 z-40 bg-premium text-white p-4 rounded-full shadow-2xl shadow-indigo-500/50 dark:shadow-none active:scale-90 transition-transform">
                 <i data-lucide="plus" class="w-7 h-7"></i>
             </button>
@@ -330,11 +330,12 @@
                 <p id="profile-stats" class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 inline-block px-4 py-1.5 rounded-full">0 Tabungan Aktif</p>
             </div>
 
-            <div class="p-6 space-y-8">
+            <div class="p-6 space-y-8 mt-4">
                 <div>
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="data_activities">Data & Aktivitas</h3>
                     <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
-                        <div onclick="window.switchView('view-archive')" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800">
+                        <!-- Menggunakan switchView dengan PushState untuk sub-halaman Arsip -->
+                        <div onclick="window.switchView('view-archive', null, true)" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors border-b border-slate-100 dark:border-slate-800">
                             <div class="flex items-center gap-4">
                                 <div class="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-xl"><i data-lucide="archive" class="w-5 h-5"></i></div>
                                 <div>
@@ -806,22 +807,27 @@
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install'];
 
         // --- DYNAMIC MANIFEST & SERVICE WORKER ---
-        const svgAppIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" fill="#eef2ff"/><path fill="#4f46e5" d="M256 96L64 192v42.6h384V192L256 96zm-149.3 181.3v149.4h42.6V277.3h-42.6zm106.6 0v149.4h42.6V277.3h-42.6zm106.7 0v149.4h42.6V277.3H320zm106.7 0v149.4h42.6V277.3h-42.6zM64 469.3v42.6h384v-42.6H64z"/></svg>`;
-        const encodedAppIcon = 'data:image/svg+xml;base64,' + btoa(svgAppIcon);
-        
         const manifestData = {
             "name": "Tabungan Bersama",
             "short_name": "Tabungan",
-            "start_url": window.location.pathname || "/",
+            "start_url": "/?source=pwa",
             "display": "standalone",
             "background_color": "#f8fafc",
             "theme_color": "#4f46e5",
-            "icons": [{
-                "src": encodedAppIcon,
-                "sizes": "512x512",
-                "type": "image/svg+xml",
-                "purpose": "any" 
-            }]
+            "icons": [
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any maskable" 
+                },
+                {
+                    "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable" 
+                }
+            ]
         };
         const manifestString = JSON.stringify(manifestData);
         const manifestLink = document.getElementById('manifest-link');
@@ -834,8 +840,11 @@
                 self.addEventListener('install', function(e) { self.skipWaiting(); });
                 self.addEventListener('activate', function(e) { e.waitUntil(self.clients.claim()); });
                 self.addEventListener('fetch', function(e) { 
-                    // Mencegat request fetch adalah syarat wajib Chrome PWA install prompt
-                    e.respondWith(fetch(e.request).catch(function() { return new Response('Aplikasi offline.'); })); 
+                    e.respondWith(
+                        fetch(e.request).catch(function() { 
+                            return new Response('<html><body style="font-family:sans-serif;text-align:center;padding-top:50px;">Aplikasi Offline</body></html>', {headers: {'Content-Type': 'text/html'}}); 
+                        })
+                    ); 
                 });
             `;
             const blob = new Blob([swCode], {type: 'application/javascript'});
@@ -849,11 +858,11 @@
         });
 
         // Setel history root agar back tidak bablas ke halaman sebelumnya di browser
-        history.replaceState({ exitApp: true }, "", location.href);
+        history.replaceState({ viewId: 'exit' }, "", location.href);
         history.pushState({ viewId: 'view-home', navId: 'nav-home', isTab: true }, "", location.href);
 
         window.addEventListener('popstate', (e) => {
-            // 1. Cek Modal Terbuka
+            // Cek Modal Terbuka
             const modals = document.querySelectorAll('.fixed.z-\\[55\\], .fixed.z-\\[60\\], .fixed.z-\\[70\\]');
             let isModalOpen = false;
             modals.forEach(m => {
@@ -868,8 +877,8 @@
                 return;
             }
 
-            // 2. View Routing
-            if (e.state && e.state.exitApp) {
+            // Route ke page sesuai state
+            if (e.state && e.state.viewId === 'exit') {
                 const now = Date.now();
                 if (now - lastBackPress < 2000) {
                     history.go(-1); // Benar-benar keluar
@@ -887,16 +896,29 @@
             }
         });
 
-        // Pengatur Navigasi Tab Bawah
+        // Pengatur Navigasi Tab Bawah (Anti-Looping)
         window.navigateTab = (viewId, navId) => {
-            const currentState = history.state || { viewId: 'view-home', isTab: true };
+            const currentState = history.state || {};
             
-            // Jika user di tab lain (cth: Profil) lalu menekan tombol Beranda (Home), 
-            // kita pakai perintah history.back() agar stack history memendek dengan benar.
-            if (viewId === 'view-home' && currentState.viewId !== 'view-home' && currentState.isTab) {
-                history.back(); 
+            if (viewId === currentState.viewId) return;
+
+            if (viewId === 'view-home') {
+                // Jika ingin ke home dari tab lain, cukup panggil back untuk menghapus stack
+                if (currentState.isTab && currentState.viewId !== 'view-home') {
+                    history.back(); 
+                } else {
+                    window.switchView(viewId, navId, 'replace');
+                }
             } else {
-                window.switchView(viewId, navId, true);
+                if (currentState.viewId === 'view-home') {
+                    // Beranda ke Tab -> tumpuk (push)
+                    window.switchView(viewId, navId, true);
+                } else if (currentState.isTab) {
+                    // Tab ke Tab lain -> ganti (replace) agar back tidak muter-muter
+                    window.switchView(viewId, navId, 'replace');
+                } else {
+                    window.switchView(viewId, navId, true);
+                }
             }
         };
 
@@ -916,7 +938,7 @@
             if(t) { 
                 t.innerText = msg; 
                 t.className = `fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 ${isError ? 'bg-rose-600' : 'bg-slate-900 dark:bg-slate-800'} text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none`;
-                void t.offsetWidth; 
+                void t.offsetWidth; // Trigger reflow
                 t.classList.add('toast-visible'); 
                 setTimeout(() => t.classList.remove('toast-visible'), 3000); 
             }
@@ -1489,7 +1511,7 @@
 
             try {
                 await setDoc(doc(db, "rooms", roomId), newRoom);
-                window.switchView('view-home', 'nav-home');
+                window.switchView('view-home', 'nav-home', true);
                 window.showToast("Berhasil dibuat!");
                 nameEl.value = ''; btn.disabled = false; btn.innerText = 'Simpan';
             } catch(e) { window.showToast("Terjadi kesalahan.", true); btn.disabled = false; }
@@ -1553,6 +1575,12 @@
                 cDiskusi.classList.add('hidden');
                 if(fab) fab.classList.remove('hidden');
                 
+                // Ringkasan langsung ke atas (Instan)
+                const scroller = document.getElementById('view-detail');
+                if (scroller) {
+                    scroller.style.scrollBehavior = 'auto'; 
+                    scroller.scrollTop = 0;
+                }
             } else {
                 tDiskusi.classList.replace('bg-white', 'bg-slate-900');
                 tDiskusi.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600');
@@ -1781,7 +1809,7 @@
                 stickers.forEach(s => s.dataset.animating = 'false');
             }, 2400);
 
-            // Logika Scroll Cerdas (Perbaikan Bug Target Scroll)
+            // Logika Scroll Cerdas
             if (window.isFirstChatRender || latestIsMe || !isScrolledUp) {
                 setTimeout(() => window.scrollToBottomChat(window.isFirstChatRender), 10);
                 window.isFirstChatRender = false;
@@ -2109,19 +2137,6 @@
                 pendingTransaction = null; // Reset
                 window.showToast("Transaksi Berhasil!");
 
-                // Kembalikan scroll ringkasan ke atas saat berhasil menabung/tarik
-                const scroller = document.getElementById('view-detail');
-                const ringkasanTab = document.getElementById('room-tab-ringkasan');
-                if (scroller && ringkasanTab && !ringkasanTab.classList.contains('hidden')) {
-                    scroller.style.scrollBehavior = 'smooth';
-                    scroller.scrollTop = 0;
-                }
-
-                if(reachedGoal) {
-                    const celebName = document.getElementById('celeb-room-name');
-                    if(celebName) celebName.innerText = r.name;
-                    setTimeout(() => { window.showModal('modal-celebration'); }, 500);
-                }
             } catch(e) { 
                 window.showToast("Terjadi kesalahan sistem.", true); 
                 btn.disabled = false; btn.innerText = origText; 
@@ -2168,7 +2183,7 @@
 
         window.changeTimeFilter = (val) => { currentTimeFilter = val; updateUI(); }
 
-        window.switchView = (viewId, navId = null, pushState = true) => {
+        window.switchView = (viewId, navId = null, pushMode = true) => {
             const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
             views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
             const target = document.getElementById(viewId); 
@@ -2195,8 +2210,12 @@
                 }
             }
             
-            if(pushState) {
-                history.pushState({ viewId, navId }, "", location.href);
+            if(pushMode === true) {
+                // Untuk membuka sub-halaman baru seperti view-detail, view-archive, view-create
+                history.pushState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
+            } else if (pushMode === 'replace') {
+                // Untuk pindah antar tab (Home -> History -> Profile)
+                history.replaceState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
             }
             
             if(viewId === 'view-create') renderCategoryOptions();
@@ -2265,7 +2284,7 @@
             await deleteDoc(doc(db, "rooms", roomToDelete));
             appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
             window.saveLocal(); syncJoinedRoomsToCloud();
-            window.closeAllModals(); window.switchView('view-home', 'nav-home');
+            window.closeAllModals(); window.switchView('view-home', 'nav-home', false);
         };
 
         window.leaveCurrentRoom = async () => {
@@ -2282,7 +2301,7 @@
                     await updateDoc(rRef, { members: members });
                 }
             } catch(e) {}
-            window.closeAllModals(); window.switchView('view-home', 'nav-home');
+            window.closeAllModals(); window.switchView('view-home', 'nav-home', false);
         };
 
         window.completeAndArchiveRoom = async () => {
@@ -2290,7 +2309,7 @@
             try {
                 await updateDoc(doc(db, "rooms", currentRoomId), { isArchived: true });
                 window.closeAllModals();
-                window.switchView('view-home', 'nav-home');
+                window.switchView('view-home', 'nav-home', false);
                 window.showToast(appData.language === 'id' ? "Berhasil diarsipkan" : "Archived");
             } catch(e) { window.showToast("Gagal mengarsipkan.", true); }
         };
@@ -2433,6 +2452,7 @@
                 });
             }
 
+            // HISTORY MEMORY PAGINATION LOGIC
             const gHistContainer = document.getElementById('global-history-container');
             if(gHistContainer) {
                 gHistContainer.innerHTML = '';
