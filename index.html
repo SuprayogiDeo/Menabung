@@ -42,6 +42,10 @@
         @keyframes shadowScale { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(0.5); opacity: 0.15; } }
         @keyframes floatCoin { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(15deg); } }
         
+        /* Sticker Temp Animation (Moves for a few seconds then stops) */
+        @keyframes floatYTemp { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-10px) rotate(-5deg); } 75% { transform: translateY(-5px) rotate(5deg); } }
+        .anim-float-temp { animation: floatYTemp 1.2s ease-in-out 2; } /* Runs twice, approx 2.4s total */
+
         .anim-float { animation: floatY 2.5s ease-in-out infinite; }
         .anim-shadow { animation: shadowScale 2.5s ease-in-out infinite; }
         .anim-coin-1 { animation: floatCoin 2s ease-in-out infinite; }
@@ -123,7 +127,7 @@
             </div>
 
             <div class="px-6 pb-6 bg-white dark:bg-slate-900 rounded-b-[2.5rem] shadow-sm border-b border-slate-100 dark:border-slate-800">
-                <div class="bg-premium-gradient rounded-[2rem] p-7 shadow-xl shadow-indigo-200/40 dark:shadow-none text-white relative overflow-hidden flex flex-col justify-between mb-5">
+                <div class="bg-premium-gradient rounded-[2rem] p-6 shadow-xl shadow-indigo-200/40 dark:shadow-none text-white relative overflow-hidden flex flex-col justify-between mb-5">
                     <div>
                         <div class="relative z-10 flex justify-between items-center mb-1">
                             <p class="text-indigo-100 font-medium text-xs opacity-80 uppercase tracking-widest" data-t="total_balance">Total Saldo</p>
@@ -131,10 +135,17 @@
                                 <i id="eye-icon" data-lucide="eye" class="w-4 h-4 text-white"></i>
                             </button>
                         </div>
-                        <h1 id="total-balance" class="text-4xl font-black tracking-tight mb-8" data-value="0">Rp 0</h1>
+                        <h1 id="total-balance" class="text-4xl font-black tracking-tight mb-4" data-value="0">Rp 0</h1>
+                    </div>
+
+                    <!-- DANA-LIKE LIVE FEED CONTAINER (Inside Blue Card) -->
+                    <div id="live-feed-container" class="bg-white/20 backdrop-blur-sm border border-white/10 rounded-xl p-2.5 shadow-inner hidden flex-col mb-5">
+                        <div id="live-feed-list" class="max-h-[75px] overflow-y-auto no-scrollbar space-y-2 snap-y">
+                            <!-- Feed items injected here -->
+                        </div>
                     </div>
                     
-                    <div class="relative z-10 pt-5 border-t border-white/20 flex justify-between items-center">
+                    <div class="relative z-10 pt-4 border-t border-white/20 flex justify-between items-center">
                         <div>
                             <p id="label-income" class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter">Masuk</p>
                             <p id="mutasi-in" class="font-bold text-sm text-emerald-300" data-value="0">Rp 0</p>
@@ -145,12 +156,6 @@
                             <p id="mutasi-out" class="font-bold text-sm text-rose-300" data-value="0">Rp 0</p>
                         </div>
                     </div>
-                </div>
-
-                <!-- STANDALONE LIVE FEED CONTAINER -->
-                <div id="live-feed-container" class="bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/50 rounded-2xl p-2.5 shadow-sm hidden flex-col">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 px-2 pt-1">Aktivitas Terbaru</p>
-                    <div id="live-feed-list" class="max-h-[120px] overflow-y-auto no-scrollbar space-y-1"></div>
                 </div>
             </div>
 
@@ -202,7 +207,10 @@
             <div class="px-8 pb-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
                 <div class="flex gap-2 overflow-x-auto no-scrollbar justify-center">
                     <button onclick="window.switchRoomTab('ringkasan')" id="tab-ringkasan" class="px-6 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="tab_summary">Ringkasan</button>
-                    <button onclick="window.switchRoomTab('diskusi')" id="tab-diskusi" class="px-6 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="tab_discussion">Diskusi</button>
+                    <button onclick="window.switchRoomTab('diskusi')" id="tab-diskusi" class="relative px-6 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full whitespace-nowrap shadow-sm transition-colors" data-t="tab_discussion">
+                        Diskusi
+                        <span id="chat-unread-dot" class="absolute top-0 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white dark:border-slate-800 hidden"></span>
+                    </button>
                 </div>
             </div>
 
@@ -236,13 +244,13 @@
 
             <!-- TAB CONTENT 2: DISKUSI (Chat Panel) -->
             <div id="room-tab-diskusi" class="hidden">
-                <div class="p-6 relative flex flex-col h-[55vh]">
+                <div class="p-6 relative flex flex-col min-h-[55vh]">
                     <div id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar pb-2 space-y-4 pr-2">
                         <!-- Chats injected here -->
                     </div>
 
                     <!-- Sticker Panel -->
-                    <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden grid-cols-4 gap-3 z-30 transition-all justify-items-center">
+                    <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-2 z-30 transition-all justify-center">
                         <button onclick="window.sendSticker('💸')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💸</button>
                         <button onclick="window.sendSticker('🤑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤑</button>
                         <button onclick="window.sendSticker('🚀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚀</button>
@@ -255,6 +263,15 @@
                         <button onclick="window.sendSticker('😭')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">😭</button>
                         <button onclick="window.sendSticker('💀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💀</button>
                         <button onclick="window.sendSticker('🤡')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤡</button>
+                        <button onclick="window.sendSticker('🥳')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🥳</button>
+                        <button onclick="window.sendSticker('🤯')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤯</button>
+                        <button onclick="window.sendSticker('🤝')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤝</button>
+                        <button onclick="window.sendSticker('🥂')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🥂</button>
+                        <button onclick="window.sendSticker('🗿')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🗿</button>
+                        <button onclick="window.sendSticker('🛑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🛑</button>
+                        <button onclick="window.sendSticker('🚨')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚨</button>
+                        <button onclick="window.sendSticker('💡')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💡</button>
+                        <button onclick="window.sendSticker('💎')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💎</button>
                     </div>
 
                     <div class="flex items-center gap-2 pt-4 relative z-20 mt-auto bg-slate-50 dark:bg-slate-950">
@@ -709,6 +726,7 @@
         
         let chatUnsubscribe = null; 
         let lastBackPress = 0; 
+        let lastChatCounts = {}; // Tracker for unread badge
 
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-name-entry'];
 
@@ -1186,6 +1204,10 @@
                 cRingkasan.classList.add('hidden');
                 cDiskusi.classList.remove('hidden');
                 
+                // Clear unread dot
+                const dot = document.getElementById('chat-unread-dot');
+                if (dot) dot.classList.add('hidden');
+                
                 // Scroll down
                 const box = document.getElementById('chat-messages');
                 if(box) box.scrollTop = box.scrollHeight;
@@ -1204,8 +1226,51 @@
                 const msgs = [];
                 snap.forEach(d => { if(d.data().roomId === id) msgs.push(d.data()); });
                 msgs.sort((a,b) => a.timestamp - b.timestamp);
+                
+                // Red dot logic for new messages when not in diskusi tab
+                const newCount = msgs.length;
+                if (lastChatCounts[id] !== undefined && newCount > lastChatCounts[id]) {
+                    const cDiskusi = document.getElementById('room-tab-diskusi');
+                    if (cDiskusi && cDiskusi.classList.contains('hidden')) {
+                        const dot = document.getElementById('chat-unread-dot');
+                        if (dot) dot.classList.remove('hidden');
+                    }
+                }
+                lastChatCounts[id] = newCount;
+                
                 renderChats(msgs);
             });
+        };
+
+        function getChatDateLabel(timestamp, lang) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const msgDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const diffTime = today - msgDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            const isId = lang === 'id';
+
+            if (diffDays === 0) return isId ? 'Hari Ini' : 'Today';
+            if (diffDays === 1) return isId ? 'Kemarin' : 'Yesterday';
+            
+            if (diffDays > 1 && diffDays < 7) {
+                const daysId = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const daysEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return isId ? daysId[date.getDay()] : daysEn[date.getDay()];
+            }
+            
+            const monthsId = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+            const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthStr = isId ? monthsId[date.getMonth()] : monthsEn[date.getMonth()];
+            return `${date.getDate()} ${monthStr} ${date.getFullYear()}`;
+        }
+
+        window.animateSticker = (el) => {
+            el.classList.remove('anim-float-temp');
+            void el.offsetWidth; // trigger reflow
+            el.classList.add('anim-float-temp');
         };
 
         function renderChats(msgs) {
@@ -1215,10 +1280,20 @@
                 box.innerHTML = `<p class="text-center text-xs text-slate-400 font-bold italic py-4 mt-8">Belum ada diskusi. Jadilah yang pertama!</p>`;
                 return;
             }
+            
             box.innerHTML = '';
+            let lastDateLabel = '';
+
             msgs.forEach(m => {
                 const isMe = m.uid === appData.uid;
                 const avaChar = m.avatar.emoji || m.name.charAt(0).toUpperCase();
+                
+                // Add Date Separator
+                const dateLabel = getChatDateLabel(m.timestamp, appData.language);
+                if (dateLabel !== lastDateLabel) {
+                    box.innerHTML += `<div class="flex justify-center my-4"><span class="bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">${dateLabel}</span></div>`;
+                    lastDateLabel = dateLabel;
+                }
                 
                 // Format Mentions
                 let formattedMsg = m.message;
@@ -1233,22 +1308,22 @@
 
                 if(isMe) {
                     box.innerHTML += `
-                    <div class="flex flex-col items-end w-full pl-8">
+                    <div class="flex flex-col items-end w-full pl-8 mb-2">
                         <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1">Anda</span>
                         ${m.type === 'sticker' 
-                            ? `<div class="text-6xl anim-float">${m.message}</div>` 
+                            ? `<div class="text-6xl cursor-pointer anim-float-temp" onclick="window.animateSticker(this)">${m.message}</div>` 
                             : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
                         }
                     </div>`;
                 } else {
                     box.innerHTML += `
-                    <div class="flex flex-col items-start w-full pr-8">
+                    <div class="flex flex-col items-start w-full pr-8 mb-2">
                         <div class="flex items-center gap-2 mb-1">
                             <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
                             <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
                         </div>
                          ${m.type === 'sticker' 
-                            ? `<div class="text-6xl ml-7 anim-float">${m.message}</div>` 
+                            ? `<div class="text-6xl ml-7 cursor-pointer anim-float-temp" onclick="window.animateSticker(this)">${m.message}</div>` 
                             : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
                         }
                     </div>`;
@@ -1756,7 +1831,7 @@
             const profStats = document.getElementById('profile-stats');
             if(profStats) profStats.innerText = `${activeRooms.length} Tabungan Aktif`;
             
-            // FEED (Notif 5 max)
+            // FEED (Notif 5 max) Inside Blue Card
             const liveFeedContainer = document.getElementById('live-feed-container');
             const liveFeedList = document.getElementById('live-feed-list');
             if(liveFeedContainer && liveFeedList) {
@@ -1772,12 +1847,13 @@
                         const verbOut = isId ? 'menarik' : 'withdrew';
                         const verb = latest.type === 'in' ? verbIn : verbOut;
                         const prepStr = latest.type === 'in' ? (isId ? 'di' : 'to') : (isId ? 'dari' : 'from');
+                        const justStr = isId ? 'baru saja' : 'just';
                         
                         liveFeedList.innerHTML += `
-                            <div class="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors cursor-pointer active:scale-[0.98]" onclick="window.openRoomDetail('${latest.roomId}')">
-                                <div class="text-2xl shrink-0 drop-shadow-sm">${latest.type === 'in' ? '💰' : '💸'}</div>
-                                <p class="text-[11px] font-bold leading-snug text-slate-600 dark:text-slate-300 line-clamp-2">
-                                    <span class="text-indigo-600 dark:text-indigo-400">${latest.userName}</span> ${isId?'baru saja':'just'} <span class="${latest.type === 'in' ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-rose-600 dark:text-rose-400 font-black'}">${verb} Rp ${latest.amount.toLocaleString('id-ID')}</span> ${prepStr} <b class="text-slate-800 dark:text-white">${latest.roomName}</b>
+                            <div class="flex items-center gap-3 p-1 rounded-lg snap-start cursor-pointer active:scale-[0.98]" onclick="window.openRoomDetail('${latest.roomId}')">
+                                <div class="text-xl shrink-0 drop-shadow-sm">${latest.type === 'in' ? '💰' : '💸'}</div>
+                                <p class="text-[10px] font-medium leading-snug text-white/90 line-clamp-2">
+                                    <b>${latest.userName}</b> ${justStr} <span class="${latest.type === 'in' ? 'text-emerald-300 font-bold' : 'text-rose-300 font-bold'}">${verb} Rp ${latest.amount.toLocaleString('id-ID')}</span> ${prepStr} <b>${latest.roomName}</b>
                                 </p>
                             </div>
                         `;
@@ -1963,7 +2039,7 @@
                 });
             }
 
-            const EMOJIS = ['A', '🐱', '🐶', '🦊', '🦄', '🦖', '🐮', '🐸', '👽', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻', '🚀', '🎸', '⚽'];
+            const EMOJIS = ['A', '🐱', '🐶', '🦊', '🦄', '🦖', '🐮', '🐸', '👽', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻', '🚀', '🎸', '⚽', '😎', '🥸', '🦁', '🦉', '🦋'];
             const emojiDiv = document.getElementById('emoji-options');
             if (emojiDiv) {
                 emojiDiv.innerHTML = '';
