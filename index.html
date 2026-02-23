@@ -179,7 +179,7 @@
         </main>
 
         <!-- VIEW 2: DETAIL ROOM -->
-        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-slate-50 dark:bg-slate-950 hidden relative">
+        <main id="view-detail" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden relative">
             <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-20 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
                 <div class="flex items-center gap-3 flex-1 overflow-hidden">
                     <button onclick="window.history.back()" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
@@ -244,13 +244,15 @@
 
             <!-- TAB CONTENT 2: DISKUSI -->
             <div id="room-tab-diskusi" class="hidden">
-                <div class="p-6 relative flex flex-col min-h-[55vh]">
+                <div class="p-6 pb-20 relative flex flex-col min-h-[50vh]">
                     <div id="chat-messages" class="flex-1 overflow-y-auto no-scrollbar pb-2 space-y-4 pr-2">
                         <!-- Chats injected here -->
                     </div>
+                </div>
 
-                    <!-- Sticker Panel -->
-                    <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-2 z-30 transition-all justify-center">
+                <!-- FIXED CHAT INPUT -->
+                <div class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40">
+                    <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-2 transition-all justify-center">
                         <button onclick="window.sendSticker('💸')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💸</button>
                         <button onclick="window.sendSticker('🤑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤑</button>
                         <button onclick="window.sendSticker('🚀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚀</button>
@@ -274,7 +276,7 @@
                         <button onclick="window.sendSticker('💎')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💎</button>
                     </div>
 
-                    <div class="flex items-center gap-2 pt-4 relative z-20 mt-auto bg-slate-50 dark:bg-slate-950">
+                    <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 pb-safe">
                         <button onclick="window.toggleStickerPanel()" class="p-3 text-slate-400 hover:text-indigo-500 bg-white dark:bg-slate-800 rounded-xl transition-colors shadow-sm"><i data-lucide="smile" class="w-6 h-6"></i></button>
                         <input type="text" id="chat-input" placeholder="Ketik pesan..." data-t="type_message" class="flex-1 p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-bold text-slate-900 dark:text-white shadow-sm">
                         <button onclick="window.sendChatMessage()" class="p-3.5 bg-indigo-600 text-white rounded-xl active:scale-90 transition-transform shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="send" class="w-5 h-5"></i></button>
@@ -358,7 +360,13 @@
                 <div>
                     <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="app_settings">Pengaturan Aplikasi</h3>
                     <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
-                        <!-- Push Notif Settings Toggle -->
+                        <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors" onclick="window.handleInstallApp()">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-sky-50 dark:bg-sky-900/20 text-sky-500 rounded-xl"><i data-lucide="download" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="install_app">Install Aplikasi</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
+                        </div>
                         <div class="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
                             <div class="flex items-center gap-4">
                                 <div class="p-2.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-500 rounded-xl"><i data-lucide="bell" class="w-5 h-5"></i></div>
@@ -513,6 +521,19 @@
                 <div class="flex gap-3">
                     <button onclick="window.closeConfirmModal()" class="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black rounded-2xl active:scale-95 transition-transform border border-slate-200 dark:border-slate-700">Batal</button>
                     <button id="btn-confirm-yes" onclick="window.executeTransaction()" class="flex-1 py-4 bg-premium text-white font-black rounded-2xl shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 transition-transform">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL TUTORIAL INSTALL PWA -->
+        <div id="modal-install" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="install_title">Cara Install</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div id="install-instructions" class="space-y-4">
+                    <!-- Dynamic Install Info -->
                 </div>
             </div>
         </div>
@@ -756,6 +777,8 @@
                 placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi", category: "Kategori",
                 install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan", leave: "Keluar Tabungan",
                 share_title: "Undang Teman",
+                install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
+                install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
                 install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
                 login_desc: "Simpan data tabungan Anda dengan aman di awan.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
                 name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
@@ -783,6 +806,8 @@
                 placeholder_goal: "Buy a Laptop...", install_app: "Install App", category: "Category",
                 install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal", leave: "Leave Goal",
                 share_title: "Invite Friends",
+                install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
+                install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen'",
                 install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
                 login_desc: "Save your savings data securely in the cloud.", login_google: "Sign in with Google", logout: "Log Out",
                 name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
@@ -837,9 +862,12 @@
 
         // Auth States
         let isLoginMode = true;
-        let pendingTransaction = null; // Menyimpan data sementara untuk konfirmasi transaksi
+        let pendingTransaction = null; 
 
-        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-name-entry', 'modal-action-sheet'];
+        // PWA Prompt
+        let deferredPrompt;
+
+        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install'];
 
         // --- INLINE SERVICE WORKER FOR MOBILE PUSH NOTIFICATIONS ---
         if ('serviceWorker' in navigator) {
@@ -857,6 +885,11 @@
         }
 
         // --- ROUTING / HARDWARE BACK BUTTON ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', (e) => {
             const currentView = document.querySelector('main:not(.hidden)')?.id;
@@ -948,18 +981,18 @@
                 const m = document.getElementById(id); 
                 if(m) {
                     m.classList.add('translate-y-full');
-                    if(id === 'modal-celebration' || id === 'modal-name-entry') m.classList.add('hidden');
+                    if(id === 'modal-celebration' || id === 'modal-name-entry' || id === 'modal-confirm-trx') m.classList.add('hidden');
                     else setTimeout(() => m.classList.add('hidden'), 300);
                 }
             });
             const overlay = document.getElementById('modal-overlay'); if(overlay) overlay.classList.add('hidden');
-            window.closeConfirmModal(); // Close confirm modal safely too
+            window.closeConfirmModal(); 
         };
 
         window.showModal = (id) => {
             const overlay = document.getElementById('modal-overlay');
             const m = document.getElementById(id);
-            if(id !== 'modal-celebration' && id !== 'modal-name-entry' && overlay) overlay.classList.remove('hidden');
+            if(id !== 'modal-celebration' && id !== 'modal-name-entry' && id !== 'modal-confirm-trx' && overlay) overlay.classList.remove('hidden');
             if(m) {
                 m.classList.remove('hidden');
                 setTimeout(() => m.classList.remove('translate-y-full'), 10);
@@ -1018,6 +1051,52 @@
             else document.documentElement.classList.remove('dark');
         };
 
+        window.handleInstallApp = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    deferredPrompt = null;
+                }
+            } else {
+                window.showInstallTutorial();
+            }
+        };
+
+        window.showInstallTutorial = () => {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const container = document.getElementById('install-instructions');
+            const lang = i18n[appData.language];
+
+            if(isIOS) {
+                container.innerHTML = `
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">${lang.install_ios_desc}</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2">
+                        <i data-lucide="share" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">1. ${lang.install_ios_step1}</p>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                        <i data-lucide="plus-square" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">2. ${lang.install_ios_step2}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">${lang.install_android_desc}</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2">
+                        <i data-lucide="more-vertical" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">1. ${lang.install_android_step1}</p>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                        <i data-lucide="download" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">2. ${lang.install_android_step2}</p>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+            window.showModal('modal-install');
+        }
+
         window.requestPushPermission = async () => {
             const toggle = document.getElementById('toggle-notif');
             if (!toggle) return;
@@ -1029,25 +1108,34 @@
                     return;
                 }
                 
-                try {
-                    const permission = await Notification.requestPermission();
-                    if (permission === "granted") {
-                        appData.pushEnabled = true;
-                        window.saveLocal();
-                        window.showToast("Notifikasi berhasil diaktifkan!");
-                    } else {
-                        appData.pushEnabled = false;
-                        window.saveLocal();
+                if (Notification.permission === "granted") {
+                    appData.pushEnabled = true;
+                    window.saveLocal();
+                    window.showToast("Notifikasi berhasil diaktifkan!");
+                } else if (Notification.permission !== "denied") {
+                    try {
+                        const permission = await Notification.requestPermission();
+                        if (permission === "granted") {
+                            appData.pushEnabled = true;
+                            window.saveLocal();
+                            window.showToast("Notifikasi berhasil diaktifkan!");
+                        } else {
+                            appData.pushEnabled = false;
+                            window.saveLocal();
+                            toggle.checked = false;
+                            window.showToast("Izin notifikasi ditolak oleh browser.", true);
+                        }
+                    } catch(e) {
                         toggle.checked = false;
-                        window.showToast("Izin notifikasi ditolak oleh sistem.", true);
                     }
-                } catch(e) {
+                } else {
                     toggle.checked = false;
+                    window.showToast("Notifikasi diblokir di pengaturan browser Anda.", true);
                 }
             } else {
                 appData.pushEnabled = false;
                 window.saveLocal();
-                window.showToast("Notifikasi dinonaktifkan.");
+                window.showToast("Notifikasi dalam aplikasi dimatikan. (Ubah via setelan browser untuk matikan penuh)");
             }
         }
 
@@ -1395,7 +1483,7 @@
                         
                         // Notif Sistem (Push Notification) jika pengguna mengaktifkan dan mengizinkan
                         if (appData.pushEnabled && window.Notification && Notification.permission === "granted") {
-                            if ('serviceWorker' in navigator) {
+                            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                                 navigator.serviceWorker.ready.then(reg => {
                                     reg.showNotification(isId ? "Aktivitas Baru!" : "New Activity!", {
                                         body: notifText,
@@ -1574,7 +1662,7 @@
             window.switchView('view-detail'); 
             history.pushState(null, null, location.href);
             
-            chatRenderLimit = 20; // reset chat limit
+            chatRenderLimit = 20; 
             if(chatUnsubscribe) chatUnsubscribe();
             
             chatUnsubscribe = onSnapshot(collection(db, "chats"), (snap) => {
@@ -1634,9 +1722,16 @@
         }
 
         window.animateSticker = (el) => {
+            if (el.dataset.animating === 'true') return; 
+            el.dataset.animating = 'true';
+            
             el.classList.remove('anim-float-temp');
             void el.offsetWidth; 
             el.classList.add('anim-float-temp');
+            
+            setTimeout(() => {
+                el.dataset.animating = 'false';
+            }, 2400); 
         };
 
         function renderChats(msgs) {
@@ -1649,7 +1744,6 @@
             
             box.innerHTML = '';
             
-            // Memory Pagination Logic
             const visibleMsgs = msgs.slice(-chatRenderLimit);
             if (msgs.length > chatRenderLimit) {
                 box.innerHTML += `<button onclick="window.loadMoreChats()" class="w-full text-center py-2 text-xs font-bold text-indigo-500 hover:text-indigo-600 transition-colors">Muat pesan sebelumnya...</button>`;
@@ -1682,7 +1776,7 @@
                     <div class="flex flex-col items-end w-full pl-8 mb-2">
                         <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1">Anda</span>
                         ${m.type === 'sticker' 
-                            ? `<div class="text-6xl cursor-pointer anim-float-temp" onclick="window.animateSticker(this)">${m.message}</div>` 
+                            ? `<div class="text-6xl cursor-pointer anim-float-temp" data-animating="true" onclick="window.animateSticker(this)">${m.message}</div>` 
                             : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
                         }
                     </div>`;
@@ -1694,13 +1788,19 @@
                             <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
                         </div>
                          ${m.type === 'sticker' 
-                            ? `<div class="text-6xl ml-7 cursor-pointer anim-float-temp" onclick="window.animateSticker(this)">${m.message}</div>` 
+                            ? `<div class="text-6xl ml-7 cursor-pointer anim-float-temp" data-animating="true" onclick="window.animateSticker(this)">${m.message}</div>` 
                             : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
                         }
                     </div>`;
                 }
             });
             box.scrollTop = box.scrollHeight;
+
+            // Automatically turn off the initial animation lock
+            setTimeout(() => {
+                const stickers = box.querySelectorAll('[data-animating="true"]');
+                stickers.forEach(s => s.dataset.animating = 'false');
+            }, 2400);
         }
 
         window.toggleStickerPanel = () => {
@@ -2270,7 +2370,7 @@
             const profStats = document.getElementById('profile-stats');
             if(profStats) profStats.innerText = `${activeRooms.length} Tabungan Aktif`;
             
-            // FEED
+            // FEED (Notif 5 max) Inside Blue Card
             const liveFeedContainer = document.getElementById('live-feed-container');
             const liveFeedList = document.getElementById('live-feed-list');
             if(liveFeedContainer && liveFeedList) {
