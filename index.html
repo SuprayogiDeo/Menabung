@@ -71,10 +71,6 @@
         .chat-bubble-other { border-radius: 1rem 1rem 1rem 0; background-color: #f1f5f9; color: #1e293b; }
         .dark .chat-bubble-other { background-color: #1e293b; color: #f8fafc; }
         
-        /* Pie Chart CSS */
-        .pie-chart { border-radius: 50%; width: 120px; height: 120px; background: conic-gradient(#e2e8f0 0% 100%); transition: background 0.5s ease; box-shadow: inset 0px 0px 20px rgba(0,0,0,0.05); }
-        .dark .pie-chart { box-shadow: inset 0px 0px 20px rgba(0,0,0,0.5); }
-        
         /* Mention Highlight */
         .mention-highlight { color: #3b82f6; font-weight: 900; background: rgba(59, 130, 246, 0.1); padding: 0 4px; border-radius: 4px; }
         .mention-me { color: #f43f5e; font-weight: 900; background: rgba(244, 63, 94, 0.1); padding: 0 4px; border-radius: 4px; }
@@ -290,7 +286,7 @@
                 </div>
             </div>
 
-            <!-- FAB TRANSACTION -->
+            <!-- FAB TRANSACTION (Hanya muncul di Tab Ringkasan) -->
             <button id="fab-trx" onclick="window.showModal('modal-action-sheet')" class="fixed bottom-6 right-6 z-40 bg-premium text-white p-4 rounded-full shadow-2xl shadow-indigo-500/50 dark:shadow-none active:scale-90 transition-transform">
                 <i data-lucide="plus" class="w-7 h-7"></i>
             </button>
@@ -328,16 +324,6 @@
                 <h1 id="profile-username" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">-</h1>
                 <p id="profile-email" class="text-[10px] font-bold text-slate-400 mt-1 mb-2"></p>
                 <p id="profile-stats" class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 inline-block px-4 py-1.5 rounded-full">0 Tabungan Aktif</p>
-            </div>
-
-            <div class="p-6 pb-0">
-                <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4">Analisis Saldo</h3>
-                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm">
-                    <div id="pie-chart-element" class="pie-chart shrink-0"></div>
-                    <div id="pie-chart-legend" class="flex-1 pl-6 space-y-2">
-                        <p class="text-[10px] font-bold text-slate-400 italic">Belum ada data</p>
-                    </div>
-                </div>
             </div>
 
             <div class="p-6 space-y-8">
@@ -686,56 +672,6 @@
             </div>
         </div>
 
-        <!-- MODAL TRANSACTION -->
-        <div id="modal-transaction" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h3 id="trx-title" class="font-black text-2xl text-slate-900 dark:text-white">Transaksi</h3>
-                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
-                </div>
-                <input type="hidden" id="trx-type" value="in">
-                <div class="space-y-6 mb-8 text-left">
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2">Nominal</label>
-                        <div class="relative">
-                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
-                            <input type="text" id="trx-amount" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none focus:ring-4 focus:ring-indigo-500/10">
-                        </div>
-                    </div>
-                    
-                    <div id="trx-milestone-container" class="hidden">
-                        <label class="block text-[10px] font-black text-indigo-500 uppercase mb-2">Bayar Milestone? (Opsional)</label>
-                        <select id="trx-milestone-select" class="w-full p-5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/50 rounded-2xl font-bold text-indigo-700 dark:text-indigo-300 outline-none appearance-none">
-                            <option value="">-- Pilih Milestone --</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="label_depositor">Penyetor</label>
-                        <input type="text" id="trx-user-display" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-500 dark:text-slate-400 outline-none" disabled>
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="label_note">Catatan (Opsional)</label>
-                        <input type="text" id="trx-note" placeholder="..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
-                    </div>
-                </div>
-                <button id="btn-submit-trx" onclick="window.handleTransactionSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl" data-t="confirm">Konfirmasi</button>
-            </div>
-        </div>
-
-        <!-- MODAL CELEBRATION -->
-        <div id="modal-celebration" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-slate-900/90 max-w-[480px] mx-auto backdrop-blur-sm">
-            <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] w-full text-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-premium opacity-10 celeb-ping"></div>
-                <div class="relative z-10">
-                    <div class="text-6xl mb-4">🎉</div>
-                    <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2" data-t="goal_reached">Tercapai!</h2>
-                    <p class="text-slate-500 dark:text-slate-400 font-bold mb-8"><span data-t="celeb_desc">Tabungan</span> <span id="celeb-room-name" class="text-indigo-600 dark:text-indigo-400"></span> <span data-t="celeb_done">lunas 100%!</span></p>
-                    <button onclick="window.closeAllModals()" class="w-full py-4 bg-slate-900 dark:bg-indigo-600 text-white font-black rounded-2xl" data-t="continue">Lanjutkan</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <!-- Firebase SDK Modules -->
@@ -774,7 +710,7 @@
                 install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan", leave: "Keluar Tabungan",
                 share_title: "Undang Teman",
                 install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
-                install_android_desc: "Untuk pengguna Android (Chrome):", install_android_step1: "Tekan ikon Titik Tiga di atas", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
+                install_android_desc: "Aplikasi siap diinstall ke layar utama HP Anda.", install_android_step1: "Tekan ikon Bagikan / Titik Tiga", install_android_step2: "Pilih 'Tambahkan ke Layar Utama'",
                 install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
                 login_desc: "Simpan data tabungan Anda dengan aman di awan.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
                 name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
@@ -803,7 +739,7 @@
                 install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal", leave: "Leave Goal",
                 share_title: "Invite Friends",
                 install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
-                install_android_desc: "For Android users (Chrome):", install_android_step1: "Tap the Three Dots icon at the top", install_android_step2: "Select 'Add to Home screen'",
+                install_android_desc: "App is ready to be installed on your Home Screen.", install_android_step1: "Tap the Share / Three Dots icon", install_android_step2: "Select 'Add to Home screen'",
                 install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
                 login_desc: "Save your savings data securely in the cloud.", login_google: "Sign in with Google", logout: "Log Out",
                 name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
@@ -832,7 +768,7 @@
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
             user: '', email: '', uid: '',
             avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
-            joinedRooms: [], darkMode: false, language: 'id', hideInstallBanner: false
+            joinedRooms: [], darkMode: false, language: 'id'
         };
         let tempAvatarSelection = { ...appData.avatar };
         let tempCategorySelection = 'lainnya'; 
@@ -868,7 +804,9 @@
         // --- INLINE SERVICE WORKER FOR MOBILE PWA INSTALL ---
         if ('serviceWorker' in navigator) {
             const swCode = `
-                self.addEventListener('fetch', function(e) { /* Minimal fetch interceptor to pass PWA criteria */ });
+                self.addEventListener('fetch', function(e) { 
+                    e.respondWith(fetch(e.request).catch(function() { return new Response('Offline'); })); 
+                });
             `;
             const blob = new Blob([swCode], {type: 'application/javascript'});
             navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
@@ -880,7 +818,7 @@
             deferredPrompt = e;
         });
 
-        // Simpan titik awal ke dalam history
+        // Setel history root agar back tidak bablas ke halaman sebelumnya di browser
         history.replaceState({ viewId: 'view-home', navId: 'nav-home' }, "", location.href);
 
         window.addEventListener('popstate', (e) => {
@@ -899,13 +837,16 @@
                 return;
             }
 
-            // 2. Jika tidak ada modal, jalankan Back View
-            if (e.state && e.state.viewId) {
-                window.switchView(e.state.viewId, e.state.navId, false); // false = jangan push history lagi
+            // 2. View Routing - Semua tab selain home akan langsung kembali ke home
+            const currentView = document.querySelector('main:not(.hidden)')?.id;
+            
+            if (currentView !== 'view-home') {
+                window.switchView('view-home', 'nav-home', false); 
+                history.pushState({ viewId: 'view-home', navId: 'nav-home' }, "", location.href); // Jaga agar stack tetap di Home
             } else {
                 const now = Date.now();
                 if (now - lastBackPress < 2000) {
-                    history.go(-1); // Benar-benar keluar
+                    history.go(-2); // Paksa keluar dari aplikasi
                 } else {
                     history.pushState({ viewId: 'view-home', navId: 'nav-home' }, "", location.href);
                     lastBackPress = now;
@@ -1397,7 +1338,6 @@
                 globalRooms.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
-                renderPieChart();
             });
 
             onSnapshot(collection(db, "history"), (snap) => {
@@ -1421,7 +1361,7 @@
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
 
-                // Notif Realtime
+                // Notif Realtime Dalam Aplikasi
                 if (!isInitialHistoryLoad && hasNewContent && latestTx) {
                     if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
                         const isId = appData.language === 'id';
@@ -1579,7 +1519,11 @@
                 const dot = document.getElementById('chat-unread-dot');
                 if (dot) dot.classList.add('hidden');
                 
-                setTimeout(window.scrollToBottomChat, 50);
+                // Instan jump to bottom without smooth scrolling or delay
+                const box = document.getElementById('chat-messages');
+                if(box) {
+                    box.scrollTop = box.scrollHeight;
+                }
             }
         };
 
@@ -1589,6 +1533,8 @@
             currentRoomId = id; 
             refreshRoomUI(id); 
             window.switchRoomTab('ringkasan');
+            
+            // Jaga agar hanya 1 tab detail yang ditumpuk di history
             window.switchView('view-detail', null, true); 
             
             chatRenderLimit = 20; 
@@ -1626,16 +1572,18 @@
         };
 
         window.scrollToBottomChat = () => {
-            const scroller = document.getElementById('view-detail');
+            const scroller = document.getElementById('chat-messages');
             if(scroller) {
-                scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+                scroller.scrollTop = scroller.scrollHeight; // Loncat instan tanpa animasi sesuai permintaan
                 document.getElementById('chat-scroll-btn').classList.add('hidden');
+                const dot = document.getElementById('chat-unread-dot-hint');
+                if (dot) dot.classList.add('hidden');
             }
         };
 
-        const viewDetailScroller = document.getElementById('view-detail');
-        if(viewDetailScroller) {
-            viewDetailScroller.addEventListener('scroll', function() {
+        const chatScroller = document.getElementById('chat-messages');
+        if(chatScroller) {
+            chatScroller.addEventListener('scroll', function() {
                 const btn = document.getElementById('chat-scroll-btn');
                 const diskusiTab = document.getElementById('room-tab-diskusi');
                 if (!btn || !diskusiTab || diskusiTab.classList.contains('hidden')) return;
@@ -1686,14 +1634,13 @@
 
         function renderChats(msgs) {
             const box = document.getElementById('chat-messages');
-            const scroller = document.getElementById('view-detail');
-            if(!box || !scroller) return;
+            if(!box) return;
 
             let isScrolledUp = false;
             if (window.isFirstChatRender) {
                 isScrolledUp = false;
             } else {
-                isScrolledUp = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight > 100;
+                isScrolledUp = box.scrollHeight - box.scrollTop - box.clientHeight > 100;
             }
 
             if(msgs.length === 0) {
@@ -1731,13 +1678,18 @@
                 }
                 
                 const isMentioned = m.type === 'text' && formattedMsg.includes('mention-me');
+                
+                // Pastikan stiker yang lama (di atas 3 detik) TIDAK BERGERAK
+                const isRecent = (Date.now() - m.timestamp) < 3000;
+                const animClass = isRecent ? 'anim-float-temp' : '';
+                const dataAnim = isRecent ? 'true' : 'false';
 
                 if(isMe) {
                     box.innerHTML += `
                     <div class="flex flex-col items-end w-full pl-8 mb-2">
                         <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1">Anda</span>
                         ${m.type === 'sticker' 
-                            ? `<div class="text-6xl cursor-pointer anim-float-temp" data-animating="true" onclick="window.animateSticker(this)">${m.message}</div>` 
+                            ? `<div class="text-6xl cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
                             : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
                         }
                     </div>`;
@@ -1749,25 +1701,24 @@
                             <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
                         </div>
                          ${m.type === 'sticker' 
-                            ? `<div class="text-6xl ml-7 cursor-pointer anim-float-temp" data-animating="true" onclick="window.animateSticker(this)">${m.message}</div>` 
+                            ? `<div class="text-6xl ml-7 cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
                             : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
                         }
                     </div>`;
                 }
             });
 
-            // Auto-stop sticker animation after 2.4s
+            // Matikan state animasi untuk stiker terbaru setelah 2.4 detik
             setTimeout(() => {
                 const stickers = box.querySelectorAll('[data-animating="true"]');
                 stickers.forEach(s => s.dataset.animating = 'false');
             }, 2400);
 
-            // Logic Scroll Cerdas
+            // Logika Scroll Cerdas (Lompat Instan)
             if (window.isFirstChatRender || latestIsMe || !isScrolledUp) {
-                setTimeout(() => window.scrollToBottomChat(), 10);
+                setTimeout(() => box.scrollTop = box.scrollHeight, 10);
                 window.isFirstChatRender = false;
             } else {
-                // Posisi sedang ke-scroll ke atas & ada chat baru dari orang lain
                 const btn = document.getElementById('chat-scroll-btn');
                 const dot = document.getElementById('chat-unread-dot-hint');
                 if (btn && dot) {
@@ -1786,7 +1737,7 @@
             if(!currentRoomId) return;
             window.toggleStickerPanel(); 
             
-            const scroller = document.getElementById('view-detail');
+            const scroller = document.getElementById('chat-messages');
             if(scroller) scroller.scrollTop = scroller.scrollHeight;
 
             const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'sticker', message: sticker, timestamp: Date.now() };
@@ -1802,7 +1753,7 @@
             const panel = document.getElementById('sticker-panel');
             if(panel && !panel.classList.contains('hidden')) panel.classList.add('hidden');
 
-            const scroller = document.getElementById('view-detail');
+            const scroller = document.getElementById('chat-messages');
             if(scroller) scroller.scrollTop = scroller.scrollHeight;
 
             const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'text', message: msg, timestamp: Date.now() };
@@ -1951,6 +1902,12 @@
             }
             lucide.createIcons();
         }
+
+        window.toggleMilestone = async (idx) => {
+            const r = globalRooms.find(x => x.id === currentRoomId); if(!r) return;
+            r.milestones[idx].done = !r.milestones[idx].done;
+            await updateDoc(doc(db, "rooms", currentRoomId), { milestones: r.milestones });
+        };
 
         window.openTransactionModal = (type) => {
             const trxAmount = document.getElementById('trx-amount');
@@ -2162,7 +2119,6 @@
             }
             
             if(viewId === 'view-create') renderCategoryOptions();
-            if(viewId === 'view-profile') renderPieChart();
 
             if(viewId !== 'view-detail' && chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
         };
@@ -2271,54 +2227,6 @@
                     </button>
                 `;
             });
-        }
-
-        function renderPieChart() {
-            const pieEl = document.getElementById('pie-chart-element');
-            const legendEl = document.getElementById('pie-chart-legend');
-            if(!pieEl || !legendEl) return;
-
-            const activeRooms = globalRooms.filter(r => !r.isArchived);
-            let catTotals = {};
-            CATEGORIES.forEach(c => catTotals[c.id] = 0);
-            
-            let grandTotal = 0;
-            activeRooms.forEach(r => {
-                const cId = r.category || 'lainnya';
-                catTotals[cId] += r.balance;
-                grandTotal += r.balance;
-            });
-
-            if(grandTotal === 0) {
-                pieEl.style.background = 'conic-gradient(#e2e8f0 0% 100%)';
-                legendEl.innerHTML = `<p class="text-[10px] font-bold text-slate-400 italic">Belum ada saldo tabungan aktif.</p>`;
-                return;
-            }
-
-            let gradientStr = [];
-            let currentAngle = 0;
-            legendEl.innerHTML = '';
-
-            CATEGORIES.forEach(c => {
-                const amt = catTotals[c.id];
-                if(amt > 0) {
-                    let pct = (amt / grandTotal) * 100;
-                    gradientStr.push(`${c.color} ${currentAngle}% ${currentAngle + pct}%`);
-                    currentAngle += pct;
-                    
-                    legendEl.innerHTML += `
-                        <div class="flex items-center justify-between text-[10px] font-bold">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full block" style="background-color: ${c.color}"></span>
-                                <span class="text-slate-600 dark:text-slate-300">${c.icon} ${c.label}</span>
-                            </div>
-                            <span class="text-slate-800 dark:text-white">${pct.toFixed(1)}%</span>
-                        </div>
-                    `;
-                }
-            });
-
-            pieEl.style.background = `conic-gradient(${gradientStr.join(', ')})`;
         }
 
         function updateUI() {
@@ -2536,17 +2444,6 @@
         window.onload = () => {
             lucide.createIcons();
             if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; }
-            
-            // Setel state tombol Push Notif berdasarkan penyimpanan
-            const tNotif = document.getElementById('toggle-notif');
-            if(tNotif && appData.pushEnabled && window.Notification && Notification.permission === 'granted') {
-                tNotif.checked = true;
-            } else if (tNotif) {
-                tNotif.checked = false;
-                appData.pushEnabled = false; 
-                window.saveLocal();
-            }
-
             applyTranslations();
 
             document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
