@@ -1815,6 +1815,97 @@
             }, 2400); 
         };
 
+        // --- CHAT SWIPE TO REPLY LOGIC ---
+        let swipeStartX = 0;
+        let swipeCurrentX = 0;
+        let swipeStartY = 0;
+        let isChatSwiping = false;
+        let isVerticalScrolling = false;
+
+        window.chatSwipeStart = (e, el) => {
+            if (e.type === 'touchstart' && e.touches.length > 1) return; 
+            swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            isChatSwiping = false;
+            isVerticalScrolling = false;
+            
+            const wrapper = el.querySelector('.chat-bubble-wrapper');
+            const ind = el.querySelector('.reply-indicator');
+            if(wrapper) wrapper.style.transition = 'none';
+            if(ind) ind.style.transition = 'none';
+        };
+
+        window.chatSwipeMove = (e, el) => {
+            if (isVerticalScrolling) return;
+            if (e.type.includes('mouse') && swipeStartX === 0) return; // ignore mousemove without click
+
+            swipeCurrentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            const diffX = swipeCurrentX - swipeStartX;
+            const diffY = Math.abs(currentY - swipeStartY);
+
+            if (!isChatSwiping) {
+                // Deteksi apakah user ingin scroll layar ke bawah/atas atau mau swipe chat
+                if (diffY > 10 && diffY > Math.abs(diffX)) {
+                    isVerticalScrolling = true;
+                    return;
+                }
+                if (diffX > 10 && Math.abs(diffX) > diffY) {
+                    isChatSwiping = true;
+                }
+            }
+
+            if (isChatSwiping) {
+                if (diffX > 0 && e.cancelable) e.preventDefault(); // Cegah geser layar (overscroll back browser)
+                
+                const dragDist = Math.max(0, Math.min(diffX, 80)); // Limit swipe maksimal 80px ke kanan
+                
+                const wrapper = el.querySelector('.chat-bubble-wrapper');
+                if(wrapper) wrapper.style.transform = `translateX(${dragDist}px)`;
+                
+                const indicator = el.querySelector('.reply-indicator');
+                if(indicator) {
+                    const progress = Math.min(dragDist / 60, 1); // Opacity memudar perlahan
+                    indicator.style.opacity = progress;
+                    indicator.style.transform = `translate(${dragDist * 0.3}px, -50%) scale(${0.5 + (progress * 0.5)})`;
+                }
+            }
+        };
+
+        window.chatSwipeEnd = (e, el, chatId, userName, msgText) => {
+            if (!swipeStartX) return; 
+            
+            const diffX = swipeCurrentX - swipeStartX;
+            const wrapper = el.querySelector('.chat-bubble-wrapper');
+            const indicator = el.querySelector('.reply-indicator');
+            
+            // Kembalikan bubble chat ke posisi semula dengan animasi bounce halus
+            if(wrapper) {
+                wrapper.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                wrapper.style.transform = 'translateX(0px)';
+            }
+            
+            if(indicator) {
+                indicator.style.transition = 'all 0.3s ease';
+                indicator.style.opacity = '0';
+                indicator.style.transform = 'translate(-1rem, -50%) scale(0.5)';
+            }
+
+            // Jika swipe cukup jauh, trigger fitur reply
+            if (isChatSwiping && diffX >= 60) {
+                window.setReply(chatId, userName, msgText);
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(50); // Getar halus di mobile
+                }
+            }
+            
+            isChatSwiping = false;
+            isVerticalScrolling = false;
+            swipeStartX = 0;
+            swipeCurrentX = 0;
+            swipeStartY = 0;
+        };
+
         // Optimasi 1: Set fungsi untuk fitur reply chat
         window.setReply = (chatId, userName, message) => {
             replyingTo = { id: chatId, name: userName, message: message };
@@ -1904,31 +1995,56 @@
                     </div>`;
                 }
 
+                const safeMsg = window.safeStr(m.message);
+                const replyActionParams = `'${m.id || m.timestamp}', '${window.safeStr(isMe?'Anda':m.name)}', \`${safeMsg}\``;
+
                 if(isMe) {
                     box.innerHTML += `
-                    <div class="flex flex-col items-end w-full pl-8 mb-2">
-                        <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1">Anda</span>
-                        <div class="flex items-center gap-2 justify-end w-full group">
-                            <button onclick="window.setReply('${m.id || m.timestamp}', 'Anda', \`${window.safeStr(m.type==='sticker'?m.message:m.message)}\`)" class="p-1.5 text-slate-300 hover:text-indigo-500 rounded-full active:scale-90 opacity-100 transition-opacity"><i data-lucide="reply" class="w-3.5 h-3.5"></i></button>
+                    <div class="relative w-full mb-2 chat-swipe-container overflow-x-hidden" 
+                         ontouchstart="window.chatSwipeStart(event, this)" 
+                         ontouchmove="window.chatSwipeMove(event, this)" 
+                         ontouchend="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmousedown="window.chatSwipeStart(event, this)"
+                         onmousemove="window.chatSwipeMove(event, this)"
+                         onmouseup="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmouseleave="window.chatSwipeEnd(event, this, ${replyActionParams})">
+                        
+                        <div class="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 reply-indicator transform -translate-x-4 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400 z-0 scale-50 pointer-events-none">
+                            <i data-lucide="reply" class="w-4 h-4"></i>
+                        </div>
+
+                        <div class="chat-bubble-wrapper w-full flex flex-col items-end pl-8 relative z-10 select-none">
+                            <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1 pointer-events-none">Anda</span>
                             ${m.type === 'sticker' 
-                                ? `<div class="text-6xl cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
-                                : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlMe}${formattedMsg}</div>`
+                                ? `<div class="text-6xl cursor-pointer pointer-events-auto ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
+                                : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap text-left pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlMe}${formattedMsg}</div>`
                             }
                         </div>
                     </div>`;
                 } else {
                     box.innerHTML += `
-                    <div class="flex flex-col items-start w-full pr-8 mb-2">
-                        <div class="flex items-center gap-2 mb-1">
-                            <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
-                            <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
+                    <div class="relative w-full mb-2 chat-swipe-container overflow-x-hidden"
+                         ontouchstart="window.chatSwipeStart(event, this)" 
+                         ontouchmove="window.chatSwipeMove(event, this)" 
+                         ontouchend="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmousedown="window.chatSwipeStart(event, this)"
+                         onmousemove="window.chatSwipeMove(event, this)"
+                         onmouseup="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmouseleave="window.chatSwipeEnd(event, this, ${replyActionParams})">
+                        
+                        <div class="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 reply-indicator transform -translate-x-4 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400 z-0 scale-50 pointer-events-none">
+                            <i data-lucide="reply" class="w-4 h-4"></i>
                         </div>
-                        <div class="flex items-center gap-2 justify-start ml-7 w-full group">
-                             ${m.type === 'sticker' 
-                                ? `<div class="text-6xl cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
-                                : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlOther}${formattedMsg}</div>`
+
+                        <div class="chat-bubble-wrapper w-full flex flex-col items-start pr-8 relative z-10 select-none"> 
+                            <div class="flex items-center gap-2 mb-1 pointer-events-none">
+                                <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
+                                <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
+                            </div>
+                            ${m.type === 'sticker' 
+                                ? `<div class="text-6xl cursor-pointer pointer-events-auto ml-7 ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
+                                : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlOther}${formattedMsg}</div>`
                             }
-                            <button onclick="window.setReply('${m.id || m.timestamp}', '${window.safeStr(m.name)}', \`${window.safeStr(m.type==='sticker'?m.message:m.message)}\`)" class="p-1.5 text-slate-300 hover:text-indigo-500 rounded-full active:scale-90 opacity-100 transition-opacity"><i data-lucide="reply" class="w-3.5 h-3.5"></i></button>
                         </div>
                     </div>`;
                 }
@@ -2675,12 +2791,112 @@
             lucide.createIcons();
         };
 
+        const initSwipeToReply = () => {
+            const chatContainer = document.getElementById('room-tab-diskusi');
+            if (!chatContainer) return;
+            
+            let startX = 0, startY = 0;
+            let activeRow = null;
+            let isSwipingRight = false;
+            let isScrolling = false;
+            
+            chatContainer.addEventListener('touchstart', e => {
+                const row = e.target.closest('.swipeable-msg');
+                if(!row) return;
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                activeRow = row;
+                isSwipingRight = false;
+                isScrolling = false;
+                
+                const wrapper = activeRow.querySelector('.swipe-bubble-wrapper');
+                if(wrapper) wrapper.style.transition = 'none';
+            }, {passive: true});
+            
+            chatContainer.addEventListener('touchmove', e => {
+                if(!activeRow || isScrolling) return;
+                
+                const curX = e.touches[0].clientX;
+                const curY = e.touches[0].clientY;
+                const dX = curX - startX;
+                const dY = Math.abs(curY - startY);
+                
+                if(!isSwipingRight) {
+                    // Jika lebih condong scroll ke bawah/atas, abaikan swipe
+                    if (dY > 10 && dY > dX) {
+                        isScrolling = true;
+                        activeRow = null;
+                        return;
+                    }
+                    if (dX > 10) {
+                        isSwipingRight = true;
+                    }
+                }
+                
+                if(isSwipingRight && dX > 0) {
+                    if(e.cancelable) e.preventDefault(); // Mengunci scroll saat menggeser chat
+                    
+                    const moveX = Math.min(dX, 60); 
+                    const wrapper = activeRow.querySelector('.swipe-bubble-wrapper');
+                    const icon = activeRow.querySelector('.reply-icon-bg');
+                    
+                    if(wrapper) wrapper.style.transform = `translateX(${moveX}px)`;
+                    if(icon) {
+                        const scale = Math.min(moveX / 40, 1);
+                        icon.style.opacity = scale;
+                        icon.style.transform = `translateY(-50%) scale(${scale})`;
+                    }
+                }
+            }, {passive: false}); 
+            
+            const endSwipe = () => {
+                if(!activeRow) return;
+                
+                const wrapper = activeRow.querySelector('.swipe-bubble-wrapper');
+                const icon = activeRow.querySelector('.reply-icon-bg');
+                
+                let moveX = 0;
+                if (wrapper && wrapper.style.transform) {
+                    const match = wrapper.style.transform.match(/translateX\((.+)px\)/);
+                    if (match) moveX = parseFloat(match[1]);
+                }
+                
+                if(wrapper) {
+                    wrapper.style.transition = 'transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
+                    wrapper.style.transform = 'translateX(0px)';
+                }
+                if(icon) {
+                    icon.style.transition = 'all 0.2s ease-out';
+                    icon.style.opacity = '0';
+                    icon.style.transform = 'translateY(-50%) scale(0.5)';
+                }
+                
+                if(isSwipingRight && moveX > 40) { 
+                    const id = activeRow.dataset.id;
+                    const name = activeRow.dataset.name;
+                    const msg = activeRow.dataset.msg;
+                    if (navigator.vibrate) navigator.vibrate(50);
+                    setTimeout(() => {
+                        window.setReply(id, name, msg);
+                    }, 50);
+                }
+                
+                activeRow = null;
+                isSwipingRight = false;
+            };
+
+            chatContainer.addEventListener('touchend', endSwipe);
+            chatContainer.addEventListener('touchcancel', endSwipe);
+        };
+
         window.onload = () => {
             lucide.createIcons();
             if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; }
             applyTranslations();
 
             document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
+            
+            initSwipeToReply();
         };
 
         window.openAvatarModal = () => {
