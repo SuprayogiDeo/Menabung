@@ -627,7 +627,7 @@
             </div>
         </div>
 
-        <!-- ONBOARDING -->
+        <!-- ONBOARDING & OTHERS -->
         <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0 overflow-y-auto no-scrollbar">
             <div class="w-full text-center py-8">
                 <div class="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-6 shadow-inner border border-indigo-100 dark:border-indigo-900/30"><img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-14 h-14"></div>
@@ -653,7 +653,6 @@
             </div>
         </div>
 
-        <!-- NAME ENTRY -->
         <div id="modal-name-entry" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 opacity-0">
             <div class="w-full text-center">
                 <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30"><img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16"></div>
@@ -669,13 +668,72 @@
         </div>
     </div>
 
-    <!-- Firebase SDK Modules -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, enableIndexedDbPersistence, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // --- CONFIG ---
+        window.i18n = {
+            id: {
+                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk", outcome: "Keluar",
+                savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
+                archive_now: "Arsipkan Sekarang", milestone_list: "Daftar Milestone", history: "Riwayat Transaksi",
+                withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
+                archive: "Arsip Tabungan", archive_desc: "Target 100% Selesai", dark_mode: "Mode Gelap", language_name: "Bahasa",
+                language_val: "ID", edit_goal: "Ubah Tabungan", goal_name: "Nama Tujuan", target_nominal: "Target Nominal",
+                save_changes: "Simpan Perubahan", goal_reached: "Tercapai!", celeb_desc: "Tabungan", celeb_done: "lunas 100%!",
+                continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
+                all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
+                no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Belum ada riwayat",
+                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi", category: "Kategori",
+                install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan", leave: "Keluar Tabungan",
+                share_title: "Undang Teman",
+                install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
+                install_android_desc: "Aplikasi siap diinstall ke perangkat Anda.", install_android_step1: "Tekan ikon Bagikan / Titik Tiga", install_android_step2: "Pilih 'Install Aplikasi' atau 'Tambahkan ke Layar Utama'",
+                install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
+                login_desc: "Simpan data tabungan Anda dengan aman di awan.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
+                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
+                filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
+                empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
+                notif_title: "Aktivitas Baru!",
+                filter_room_all: "Semua", filter_room_personal: "Pribadi", filter_room_shared: "Bersama",
+                type_message: "Ketik pesan...", tab_summary: "Ringkasan", tab_discussion: "Diskusi",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Lupa Password?",
+                login_btn: "Masuk", register_btn: "Daftar Akun", no_account: "Belum punya akun?",
+                register_link: "Daftar Sekarang", has_account: "Sudah punya akun?", login_link: "Masuk di sini", or: "ATAU",
+                pass_reset_sent: "Email reset password telah dikirim!"
+            },
+            en: {
+                welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
+                savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
+                archive_now: "Archive Now", milestone_list: "Milestone List", history: "Transaction History",
+                withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
+                archive: "Archive", archive_desc: "100% Goal Completed", dark_mode: "Dark Mode", language_name: "Language",
+                language_val: "EN", edit_goal: "Edit Saving", goal_name: "Goal Name", target_nominal: "Target Amount",
+                save_changes: "Save Changes", goal_reached: "Reached!", celeb_desc: "Saving", celeb_done: "is 100% completed!",
+                continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
+                all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
+                no_goals: "No goals yet", no_archive: "No archived items", empty_history: "No history yet",
+                placeholder_goal: "Buy a Laptop...", install_app: "Install App", category: "Category",
+                install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal", leave: "Leave Goal",
+                share_title: "Invite Friends",
+                install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
+                install_android_desc: "App is ready to be installed on your device.", install_android_step1: "Tap the Share / Three Dots icon", install_android_step2: "Select 'Install App' or 'Add to Home screen'",
+                install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
+                login_desc: "Save your savings data securely in the cloud.", login_google: "Sign in with Google", logout: "Log Out",
+                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
+                filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
+                empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
+                notif_title: "New Activity!",
+                filter_room_all: "All", filter_room_personal: "Personal", filter_room_shared: "Shared",
+                type_message: "Type message...", tab_summary: "Summary", tab_discussion: "Discussion",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Forgot Password?",
+                login_btn: "Login", register_btn: "Register Account", no_account: "Don't have an account?",
+                register_link: "Register Now", has_account: "Already have an account?", login_link: "Login here", or: "OR",
+                pass_reset_sent: "Password reset email sent!"
+            }
+        };
+
         const firebaseConfig = {
             apiKey: "AIzaSyDUPTlI50-ZrTwokK9A9S7MJr5iCmqqyT4",
             authDomain: "tabungan-bersama-e48da.firebaseapp.com",
@@ -689,6 +747,38 @@
         const auth = getAuth(app);
 
         try { enableIndexedDbPersistence(db).catch(()=>{}); } catch (e) { }
+
+        window.applyTranslations = function() {
+            const lang = window.i18n[appData.language];
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (lang[key]) el.innerText = lang[key];
+            });
+            const langDisp = document.getElementById('lang-display');
+            if (langDisp) langDisp.innerText = appData.language.toUpperCase();
+            
+            const createNameInp = document.getElementById('create-name');
+            if(createNameInp) createNameInp.placeholder = lang.placeholder_goal;
+
+            const chatInp = document.getElementById('chat-input');
+            if(chatInp) chatInp.placeholder = lang.type_message;
+
+            const monthStr = new Date().toLocaleString(appData.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
+            const lblIn = document.getElementById('label-income');
+            if (lblIn) lblIn.innerText = `${lang.income} (${monthStr})`;
+            const lblOut = document.getElementById('label-outcome');
+            if (lblOut) lblOut.innerText = `${lang.outcome} (${monthStr})`;
+
+            if(!isLoginMode) {
+                const asText = document.getElementById('auth-switch-text'); if(asText) asText.innerText = lang.has_account;
+                const asBtn = document.getElementById('auth-switch-btn'); if(asBtn) asBtn.innerText = lang.login_link;
+                const eaBtn = document.getElementById('btn-email-auth'); if(eaBtn) eaBtn.innerText = lang.register_btn;
+            } else {
+                const asText = document.getElementById('auth-switch-text'); if(asText) asText.innerText = lang.no_account;
+                const asBtn = document.getElementById('auth-switch-btn'); if(asBtn) asBtn.innerText = lang.register_link;
+                const eaBtn = document.getElementById('btn-email-auth'); if(eaBtn) eaBtn.innerText = lang.login_btn;
+            }
+        };
 
         const chatInputBox = document.getElementById('chat-input');
         if (window.visualViewport) {
@@ -784,12 +874,12 @@
 
         window.checkPasswordStrength = () => { if (isLoginMode) return; const pass = document.getElementById('auth-pass').value; const updateHint = (id, isValid) => { const p = document.getElementById('hint-' + id); if (!p) return; const text = p.querySelector('span').innerText; if (isValid) { p.classList.replace('text-rose-500', 'text-emerald-500'); p.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> <span>${text}</span>`; } else { p.classList.replace('text-emerald-500', 'text-rose-500'); p.innerHTML = `<i data-lucide="x" class="w-3.5 h-3.5"></i> <span>${text}</span>`; } }; updateHint('length', pass.length >= 6); updateHint('case', /[a-z]/.test(pass) && /[A-Z]/.test(pass)); updateHint('number', /[0-9]/.test(pass)); lucide.createIcons(); };
         window.togglePasswordVisibility = () => { const input = document.getElementById('auth-pass'); const icon = document.getElementById('auth-pass-eye'); if(input.type === 'password') { input.type = 'text'; icon.setAttribute('data-lucide', 'eye-off'); } else { input.type = 'password'; icon.setAttribute('data-lucide', 'eye'); } lucide.createIcons(); };
-        window.toggleAuthMode = () => { isLoginMode = !isLoginMode; const fpContainer = document.getElementById('forgot-pass-container'); const passHints = document.getElementById('pass-hints'); if(isLoginMode) { fpContainer.classList.remove('hidden'); passHints.classList.add('hidden'); } else { fpContainer.classList.add('hidden'); passHints.classList.remove('hidden'); window.checkPasswordStrength(); } window.showAuthError(""); window.showAuthSuccess(""); };
+        window.toggleAuthMode = () => { isLoginMode = !isLoginMode; const fpContainer = document.getElementById('forgot-pass-container'); const passHints = document.getElementById('pass-hints'); if(isLoginMode) { fpContainer.classList.remove('hidden'); passHints.classList.add('hidden'); } else { fpContainer.classList.add('hidden'); passHints.classList.remove('hidden'); window.checkPasswordStrength(); } window.showAuthError(""); window.showAuthSuccess(""); window.applyTranslations(); };
 
         window.handleForgotPassword = async () => {
             const email = document.getElementById('auth-email').value.trim(); window.showAuthError(""); window.showAuthSuccess("");
-            if(!email) return window.showAuthError("Tulis email Anda di kolom atas terlebih dahulu.");
-            try { await sendPasswordResetEmail(auth, email); window.showAuthSuccess("Email reset terkirim! Silakan cek kotak masuk atau folder SPAM Anda."); } catch(e) { window.showAuthError("Gagal mengirim email reset."); }
+            if(!email) return window.showAuthError(window.i18n[appData.language].id ? 'Tulis email Anda di kolom atas terlebih dahulu.' : 'Please enter your email above first.');
+            try { await sendPasswordResetEmail(auth, email); window.showAuthSuccess(window.i18n[appData.language].id ? "Email reset terkirim! Silakan cek kotak masuk atau folder SPAM Anda." : "Password reset email sent! Check your inbox or SPAM folder."); } catch(e) { window.showAuthError("Gagal mengirim email reset."); }
         };
 
         window.handleEmailAuth = async () => {
@@ -979,7 +1069,7 @@
             if(!name) return window.showToast("Isi nama tujuan terlebih dahulu.", true);
 
             btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
-            try { await updateDoc(doc(db, "rooms", currentRoomId), { name: name, target: target, hasTarget: target > 0 }); window.closeAllModals(); window.showToast("Disimpan!"); btn.disabled = false; btn.innerText = "Simpan Perubahan"; } 
+            try { await updateDoc(doc(db, "rooms", currentRoomId), { name: name, target: target, hasTarget: target > 0 }); window.closeAllModals(); window.showToast("Disimpan!"); btn.disabled = false; btn.innerText = window.i18n[appData.language].save_changes; } 
             catch(e) { window.showToast("Terjadi kesalahan.", true); btn.disabled = false; }
         };
 
@@ -1208,7 +1298,6 @@
                 const isMe = m.uid === appData.uid; if(idx === visibleMsgs.length - 1) latestIsMe = isMe;
                 const avaChar = m.avatar && m.avatar.emoji ? m.avatar.emoji : (m.name ? m.name.charAt(0).toUpperCase() : '?');
                 
-                // System Message
                 if (m.type === 'system') {
                     box.innerHTML += `<div class="flex justify-center my-3 w-full px-4"><span class="bg-slate-200/70 dark:bg-slate-800/70 backdrop-blur-md text-slate-700 dark:text-slate-200 text-[10px] font-bold px-4 py-1.5 rounded-xl text-center shadow-sm max-w-[85%] leading-relaxed border border-slate-300/30 dark:border-slate-700/50">${m.message}</span></div>`;
                     return;
@@ -1249,9 +1338,8 @@
                 
                 let checkHtml = '';
                 if(isMe) {
-                    if(m.readBy && m.readBy.length > 0) checkHtml = '<i data-lucide="check-check" class="w-3.5 h-3.5 text-sky-300 ml-0.5"></i>'; // 2 Biru
-                    else if(m.deliveredTo && m.deliveredTo.length > 0) checkHtml = '<i data-lucide="check-check" class="w-3.5 h-3.5 text-white/80 ml-0.5"></i>'; // 2 Putih
-                    else checkHtml = '<i data-lucide="check" class="w-3.5 h-3.5 text-white/80 ml-0.5"></i>'; // 1 Putih
+                    if(m.readBy && m.readBy.length > 0) checkHtml = '<i data-lucide="check-check" class="w-3.5 h-3.5 text-sky-300 ml-0.5"></i>'; 
+                    else checkHtml = '<i data-lucide="check" class="w-3.5 h-3.5 text-white/80 ml-0.5"></i>'; 
                 }
 
                 if(isMe) {
@@ -1345,9 +1433,337 @@
             try { await updateDoc(doc(db, "history", trxId), { reactions: reactions }); } catch(e) {}
         };
 
+        function refreshRoomUI(id) {
+            const lang = window.i18n[appData.language]; const r = globalRooms.find(x => x.id === id); if(!r) return;
+            const titleEl = document.getElementById('detail-title'); const balanceEl = document.getElementById('detail-balance');
+            if(titleEl) titleEl.innerText = r.name; if(balanceEl) balanceEl.innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
+            
+            const catBadge = document.getElementById('detail-category-badge');
+            if(catBadge) {
+                if(r.category) { const catObj = CATEGORIES.find(c => c.id === r.category) || CATEGORIES[4]; catBadge.innerText = `${catObj.icon} ${catObj.label}`; catBadge.classList.remove('hidden'); } else { catBadge.classList.add('hidden'); }
+            }
+
+            const btnEdit = document.getElementById('btn-edit-room');
+            const isAdmin = !r.adminUid || r.adminUid === appData.uid;
+            let btnOptionsHtml = ``;
+            if(isAdmin) { btnOptionsHtml += `<button onclick="window.openEditModal()" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors shrink-0"><i data-lucide="edit-2" class="w-5 h-5"></i></button>`; }
+            btnOptionsHtml += `<button onclick="window.openWallpaperModal()" class="p-2 text-slate-400 hover:text-indigo-500 transition-colors shrink-0"><i data-lucide="image" class="w-5 h-5"></i></button>`;
+            
+            const headerRight = document.querySelector('#view-detail .sticky > div:last-child') || btnEdit;
+            if (headerRight && btnEdit) { headerRight.outerHTML = `<div class="flex items-center gap-1" id="detail-header-actions">${btnOptionsHtml}</div>`; }
+
+            const pile = document.getElementById('member-pile-container'); const countText = document.getElementById('member-count-text');
+            const filterSelect = document.getElementById('detail-history-member-filter');
+            if(filterSelect && r.members) {
+                const currentVal = filterSelect.value; filterSelect.innerHTML = '<option value="all">Semua Anggota</option>';
+                r.members.forEach(m => { filterSelect.innerHTML += `<option value="${m.uid}">${m.name}</option>`; });
+                if(r.members.some(m => m.uid === currentVal)) filterSelect.value = currentVal;
+            }
+
+            if(pile && r.members) {
+                pile.innerHTML = '';
+                r.members.slice(0, 5).forEach(m => {
+                    const char = m.avatar.emoji || m.name.charAt(0).toUpperCase();
+                    pile.innerHTML += `<div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-black shadow-sm ${m.avatar.colorClass} ${m.avatar.textClass}" title="${m.name}">${char}</div>`;
+                });
+                if(r.members.length > 5) pile.innerHTML += `<div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 text-slate-500 flex items-center justify-center text-[10px] font-black shadow-sm">+${r.members.length-5}</div>`;
+                if(countText) countText.innerHTML = `${r.members.length} Anggota <i data-lucide="users" class="w-3 h-3"></i>`;
+            }
+
+            const tgtBox = document.getElementById('detail-target-container');
+            if(tgtBox) {
+                if(r.hasTarget) {
+                    tgtBox.classList.remove('hidden');
+                    const progressTxt = document.getElementById('detail-progress-text'); const progressBr = document.getElementById('detail-progress-bar');
+                    const pct = Math.min(Math.round((r.balance/r.target)*100), 100);
+                    if(progressTxt) progressTxt.innerText = `${r.balance.toLocaleString('id-ID')} / ${r.target.toLocaleString('id-ID')}`;
+                    if(progressBr) progressBr.style.width = pct + '%';
+                    const archBtnBox = document.getElementById('detail-archive-btn-container');
+                    if (archBtnBox) { if (pct >= 100 && !r.isArchived && isAdmin) archBtnBox.classList.remove('hidden'); else archBtnBox.classList.add('hidden'); }
+                } else { tgtBox.classList.add('hidden'); const archBtnBox = document.getElementById('detail-archive-btn-container'); if (archBtnBox) archBtnBox.classList.add('hidden'); }
+            }
+            const msBox = document.getElementById('detail-milestone-container'); const msList = document.getElementById('detail-milestone-list');
+            if(msBox && msList) {
+                if(r.hasMilestones && r.milestones.length > 0) {
+                    msBox.classList.remove('hidden'); msList.innerHTML = '';
+                    r.milestones.forEach((m, idx) => {
+                        msList.innerHTML += `<div onclick="${isAdmin ? `window.toggleMilestone(${idx})` : ''}" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 ${isAdmin?'active:scale-[0.98] cursor-pointer':''} transition-all"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${m.done ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300'}">${m.done ? '<i data-lucide="check" class="w-4 h-4 text-white"></i>' : ''}</div><div class="flex-1"><p class="text-sm font-bold ${m.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${m.name}</p><p class="text-[10px] font-black text-slate-400 tracking-wider uppercase">RP ${m.price.toLocaleString('id-ID')}</p></div></div>`;
+                    });
+                } else msBox.classList.add('hidden');
+            }
+            
+            const pinBanner = document.getElementById('pinned-message-banner'); const pinText = document.getElementById('pinned-message-text');
+            if(pinBanner && pinText) {
+                if(r.pinnedChat) { pinText.innerText = `${r.pinnedChat.name}: ${r.pinnedChat.message}`; pinBanner.classList.remove('hidden'); } else { pinBanner.classList.add('hidden'); }
+            }
+            lucide.createIcons();
+        }
+
+        window.renderRoomHistory = () => {
+            const histList = document.getElementById('detail-history-list'); const filterSelect = document.getElementById('detail-history-member-filter');
+            const contribBox = document.getElementById('detail-member-contribution'); const contribTotal = document.getElementById('detail-member-contribution-total');
+            const lang = window.i18n[appData.language];
+
+            if(!histList || !filterSelect) return;
+            histList.innerHTML = '';
+            const uidFilter = filterSelect.value;
+            let filtered = globalHistory.filter(h => h.roomId === currentRoomId);
+            
+            if (uidFilter !== 'all') {
+                const r = globalRooms.find(x => x.id === currentRoomId);
+                const selectedMember = r ? r.members.find(m => m.uid === uidFilter) : null;
+                const selectedName = selectedMember ? selectedMember.name : null;
+
+                filtered = filtered.filter(h => { if (h.userUid) return h.userUid === uidFilter; return selectedName && h.userName === selectedName; });
+                
+                let totalIn = 0; filtered.forEach(h => { if(h.type === 'in') totalIn += h.amount; else totalIn -= h.amount; });
+                if(contribBox && contribTotal) { contribBox.classList.remove('hidden'); contribTotal.innerText = `Rp ${totalIn.toLocaleString('id-ID')}`; }
+            } else { if(contribBox) contribBox.classList.add('hidden'); }
+
+            const visibleFiltered = filtered.slice(0, historyRenderLimit);
+            if(filtered.length === 0) {
+                histList.innerHTML = `<div class="text-center py-10 opacity-40"><i data-lucide="hourglass" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i><h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3><p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p></div>`;
+            }
+            else {
+                visibleFiltered.forEach(h => {
+                    const isIn = h.type === 'in';
+                    const catHtml = h.category && h.category !== 'Umum' ? `<span class="text-[8px] font-black text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-1.5 py-0.5 rounded-md ml-1 uppercase border border-indigo-100 dark:border-indigo-800">${h.category}</span>` : '';
+                    const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight whitespace-pre-wrap">"${h.note}"</p>` : '';
+                    histList.innerHTML += `<div class="relative pl-8 mb-6 last:mb-0"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-900"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.userName} ${catHtml}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml} ${getReactionHTML(h.id, h.reactions)}</div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                });
+                if (filtered.length > historyRenderLimit) { histList.innerHTML += `<button onclick="window.loadMoreHistory()" class="w-full py-3 mt-4 text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl active:scale-95 transition-transform">Muat Lebih Banyak</button>`; }
+            }
+            lucide.createIcons();
+        };
+
+        window.toggleMilestone = async (idx) => {
+            const r = globalRooms.find(x => x.id === currentRoomId); if(!r) return;
+            r.milestones[idx].done = !r.milestones[idx].done;
+            await updateDoc(doc(db, "rooms", currentRoomId), { milestones: r.milestones });
+        };
+
+        window.openTransactionModal = (type) => {
+            const trxAmount = document.getElementById('trx-amount'); const trxType = document.getElementById('trx-type');
+            const trxTitle = document.getElementById('trx-title'); const trxUser = document.getElementById('trx-user-display');
+            const trxNote = document.getElementById('trx-note'); const trxCategory = document.getElementById('trx-category-select');
+            const btnSubmit = document.getElementById('btn-submit-trx');
+            
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            const msContainer = document.getElementById('trx-milestone-container'); const msSelect = document.getElementById('trx-milestone-select');
+
+            if(trxAmount) trxAmount.value = '';
+            if(trxType) trxType.value = type === 'nabung' ? 'in' : 'out';
+            if(trxTitle) trxTitle.innerText = type === 'nabung' ? window.i18n[appData.language].save : window.i18n[appData.language].withdraw;
+            if(trxUser) trxUser.value = appData.user; if(trxNote) trxNote.value = ''; if(trxCategory) trxCategory.value = 'Umum';
+            
+            if(btnSubmit) { btnSubmit.className = `w-full py-5 text-white font-black text-lg rounded-[1.5rem] shadow-xl active:scale-95 transition-all ${type === 'nabung' ? 'bg-emerald-500 shadow-emerald-200 dark:shadow-none' : 'bg-rose-500 shadow-rose-200 dark:shadow-none'}`; }
+
+            if(type === 'nabung' && r && r.hasMilestones) {
+                msContainer.classList.remove('hidden'); msSelect.innerHTML = '<option value="">-- Pilih Milestone --</option>';
+                r.milestones.forEach((m, idx) => { if(!m.done) msSelect.innerHTML += `<option value="${idx}">Bayar: ${m.name} (Rp ${m.price.toLocaleString('id-ID')})</option>`; });
+                msSelect.onchange = function() { if(this.value !== "") { const mPrice = r.milestones[this.value].price; trxAmount.value = mPrice.toLocaleString('id-ID'); } };
+            } else { msContainer.classList.add('hidden'); msSelect.innerHTML = ''; }
+            
+            window.showModal('modal-transaction'); setTimeout(() => { if(trxAmount) trxAmount.focus(); }, 400);
+        };
+
+        window.closeConfirmModal = () => {
+            const m = document.getElementById('modal-confirm-trx'); const card = document.getElementById('confirm-trx-card');
+            if (m && card) { card.classList.remove('scale-100'); card.classList.add('scale-95'); m.classList.remove('opacity-100'); m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300); }
+        };
+
+        window.handleTransactionSubmit = () => {
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            const amountStr = document.getElementById('trx-amount').value.replace(/\D/g, ''); const amount = parseInt(amountStr);
+            if(!amount || !r) return window.showToast("Masukkan nominal yang valid.", true);
+
+            const type = document.getElementById('trx-type').value;
+            const categorySelect = document.getElementById('trx-category-select'); const categoryVal = categorySelect ? categorySelect.value : 'Umum';
+
+            let newBal = r.balance;
+            if(type === 'in') {
+                if(r.hasTarget && r.balance + amount > r.target) return window.showToast("Nominal melebihi target tabungan!", true);
+                newBal += amount;
+            } else {
+                if(amount > r.balance) return window.showToast("Saldo tabungan tidak mencukupi.", true);
+                newBal -= amount;
+            }
+
+            let finalNote = document.getElementById('trx-note').value.trim();
+            const msSelect = document.getElementById('trx-milestone-select'); let updatedMilestones = r.milestones;
+            
+            if(type === 'in' && msSelect && msSelect.value !== "") {
+                const idx = parseInt(msSelect.value); const mName = r.milestones[idx].name;
+                finalNote = finalNote ? `${finalNote} [Tujuan: ${mName}]` : `[Tujuan: ${mName}]`; updatedMilestones[idx].done = true;
+            }
+
+            const reachedGoal = (r.hasTarget && newBal === r.target && type === 'in');
+            pendingTransaction = { r, type, categoryVal, amount, newBal, finalNote, updatedMilestones, reachedGoal };
+
+            const m = document.getElementById('modal-confirm-trx'); const card = document.getElementById('confirm-trx-card');
+            const desc = document.getElementById('confirm-trx-desc'); const icon = document.getElementById('confirm-trx-icon');
+            
+            if (m && card && desc && icon) {
+                const actionText = type === 'in' ? `<span class="text-emerald-500 font-black">menabung Rp ${amount.toLocaleString('id-ID')}</span> ke` : `<span class="text-rose-500 font-black">menarik Rp ${amount.toLocaleString('id-ID')}</span> dari`;
+                icon.innerText = type === 'in' ? '💰' : '💸'; desc.innerHTML = `Anda akan ${actionText} tabungan <b>"${r.name}"</b>.`;
+                m.classList.remove('hidden'); void m.offsetWidth; m.classList.remove('opacity-0'); m.classList.add('opacity-100'); card.classList.remove('scale-95'); card.classList.add('scale-100');
+            }
+        };
+
+        window.executeTransaction = async () => {
+            if (!pendingTransaction) return;
+            const { r, type, categoryVal, amount, newBal, finalNote, updatedMilestones, reachedGoal } = pendingTransaction;
+            
+            const btn = document.getElementById('btn-confirm-yes'); const origText = btn.innerText;
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+
+            const ts = Date.now(); const trxId = 'trx_' + ts;
+            const h = { id: trxId, roomId: currentRoomId, roomName: r.name, type: type, amount: amount, userUid: appData.uid, userName: appData.user, category: categoryVal, note: finalNote, timestamp: ts, date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}), reactions: {} };
+
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { balance: newBal, milestones: updatedMilestones });
+                await setDoc(doc(db, "history", trxId), h);
+                
+                const sysMsg = `💸 ${appData.user} baru saja ${type === 'in' ? 'menabung' : 'menarik'} Rp ${amount.toLocaleString('id-ID')}`;
+                await setDoc(doc(db, "chats", 'sys_'+Date.now()), { roomId: currentRoomId, uid: 'system', type: 'system', message: sysMsg, timestamp: Date.now() });
+
+                window.closeConfirmModal(); window.closeAllModals(); btn.disabled = false; btn.innerText = origText;
+                
+                document.getElementById('rcpt-name').innerText = appData.user;
+                document.getElementById('rcpt-room').innerText = r.name;
+                document.getElementById('rcpt-cat').innerText = categoryVal;
+                document.getElementById('rcpt-time').innerText = new Date().toLocaleString('id-ID', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'});
+                document.getElementById('rcpt-note').innerText = finalNote ? `"${finalNote}"` : '-';
+                document.getElementById('rcpt-type-label').innerText = type === 'in' ? 'Total Menabung' : 'Total Menarik';
+                document.getElementById('rcpt-amount').innerText = `Rp ${amount.toLocaleString('id-ID')}`;
+                
+                const rModal = document.getElementById('modal-receipt');
+                if(rModal) { rModal.classList.remove('hidden'); setTimeout(() => rModal.classList.remove('opacity-0'), 50); }
+
+                if(reachedGoal && typeof confetti === 'function') confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, zIndex: 9999 });
+
+                pendingTransaction = null; 
+            } catch(e) { window.showToast("Terjadi kesalahan sistem.", true); btn.disabled = false; btn.innerText = origText; }
+        };
+
+        window.closeReceiptModal = () => { const m = document.getElementById('modal-receipt'); if (m) { m.classList.remove('opacity-100'); m.classList.add('opacity-0'); setTimeout(() => m.classList.add('hidden'), 300); } };
+
+        window.downloadReceipt = async (event) => {
+            const card = document.getElementById('receipt-card'); const btn = event.currentTarget;
+            const origHtml = btn.innerHTML; btn.innerHTML = createSpinner();
+            try {
+                const canvas = await html2canvas(card, { scale: 2, backgroundColor: appData.darkMode ? '#0f172a' : '#ffffff' });
+                const link = document.createElement('a'); link.download = `Struk-Tabungan-${Date.now()}.jpg`; link.href = canvas.toDataURL('image/jpeg', 0.9); link.click();
+                window.showToast("Struk berhasil disimpan ke Galeri!");
+            } catch(e) { window.showToast("Gagal menyimpan struk.", true); }
+            btn.innerHTML = origHtml; lucide.createIcons();
+        };
+
+        window.shareReceipt = async (event) => {
+            const card = document.getElementById('receipt-card'); const btn = event.currentTarget;
+            const origHtml = btn.innerHTML; btn.innerHTML = createSpinner();
+            try {
+                const canvas = await html2canvas(card, { scale: 2, backgroundColor: appData.darkMode ? '#0f172a' : '#ffffff' });
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'struk.jpg', {type: 'image/jpeg'});
+                    if(navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try { await navigator.share({ title: 'Struk Tabungan', text: 'Bukti transaksi Tabungan Bersama 💸', files: [file] }); } catch(e) {}
+                    } else {
+                        window.downloadReceipt({currentTarget: btn}); window.showToast("Browser tidak mendukung Share, file diunduh otomatis.");
+                    }
+                    btn.innerHTML = origHtml; lucide.createIcons();
+                }, 'image/jpeg', 0.9);
+            } catch(e) { window.showToast("Gagal membagikan struk.", true); btn.innerHTML = origHtml; lucide.createIcons(); }
+        };
+
+        window.filterRooms = (type) => {
+            currentRoomFilter = type;
+            ['all', 'personal', 'shared'].forEach(f => {
+                const btn = document.getElementById('filter-room-'+f); if(!btn) return;
+                if(f === type) { btn.classList.replace('bg-white', 'bg-slate-900'); btn.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600'); btn.classList.replace('text-slate-600', 'text-white'); btn.classList.replace('dark:text-slate-400', 'text-white'); btn.classList.remove('border', 'border-slate-200', 'dark:border-slate-700'); } 
+                else { btn.classList.replace('bg-slate-900', 'bg-white'); btn.classList.replace('dark:bg-indigo-600', 'dark:bg-slate-800'); btn.classList.replace('text-white', 'text-slate-600'); btn.classList.replace('text-white', 'dark:text-slate-400'); if (!btn.classList.contains('border')) btn.classList.add('border', 'border-slate-200', 'dark:border-slate-700'); }
+            });
+            updateUI();
+        };
+
+        window.filterHistory = (type) => {
+            currentHistoryFilter = type;
+            ['all', 'in', 'out'].forEach(f => {
+                const btn = document.getElementById('filter-'+f); if(!btn) return;
+                if(f === type) { btn.classList.add('bg-slate-900', 'text-white', 'dark:bg-indigo-600'); btn.classList.remove('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400'); } 
+                else { btn.classList.remove('bg-slate-900', 'text-white', 'dark:bg-indigo-600'); btn.classList.add('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400'); }
+            });
+            updateUI();
+        };
+
+        window.changeTimeFilter = (val) => { currentTimeFilter = val; updateUI(); }
+
+        window.switchView = (viewId, navId = null, pushMode = true) => {
+            const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
+            views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+            const target = document.getElementById(viewId); 
+            if(target) { target.classList.remove('hidden'); if (viewId !== 'view-detail') target.scrollTop = 0; }
+            const nav = document.getElementById('bottom-nav');
+            if(nav) { if (['view-detail', 'view-create', 'view-archive'].includes(viewId)) nav.classList.add('hidden'); else nav.classList.remove('hidden'); }
+            if(navId) {
+                document.querySelectorAll('.nav-btn').forEach(btn => { btn.classList.replace('text-indigo-600', 'text-slate-300'); const span = btn.querySelector('span'); if(span) span.classList.replace('font-black', 'font-bold'); });
+                const active = document.getElementById(navId);
+                if(active) { active.classList.replace('text-slate-300', 'text-indigo-600'); const span = active.querySelector('span'); if(span) span.classList.replace('font-bold', 'font-black'); }
+            }
+            
+            if(pushMode === true) history.pushState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
+            else if (pushMode === 'replace') history.replaceState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
+            
+            if(viewId === 'view-create') renderCategoryOptions();
+            if(viewId !== 'view-detail' && chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+        };
+
+        window.openManageModal = (id) => { 
+            roomToDelete = id; const r = globalRooms.find(x => x.id === id);
+            const isAdmin = r && (!r.adminUid || r.adminUid === appData.uid);
+            const optsContainer = document.getElementById('manage-options-container');
+            if(optsContainer) {
+                let html = `<button onclick="window.openShareOptions()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors"><div class="p-2 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="share-2" class="w-5 h-5"></i></div><span class="font-bold text-slate-800 dark:text-white" data-t="share">${window.i18n[appData.language].share}</span></button>`;
+                if(isAdmin) { html += `<button onclick="window.deleteCurrentRoom()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors"><div class="p-2 bg-rose-100 text-rose-600 rounded-xl"><i data-lucide="trash-2" class="w-5 h-5"></i></div><span class="font-bold text-rose-600" data-t="delete">${window.i18n[appData.language].delete}</span></button>`; } 
+                else { html += `<button onclick="window.leaveCurrentRoom()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors"><div class="p-2 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="log-out" class="w-5 h-5"></i></div><span class="font-bold text-amber-600" data-t="leave">${window.i18n[appData.language].leave || "Keluar Tabungan"}</span></button>`; }
+                optsContainer.innerHTML = html; lucide.createIcons();
+            }
+            window.showModal('modal-manage'); 
+        };
+
+        window.openShareOptions = () => {
+            const mManage = document.getElementById('modal-manage'); if(mManage) mManage.classList.add('translate-y-full');
+            const baseUrl = window.location.origin + window.location.pathname; const fullLink = baseUrl + "?id=" + roomToDelete;
+            const textEl = document.getElementById('share-link-text');
+            if(textEl) { textEl.innerText = window.location.host + "/?id=" + roomToDelete.substring(0,8) + "..."; textEl.setAttribute('data-link', fullLink); }
+            setTimeout(() => window.showModal('modal-share'), 350);
+        };
+
+        window.copyShareLink = () => {
+            const textEl = document.getElementById('share-link-text'); if(!textEl) return;
+            const link = textEl.getAttribute('data-link'); const el = document.createElement('textarea'); el.value = link;
+            document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            window.showToast("Disalin!"); window.closeAllModals();
+        };
+
+        window.deleteCurrentRoom = async () => {
+            if(!confirm("Apakah Anda yakin ingin menghapus tabungan ini?")) return;
+            await deleteDoc(doc(db, "rooms", roomToDelete));
+            appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
+            window.saveLocal(); syncJoinedRoomsToCloud(); window.closeAllModals(); window.switchView('view-home', 'nav-home', false);
+        };
+
+        window.leaveCurrentRoom = async () => {
+            if(!confirm("Anda yakin ingin keluar dari tabungan bersama ini?")) return;
+            appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
+            window.saveLocal(); syncJoinedRoomsToCloud();
+            try { const rRef = doc(db, "rooms", roomToDelete); const snap = await getDoc(rRef); if(snap.exists()) { let members = snap.data().members || []; members = members.filter(m => m.uid !== appData.uid); await updateDoc(rRef, { members: members }); } } catch(e) {}
+            window.closeAllModals(); window.switchView('view-home', 'nav-home', false);
+        };
+
         function updateUI() {
             if(!appData.user) return;
-            const lang = i18n[appData.language]; const initial = appData.user.charAt(0).toUpperCase(); const displayChar = appData.avatar.emoji || initial;
+            const lang = window.i18n[appData.language]; const initial = appData.user.charAt(0).toUpperCase(); const displayChar = appData.avatar.emoji || initial;
             
             const homeAv = document.getElementById('home-avatar'); const profAv = document.getElementById('profile-avatar');
             const homeUser = document.getElementById('home-username'); const profUser = document.getElementById('profile-username');
@@ -1396,7 +1812,6 @@
                     }
                     let catIcon = '🎯'; if(r.category) { const c = CATEGORIES.find(x => x.id === r.category); if(c) catIcon = c.icon; }
                     
-                    // UNREAD BADGE RENDER
                     let unreadBadgeHTML = '';
                     if(globalUnreadCounts[r.id] > 0) {
                         unreadBadgeHTML = `<div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center shadow-md border-2 border-white dark:border-slate-900 animate-bounce">${globalUnreadCounts[r.id]}</div>`;
@@ -1450,7 +1865,7 @@
             lucide.createIcons();
         };
 
-        window.onload = () => { lucide.createIcons(); if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; } applyTranslations(); updateChatWallpaper(); document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); }); };
+        window.onload = () => { lucide.createIcons(); if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; } window.applyTranslations(); updateChatWallpaper(); document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); }); };
         
         window.openAvatarModal = () => {
             tempAvatarSelection = { ...appData.avatar };
