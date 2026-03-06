@@ -14,7 +14,7 @@
     
     <!-- Dynamic Manifest Link -->
     <link rel="manifest" id="manifest-link">
-    <!-- Icon for iOS with built-in padding (Play Games Style) -->
+    <!-- Icon for iOS -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2VlZjJmZiIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyOCwgMTI4KSBzY2FsZSgwLjUpIj48cGF0aCBmaWxsPSIjNGY0NmU1IiBkPSJNMjU2IDk2TDY0IDE5MnY0Mi42aDM4NFYxOTJMMjU2IDk2em0tMTQ5LjMgMTgxLjN2MTQ5LjRoNDIuNlYyNzcuM2gtNDIuNnptMTA2LjYgMHYxNDkuNGg0Mi42VjI3Ny4zaC00Mi42em0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNIMzIwem0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNoLTQyLjZ6TTY0IDQ2OS4zdjQyLjZoMzg0di00Mi42SDY0eiIvPjwvZz48L3N2Zz4=">
 
     <!-- Tailwind CSS -->
@@ -32,7 +32,6 @@
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; } 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        /* Gunakan 100dvh agar responsif terhadap keyboard di mobile */
         .app-container { max-width: 480px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
         .toggle-checkbox:checked { right: 0; border-color: #4f46e5; }
         .toggle-checkbox:checked + .toggle-label { background-color: #4f46e5; }
@@ -241,7 +240,7 @@
                 </div>
             </div>
 
-            <!-- TAB CONTENT 2: DISKUSI (Zero Gap & Fixed Input) -->
+            <!-- TAB CONTENT 2: DISKUSI -->
             <div id="room-tab-diskusi" class="hidden">
                 <div class="p-6 pb-28 relative flex flex-col justify-end min-h-[calc(100vh-220px)]">
                     <div id="chat-messages" class="w-full space-y-4 pr-2">
@@ -256,8 +255,8 @@
                 </button>
 
                 <!-- FIXED CHAT INPUT -->
-                <div class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40">
-                    <div id="sticker-panel" class="absolute bottom-[80px] left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-2 transition-all justify-center">
+                <div class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40 bg-white dark:bg-slate-900">
+                    <div id="sticker-panel" class="absolute bottom-full mb-2 left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-2 transition-all justify-center">
                         <button onpointerdown="event.preventDefault(); window.sendSticker('💸')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💸</button>
                         <button onpointerdown="event.preventDefault(); window.sendSticker('🤑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤑</button>
                         <button onpointerdown="event.preventDefault(); window.sendSticker('🚀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚀</button>
@@ -279,6 +278,15 @@
                         <button onpointerdown="event.preventDefault(); window.sendSticker('🚨')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚨</button>
                         <button onpointerdown="event.preventDefault(); window.sendSticker('💡')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💡</button>
                         <button onpointerdown="event.preventDefault(); window.sendSticker('💎')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💎</button>
+                    </div>
+
+                    <!-- REPLY PREVIEW BOX -->
+                    <div id="reply-preview" class="hidden bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-3 flex justify-between items-center shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.05)]">
+                        <div class="flex-1 overflow-hidden border-l-4 border-indigo-500 pl-3">
+                            <p class="text-[10px] font-black text-indigo-500 uppercase flex items-center gap-1"><i data-lucide="reply" class="w-3 h-3"></i> Membalas <span id="reply-to-name"></span></p>
+                            <p id="reply-to-msg" class="text-xs font-medium text-slate-600 dark:text-slate-300 truncate mt-0.5">message</p>
+                        </div>
+                        <button onclick="window.cancelReply()" class="p-2 ml-2 text-slate-400 bg-slate-200 dark:bg-slate-700 rounded-full active:scale-90"><i data-lucide="x" class="w-3 h-3"></i></button>
                     </div>
 
                     <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 pb-safe shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
@@ -565,7 +573,7 @@
             </div>
         </div>
 
-        <!-- ONBOARDING (EMAIL/PASS & GOOGLE) -->
+        <!-- ONBOARDING -->
         <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0 overflow-y-auto no-scrollbar">
             <div class="w-full text-center py-8">
                 <div class="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-6 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
@@ -574,7 +582,6 @@
                 <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">Tabungan Bersama</h2>
                 <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-8" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan.</p>
                 
-                <!-- Email/Pass Form -->
                 <div class="text-left space-y-4">
                     <div>
                         <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="email_label">Email</label>
@@ -592,8 +599,6 @@
                                 <i id="auth-pass-eye" data-lucide="eye" class="w-5 h-5"></i>
                             </button>
                         </div>
-                        
-                        <!-- Password Validation Hints -->
                         <div id="pass-hints" class="hidden mt-3 px-2 space-y-1.5 text-[10px] font-bold">
                             <p id="hint-length" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Minimal 6 karakter</span></p>
                             <p id="hint-case" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Terdapat huruf besar & kecil</span></p>
@@ -606,7 +611,6 @@
                         <button onclick="window.handleForgotPassword()" id="btn-forgot-pass" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline" data-t="forgot_pass">Lupa Password?</button>
                     </div>
 
-                    <!-- In-App Error / Success Messages -->
                     <p id="auth-error-msg" class="text-xs text-rose-500 font-bold hidden text-center px-2 mt-2 leading-tight"></p>
                     <p id="auth-success-msg" class="text-xs text-emerald-500 font-bold hidden text-center px-2 mt-2 leading-tight"></p>
                 </div>
@@ -833,6 +837,9 @@
         let lastBackPress = 0; 
         let lastChatCounts = {}; 
 
+        // Optimasi: Variabel untuk fitur Reply Chat
+        let replyingTo = null;
+
         // Pagination Limits
         let historyRenderLimit = 15;
         let chatRenderLimit = 20;
@@ -844,7 +851,13 @@
         // PWA Prompt
         let deferredPrompt;
 
-        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-celebration', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install'];
+        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install'];
+
+        // Helper untuk mencegah error single/double quote pada string inline HTML
+        window.safeStr = (str) => {
+            if(!str) return '';
+            return String(str).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        };
 
         // --- DYNAMIC MANIFEST & SERVICE WORKER ---
         const manifestData = {
@@ -897,12 +910,10 @@
             deferredPrompt = e;
         });
 
-        // Setel history root agar back tidak bablas ke halaman sebelumnya di browser
         history.replaceState({ viewId: 'exit' }, "", location.href);
         history.pushState({ viewId: 'view-home', navId: 'nav-home', isTab: true }, "", location.href);
 
         window.addEventListener('popstate', (e) => {
-            // Cek Modal Terbuka
             const modals = document.querySelectorAll('.fixed.z-\\[55\\], .fixed.z-\\[60\\], .fixed.z-\\[70\\]');
             let isModalOpen = false;
             modals.forEach(m => {
@@ -917,11 +928,10 @@
                 return;
             }
 
-            // Route ke page sesuai state
             if (e.state && e.state.viewId === 'exit') {
                 const now = Date.now();
                 if (now - lastBackPress < 2000) {
-                    history.go(-1); // Benar-benar keluar
+                    history.go(-1); 
                 } else {
                     history.pushState({ viewId: 'view-home', navId: 'nav-home', isTab: true }, "", location.href);
                     window.switchView('view-home', 'nav-home', false);
@@ -936,14 +946,11 @@
             }
         });
 
-        // Pengatur Navigasi Tab Bawah (Anti-Looping)
         window.navigateTab = (viewId, navId) => {
             const currentState = history.state || {};
-            
             if (viewId === currentState.viewId) return;
 
             if (viewId === 'view-home') {
-                // Jika ingin ke home dari tab lain, cukup panggil back untuk menghapus stack
                 if (currentState.isTab && currentState.viewId !== 'view-home') {
                     history.back(); 
                 } else {
@@ -951,10 +958,8 @@
                 }
             } else {
                 if (currentState.viewId === 'view-home') {
-                    // Beranda ke Tab -> tumpuk (push)
                     window.switchView(viewId, navId, true);
                 } else if (currentState.isTab) {
-                    // Tab ke Tab lain -> ganti (replace) agar back tidak muter-muter
                     window.switchView(viewId, navId, 'replace');
                 } else {
                     window.switchView(viewId, navId, true);
@@ -962,7 +967,6 @@
             }
         };
 
-        // Event listener tambahan untuk Keyboard resizer di Mobile
         window.addEventListener('resize', () => {
             const diskusiTab = document.getElementById('room-tab-diskusi');
             if (diskusiTab && !diskusiTab.classList.contains('hidden')) {
@@ -1032,7 +1036,7 @@
                 const m = document.getElementById(id); 
                 if(m) {
                     m.classList.add('translate-y-full');
-                    if(id === 'modal-celebration' || id === 'modal-name-entry' || id === 'modal-confirm-trx') m.classList.add('hidden');
+                    if(id === 'modal-name-entry' || id === 'modal-confirm-trx') m.classList.add('hidden');
                     else setTimeout(() => m.classList.add('hidden'), 300);
                 }
             });
@@ -1043,7 +1047,7 @@
         window.showModal = (id) => {
             const overlay = document.getElementById('modal-overlay');
             const m = document.getElementById(id);
-            if(id !== 'modal-celebration' && id !== 'modal-name-entry' && id !== 'modal-confirm-trx' && overlay) overlay.classList.remove('hidden');
+            if(id !== 'modal-name-entry' && id !== 'modal-confirm-trx' && overlay) overlay.classList.remove('hidden');
             if(m) {
                 m.classList.remove('hidden');
                 setTimeout(() => m.classList.remove('translate-y-full'), 10);
@@ -1169,6 +1173,31 @@
                     }
                 }
             } catch(e) {}
+        }
+
+        // Optimasi 3: Fungsi Sinkronisasi Avatar & Nama ke seluruh Room yang diikuti
+        async function syncUserToRooms(userUid, newName, newAvatar) {
+            if(!appData.joinedRooms || appData.joinedRooms.length === 0) return;
+            appData.joinedRooms.forEach(async (roomId) => {
+                try {
+                    const rRef = doc(db, "rooms", roomId);
+                    const snap = await getDoc(rRef);
+                    if(snap.exists()) {
+                        let members = snap.data().members || [];
+                        let isChanged = false;
+                        members = members.map(m => {
+                            if (m.uid === userUid) {
+                                isChanged = true;
+                                return { ...m, name: newName || m.name, avatar: newAvatar || m.avatar };
+                            }
+                            return m;
+                        });
+                        if(isChanged) {
+                            await updateDoc(rRef, { members: members });
+                        }
+                    }
+                } catch(e) {}
+            });
         }
 
         // --- AUTH LOGIC (EMAIL + GOOGLE) ---
@@ -1420,6 +1449,7 @@
                 await setDoc(doc(db, "users", appData.uid), {
                     name: appData.user, email: appData.email, avatar: appData.avatar, joinedRooms: appData.joinedRooms, createdAt: Date.now()
                 });
+                await syncUserToRooms(appData.uid, appData.user, appData.avatar);
             } catch(e) { }
             
             document.getElementById('modal-name-entry').classList.add('hidden');
@@ -1476,7 +1506,7 @@
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
 
-                // Notif Realtime Dalam Aplikasi
+                // Notif Realtime Dalam Aplikasi untuk Trx
                 if (!isInitialHistoryLoad && hasNewContent && latestTx) {
                     if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
                         const isId = appData.language === 'id';
@@ -1488,7 +1518,36 @@
                 }
             });
 
+            // Optimasi 2: Global listener untuk in-app notification pada Chat/Diskusi
+            let isInitialGlobalChatLoad = true;
+            onSnapshot(collection(db, "chats"), (snap) => {
+                let hasNewChat = false;
+                let latestChat = null;
+
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        hasNewChat = true;
+                        latestChat = change.doc.data();
+                    }
+                });
+
+                if (!isInitialGlobalChatLoad && hasNewChat && latestChat) {
+                    if (latestChat.uid !== appData.uid && appData.joinedRooms.includes(latestChat.roomId)) {
+                        const isViewingCurrentRoomChat = (currentRoomId === latestChat.roomId && document.getElementById('room-tab-diskusi') && !document.getElementById('room-tab-diskusi').classList.contains('hidden'));
+
+                        if (!isViewingCurrentRoomChat) {
+                            const r = globalRooms.find(x => x.id === latestChat.roomId);
+                            const rName = r ? r.name : 'Tabungan';
+                            let msgPrev = latestChat.type === 'sticker' ? latestChat.message : latestChat.message;
+                            if(msgPrev.length > 25) msgPrev = msgPrev.substring(0,25) + '...';
+                            window.showRealtimeNotif(`💬 ${latestChat.name} (${rName}): ${msgPrev}`);
+                        }
+                    }
+                }
+            });
+
             setTimeout(() => { isInitialHistoryLoad = false; }, 2000);
+            setTimeout(() => { isInitialGlobalChatLoad = false; }, 2500);
         }
 
         // --- CORE ACTIONS ---
@@ -1615,7 +1674,6 @@
                 cDiskusi.classList.add('hidden');
                 if(fab) fab.classList.remove('hidden');
                 
-                // Ringkasan langsung ke atas (Instan)
                 const scroller = document.getElementById('view-detail');
                 if (scroller) {
                     scroller.style.scrollBehavior = 'auto'; 
@@ -1641,7 +1699,6 @@
                 const dot = document.getElementById('chat-unread-dot');
                 if (dot) dot.classList.add('hidden');
                 
-                // Diskusi langsung ke paling bawah (instan)
                 window.scrollToBottomChat(true); 
             }
         };
@@ -1653,7 +1710,6 @@
             refreshRoomUI(id); 
             window.switchRoomTab('ringkasan');
             
-            // Push history khusus agar bisa back
             window.switchView('view-detail', null, true); 
             
             chatRenderLimit = 20; 
@@ -1742,7 +1798,6 @@
             return `${date.getDate()} ${monthStr} ${date.getFullYear()}`;
         }
 
-        // Variable global untuk melacak stiker yang sudah pernah dianimasikan
         if (!window.animatedStickersTracker) {
             window.animatedStickersTracker = new Set();
         }
@@ -1758,6 +1813,22 @@
             setTimeout(() => {
                 el.dataset.animating = 'false';
             }, 2400); 
+        };
+
+        // Optimasi 1: Set fungsi untuk fitur reply chat
+        window.setReply = (chatId, userName, message) => {
+            replyingTo = { id: chatId, name: userName, message: message };
+            const preview = document.getElementById('reply-preview');
+            document.getElementById('reply-to-name').innerText = userName;
+            document.getElementById('reply-to-msg').innerText = message;
+            if(preview) preview.classList.remove('hidden');
+            document.getElementById('chat-input').focus();
+        };
+
+        window.cancelReply = () => {
+            replyingTo = null;
+            const preview = document.getElementById('reply-preview');
+            if(preview) preview.classList.add('hidden');
         };
 
         function renderChats(msgs) {
@@ -1808,7 +1879,6 @@
                 
                 const isMentioned = m.type === 'text' && formattedMsg.includes('mention-me');
                 
-                // Logic Stiker 1x Gerak
                 let animClass = '';
                 let dataAnim = 'false';
                 if(m.type === 'sticker') {
@@ -1819,14 +1889,32 @@
                     }
                 }
 
+                let replyHtmlMe = '';
+                let replyHtmlOther = '';
+                if (m.replyTo) {
+                    replyHtmlMe = `
+                    <div class="mb-1.5 p-2 bg-black/10 rounded-lg flex flex-col border-l-2 border-white/50 text-left">
+                        <span class="text-[9px] font-black opacity-80">${m.replyTo.name}</span>
+                        <span class="text-[10px] opacity-90 line-clamp-1">${m.replyTo.message}</span>
+                    </div>`;
+                    replyHtmlOther = `
+                    <div class="mb-1.5 p-2 bg-black/5 dark:bg-white/5 rounded-lg flex flex-col border-l-2 border-indigo-400 text-left">
+                        <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400">${m.replyTo.name}</span>
+                        <span class="text-[10px] opacity-80 line-clamp-1 text-slate-700 dark:text-slate-300">${m.replyTo.message}</span>
+                    </div>`;
+                }
+
                 if(isMe) {
                     box.innerHTML += `
                     <div class="flex flex-col items-end w-full pl-8 mb-2">
                         <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1">Anda</span>
-                        ${m.type === 'sticker' 
-                            ? `<div class="text-6xl cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
-                            : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
-                        }
+                        <div class="flex items-center gap-2 justify-end w-full group">
+                            <button onclick="window.setReply('${m.id || m.timestamp}', 'Anda', \`${window.safeStr(m.type==='sticker'?m.message:m.message)}\`)" class="p-1.5 text-slate-300 hover:text-indigo-500 rounded-full active:scale-90 opacity-100 transition-opacity"><i data-lucide="reply" class="w-3.5 h-3.5"></i></button>
+                            ${m.type === 'sticker' 
+                                ? `<div class="text-6xl cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
+                                : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlMe}${formattedMsg}</div>`
+                            }
+                        </div>
                     </div>`;
                 } else {
                     box.innerHTML += `
@@ -1835,21 +1923,22 @@
                             <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
                             <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
                         </div>
-                         ${m.type === 'sticker' 
-                            ? `<div class="text-6xl ml-7 cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
-                            : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${formattedMsg}</div>`
-                        }
+                        <div class="flex items-center gap-2 justify-start ml-7 w-full group">
+                             ${m.type === 'sticker' 
+                                ? `<div class="text-6xl cursor-pointer ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
+                                : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlOther}${formattedMsg}</div>`
+                            }
+                            <button onclick="window.setReply('${m.id || m.timestamp}', '${window.safeStr(m.name)}', \`${window.safeStr(m.type==='sticker'?m.message:m.message)}\`)" class="p-1.5 text-slate-300 hover:text-indigo-500 rounded-full active:scale-90 opacity-100 transition-opacity"><i data-lucide="reply" class="w-3.5 h-3.5"></i></button>
+                        </div>
                     </div>`;
                 }
             });
 
-            // Matikan state animasi untuk stiker terbaru setelah 2.4 detik
             setTimeout(() => {
                 const stickers = box.querySelectorAll('[data-animating="true"]');
                 stickers.forEach(s => s.dataset.animating = 'false');
             }, 2400);
 
-            // Logika Scroll Cerdas
             if (window.isFirstChatRender || latestIsMe || !isScrolledUp) {
                 setTimeout(() => window.scrollToBottomChat(window.isFirstChatRender), 10);
                 window.isFirstChatRender = false;
@@ -1861,6 +1950,7 @@
                     dot.classList.remove('hidden'); 
                 }
             }
+            lucide.createIcons();
         }
 
         window.toggleStickerPanel = () => {
@@ -1871,10 +1961,13 @@
         window.sendSticker = async (sticker) => {
             if(!currentRoomId) return;
             window.toggleStickerPanel(); 
-            
             window.scrollToBottomChat(false);
 
             const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'sticker', message: sticker, timestamp: Date.now() };
+            if(replyingTo) {
+                chat.replyTo = replyingTo;
+                window.cancelReply();
+            }
             try { await setDoc(doc(db, "chats", 'chat_'+Date.now()), chat); } catch(e) {}
         }
 
@@ -1894,6 +1987,13 @@
             window.scrollToBottomChat(false);
 
             const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'text', message: msg, timestamp: Date.now() };
+            
+            // Sertakan info Reply jika ada
+            if(replyingTo) {
+                chat.replyTo = replyingTo;
+                window.cancelReply();
+            }
+
             try { await setDoc(doc(db, "chats", 'chat_'+Date.now()), chat); } catch(e) {}
         };
 
@@ -2008,7 +2108,6 @@
                 } else msBox.classList.add('hidden');
             }
             
-            // Render History in Detail view
             const histList = document.getElementById('detail-history-list');
             if(histList) {
                 histList.innerHTML = '';
@@ -2130,10 +2229,8 @@
 
             const reachedGoal = (r.hasTarget && newBal === r.target && type === 'in');
             
-            // Simpan ke state sementara
             pendingTransaction = { r, type, amount, newBal, finalNote, updatedMilestones, reachedGoal };
 
-            // Tampilkan Modal Konfirmasi
             const m = document.getElementById('modal-confirm-trx');
             const card = document.getElementById('confirm-trx-card');
             const desc = document.getElementById('confirm-trx-desc');
@@ -2145,7 +2242,6 @@
                 desc.innerHTML = `Anda akan ${actionText} tabungan <b>"${r.name}"</b>.`;
                 
                 m.classList.remove('hidden');
-                // Trigger reflow
                 void m.offsetWidth;
                 m.classList.remove('opacity-0');
                 m.classList.add('opacity-100');
@@ -2174,7 +2270,7 @@
                 window.closeAllModals();
                 
                 btn.disabled = false; btn.innerText = origText;
-                pendingTransaction = null; // Reset
+                pendingTransaction = null; 
                 window.showToast("Transaksi Berhasil!");
 
             } catch(e) { 
@@ -2251,10 +2347,8 @@
             }
             
             if(pushMode === true) {
-                // Untuk membuka sub-halaman baru seperti view-detail, view-archive, view-create
                 history.pushState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
             } else if (pushMode === 'replace') {
-                // Untuk pindah antar tab (Home -> History -> Profile)
                 history.replaceState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
             }
             
@@ -2639,7 +2733,11 @@
             window.closeAllModals(); 
             window.showToast("Berhasil disimpan!"); 
             if(appData.uid) {
-                try { await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar }); } catch(e) {}
+                try { 
+                    await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar }); 
+                    // Panggil fungsi sinkronisasi (Optimasi 3)
+                    await syncUserToRooms(appData.uid, appData.user, appData.avatar);
+                } catch(e) {}
             }
         };
     </script>
