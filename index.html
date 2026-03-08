@@ -247,6 +247,10 @@
                 <h1 id="profile-username" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">-</h1>
                 <p id="profile-email" class="text-xs text-slate-400"></p>
                 <div class="mt-8 space-y-4 text-left">
+                    <button onclick="window.requestNotificationPermission()" class="w-full p-5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex justify-between items-center shadow-sm active:scale-95 transition-transform border border-indigo-100 dark:border-indigo-800">
+                        <span class="font-bold flex items-center gap-3"><i data-lucide="bell-ring" class="w-5 h-5"></i> Aktifkan Notifikasi</span>
+                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
                     <button onclick="window.toggleDarkMode()" class="w-full p-5 bg-white dark:bg-slate-900 rounded-2xl flex justify-between shadow-sm">
                         <span class="font-bold dark:text-white" data-t="dark_mode">Mode Gelap</span>
                         <div class="relative inline-block w-10 h-5"><input type="checkbox" id="toggle-dark" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer transition-all"/><label for="toggle-dark" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer"></label></div>
