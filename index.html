@@ -12,7 +12,7 @@
     <title>Tabungan Bersama</title>
     
     <link rel="manifest" id="manifest-link">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2VlZjJmZiIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyOCwgMTI4KSBzY2FsZSgwLjUpIj48cGF0aCBmaWxsPSIjNGY0NmU1IiBkPSJNMjU2IDk2TDY0IDE5MnY0Mi42aDM4NFYxOTJMMjU2IDk2em0tMTQ5LjMgMTgxLjN2MTQ5LjRoNDIuNlYyNzcuM2gtNDIuNnptMTA2LjYgMHYxNDkuNGg0Mi42VjI3Ny4zaC00Mi42em0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNIMzIwem0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNoLTQyLjZ6TTY0IDQ2OS4zdjQyLjZoMzg0di00Mi42SDY0eiIvPjwvZz48L3N2Zz4=">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgZmlsbD0iI2VlZjJmZiIvPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEyOCwgMTI4KSBzY2FsZSgwLjUpIj48cGF0aCBmaWxsPSIjNGY0NmU1IiBkPSJNMjU2IDk2TDY0IDE5MnY0Mi42aDM4NFYxOTJMMjU2IDk2em0tMTQ5LjMgMTgxLjN2MTQ5LjRoNDIuNlYyNzcuM2gtNDIuNnptMTA2LjYgMHYxNDkuNGg0Mi42VjI3Ny4zaC00Mi42em0xMDYuNyAwdjE0OS40aDQyLjZWMjc3LjNoLTQyLjZ6TTY0IDQ2OS4zdjQyLjZoMzg0di00Mi42SDY0eiIvPjwvZz48L3N2Zz4=">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -34,27 +34,35 @@
         .bg-premium-gradient { background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%); }
         .toast-visible { opacity: 1 !important; transform: translate(-50%, -20px) !important; }
         .celeb-ping { animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
+        
         @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         @keyframes shadowScale { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(0.5); opacity: 0.15; } }
         @keyframes floatCoin { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(15deg); } }
+        @keyframes floatYTemp { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-10px) rotate(-5deg); } 75% { transform: translateY(-5px) rotate(5deg); } }
+        
         .anim-float-temp { animation: floatYTemp 1.2s ease-in-out 2; }
         .anim-float { animation: floatY 2.5s ease-in-out infinite; }
         .anim-shadow { animation: shadowScale 2.5s ease-in-out infinite; }
         .anim-coin-1 { animation: floatCoin 2s ease-in-out infinite; }
         .anim-coin-2 { animation: floatCoin 2.8s ease-in-out infinite; animation-delay: 0.4s; }
         .anim-coin-3 { animation: floatCoin 2.4s ease-in-out infinite; animation-delay: 0.8s; }
+
         .spinner { animation: rotate 2s linear infinite; width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; }
         .spinner .path { stroke: currentColor; stroke-linecap: round; animation: dash 1.5s ease-in-out infinite; }
         @keyframes rotate { 100% { transform: rotate(360deg); } }
         @keyframes dash { 0% { stroke-dasharray: 1, 150; stroke-dashoffset: 0; } 50% { stroke-dasharray: 90, 150; stroke-dashoffset: -35; } 100% { stroke-dasharray: 90, 150; stroke-dashoffset: -124; } }
+        
         button:disabled { opacity: 0.7; cursor: not-allowed; }
+        
         .color-btn.selected, .category-btn.selected { transform: scale(1.1); border-width: 3px; border-color: #4f46e5; background-color: #eef2ff; }
         .dark .category-btn.selected { background-color: #312e81; }
         .emoji-btn.selected { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.1); border-width: 2px; }
         .dark .emoji-btn.selected { background-color: #312e81; }
+
         .chat-bubble-me { border-radius: 1rem 1rem 0 1rem; background-color: #4f46e5; color: white; }
         .chat-bubble-other { border-radius: 1rem 1rem 1rem 0; background-color: #f1f5f9; color: #1e293b; }
         .dark .chat-bubble-other { background-color: #1e293b; color: #f8fafc; }
+        
         .mention-highlight { color: #3b82f6; font-weight: 900; background: rgba(59, 130, 246, 0.1); padding: 0 4px; border-radius: 4px; }
         .mention-me { color: #f43f5e; font-weight: 900; background: rgba(244, 63, 94, 0.1); padding: 0 4px; border-radius: 4px; }
     </style>
@@ -112,9 +120,11 @@
                         </div>
                         <h1 id="total-balance" class="text-4xl font-black tracking-tight mb-4" data-value="0">Rp 0</h1>
                     </div>
+
                     <div id="live-feed-container" class="bg-white/20 backdrop-blur-sm border border-white/10 rounded-xl p-2.5 shadow-inner hidden flex-col mb-5">
                         <div id="live-feed-list" class="max-h-[75px] overflow-y-auto no-scrollbar space-y-2 snap-y"></div>
                     </div>
+                    
                     <div class="relative z-10 pt-4 border-t border-white/20 flex justify-between items-center">
                         <div>
                             <p id="label-income" class="text-[9px] uppercase font-black text-indigo-200 mb-1 tracking-tighter">Masuk</p>
@@ -136,11 +146,13 @@
                         <i data-lucide="plus" class="w-5 h-5"></i>
                     </button>
                 </div>
+                
                 <div class="flex gap-2 overflow-x-auto no-scrollbar mb-6 pb-1">
                     <button onclick="window.filterRooms('all')" id="filter-room-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-black rounded-full shadow-sm transition-colors" data-t="filter_room_all">Semua</button>
                     <button onclick="window.filterRooms('personal')" id="filter-room-personal" class="px-5 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full shadow-sm transition-colors" data-t="filter_room_personal">Pribadi</button>
                     <button onclick="window.filterRooms('shared')" id="filter-room-shared" class="px-5 py-2 bg-white border border-slate-200 dark:bg-slate-800 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-[11px] font-black rounded-full shadow-sm transition-colors" data-t="filter_room_shared">Bersama</button>
                 </div>
+
                 <div id="rooms-container" class="space-y-4"></div>
             </div>
         </main>
@@ -181,133 +193,512 @@
 
             <div id="room-tab-ringkasan" class="pb-24">
                 <div class="px-8 pb-6 pt-6 bg-white dark:bg-slate-900">
-                    <div id="detail-target-container" class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100">
+                    <div id="detail-target-container" class="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-3xl text-left hidden border border-slate-100 dark:border-slate-800">
                         <div class="flex justify-between text-xs font-bold mb-3">
                             <span class="text-slate-400 uppercase" data-t="progress">Progres</span>
                             <span id="detail-progress-text" class="text-indigo-600 dark:text-indigo-400">0 / 0</span>
                         </div>
                         <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden">
-                            <div id="detail-progress-bar" class="bg-indigo-600 h-3 transition-all duration-1000" style="width: 0%"></div>
+                            <div id="detail-progress-bar" class="bg-indigo-600 h-3 transition-all duration-1000 shadow-sm" style="width: 0%"></div>
+                        </div>
+                        <div id="detail-archive-btn-container" class="mt-6 hidden">
+                            <button onclick="window.completeAndArchiveRoom()" class="w-full py-3 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-amber-100 dark:border-amber-900/30" data-t="archive_now">Arsipkan Sekarang</button>
                         </div>
                     </div>
                 </div>
-                <div id="detail-milestone-container" class="p-6 pt-0 bg-white dark:bg-slate-900 border-b hidden">
-                    <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase" data-t="milestone_list">Daftar Milestone</h3>
+
+                <div id="detail-milestone-container" class="p-6 pt-0 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 hidden">
+                    <h3 class="font-black text-slate-800 dark:text-white mb-4 text-xs uppercase tracking-widest" data-t="milestone_list">Daftar Milestone</h3>
                     <div id="detail-milestone-list" class="space-y-3"></div>
                 </div>
+
                 <div class="p-6">
                     <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="history" class="w-4 h-4"></i> <span data-t="history">Riwayat</span></h3>
-                    <div id="detail-history-list" class="relative border-l-2 border-indigo-100 ml-3 space-y-4 pb-4"></div>
+                    <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-4 pb-4"></div>
                 </div>
             </div>
 
             <div id="room-tab-diskusi" class="hidden">
-                <div class="p-6 pb-28 min-h-[calc(100vh-220px)] flex flex-col justify-end">
-                    <div id="chat-messages" class="w-full space-y-4"></div>
-                </div>
-                <button id="chat-scroll-btn" onclick="window.scrollToBottomChat(false)" class="fixed bottom-[90px] right-6 z-40 bg-white dark:bg-slate-800 text-indigo-600 p-3 rounded-full shadow-xl hidden"><i data-lucide="chevron-down"></i></button>
-                <div class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40 bg-white dark:bg-slate-900">
-                    <div id="reply-preview" class="hidden bg-slate-100 p-3 flex justify-between border-t border-slate-200">
-                        <div class="border-l-4 border-indigo-500 pl-3">
-                            <p class="text-[10px] font-black text-indigo-500">Membalas <span id="reply-to-name"></span></p>
-                            <p id="reply-to-msg" class="text-xs truncate"></p>
+                <div class="p-6 pb-28 relative flex flex-col justify-end min-h-[calc(100vh-220px)]">
+                    <div id="chat-messages" class="w-full space-y-4 pr-2">
                         </div>
-                        <button onclick="window.cancelReply()" class="p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+
+                <button id="chat-scroll-btn" onclick="window.scrollToBottomChat(false)" class="fixed bottom-[90px] right-6 z-40 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 p-3 rounded-full shadow-xl border border-slate-100 dark:border-slate-700 hidden active:scale-90 transition-transform">
+                    <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                    <span id="chat-unread-dot-hint" class="absolute top-0 right-0 w-3 h-3 bg-rose-500 rounded-full border-2 border-white dark:border-slate-800 hidden"></span>
+                </button>
+
+                <div class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto z-40 bg-white dark:bg-slate-900">
+                    <div id="sticker-panel" class="absolute bottom-full mb-2 left-6 right-6 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 p-4 hidden flex-wrap gap-2 transition-all justify-center">
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('💸')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💸</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🤑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤑</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🚀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚀</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('💰')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💰</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('📈')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">📈</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('📉')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">📉</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🔥')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🔥</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🏃‍♂️')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🏃‍♂️</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🙏')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🙏</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('😭')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">😭</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('💀')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💀</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🤡')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤡</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🥳')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🥳</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🤯')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤯</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🤝')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🤝</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🥂')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🥂</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🗿')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🗿</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🛑')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🛑</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('🚨')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">🚨</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('💡')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💡</button>
+                        <button onpointerdown="event.preventDefault(); window.sendSticker('💎')" class="text-3xl active:scale-90 hover:bg-slate-50 dark:hover:bg-slate-700 p-2 rounded-xl transition-all">💎</button>
                     </div>
-                    <div class="p-4 flex gap-2 border-t dark:border-slate-800">
-                        <button onclick="window.toggleStickerPanel()" class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"><i data-lucide="smile"></i></button>
-                        <input type="text" id="chat-input" placeholder="Ketik pesan..." class="flex-1 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl outline-none dark:text-white">
-                        <button onclick="window.sendChatMessage()" class="p-3 bg-indigo-600 text-white rounded-xl"><i data-lucide="send"></i></button>
+
+                    <div id="reply-preview" class="hidden bg-slate-100 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 p-3 flex justify-between items-center shadow-[0_-5px_15px_-5px_rgba(0,0,0,0.05)]">
+                        <div class="flex-1 overflow-hidden border-l-4 border-indigo-500 pl-3">
+                            <p class="text-[10px] font-black text-indigo-500 uppercase flex items-center gap-1"><i data-lucide="reply" class="w-3 h-3"></i> Membalas <span id="reply-to-name"></span></p>
+                            <p id="reply-to-msg" class="text-xs font-medium text-slate-600 dark:text-slate-300 truncate mt-0.5">message</p>
+                        </div>
+                        <button onclick="window.cancelReply()" class="p-2 ml-2 text-slate-400 bg-slate-200 dark:bg-slate-700 rounded-full active:scale-90"><i data-lucide="x" class="w-3 h-3"></i></button>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center gap-2 pb-safe shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.05)]">
+                        <button onpointerdown="event.preventDefault(); window.toggleStickerPanel()" class="p-3 text-slate-400 hover:text-indigo-500 bg-white dark:bg-slate-800 rounded-xl transition-colors shadow-sm"><i data-lucide="smile" class="w-6 h-6"></i></button>
+                        <input type="text" id="chat-input" autocomplete="off" spellcheck="false" placeholder="Ketik pesan..." data-t="type_message" class="flex-1 p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500/20 text-sm font-bold text-slate-900 dark:text-white shadow-sm">
+                        <button onpointerdown="event.preventDefault(); window.sendChatMessage()" class="p-3.5 bg-indigo-600 text-white rounded-xl active:scale-90 transition-transform shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="send" class="w-5 h-5"></i></button>
                     </div>
                 </div>
             </div>
-            <button id="fab-trx" onclick="window.showModal('modal-action-sheet')" class="fixed bottom-6 right-6 z-40 bg-premium text-white p-4 rounded-full shadow-2xl transition-transform active:scale-90"><i data-lucide="plus" class="w-7 h-7"></i></button>
+
+            <button id="fab-trx" onclick="window.showModal('modal-action-sheet')" class="fixed bottom-6 right-6 z-40 bg-premium text-white p-4 rounded-full shadow-2xl shadow-indigo-500/50 dark:shadow-none active:scale-90 transition-transform">
+                <i data-lucide="plus" class="w-7 h-7"></i>
+            </button>
         </main>
 
         <main id="view-history" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-white dark:bg-slate-900 hidden">
-            <div class="px-6 pt-10 pb-4 border-b dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
+            <div class="px-6 pt-10 pb-4 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white dark:bg-slate-900 z-10">
                 <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-5 tracking-tight" data-t="history">Riwayat</h1>
                 <div class="flex items-center justify-between gap-2">
-                    <div class="flex gap-2 overflow-x-auto no-scrollbar">
-                        <button onclick="window.filterHistory('all')" id="filter-all" class="px-5 py-2 bg-slate-900 text-white text-xs font-black rounded-full" data-t="all">Semua</button>
-                        <button onclick="window.filterHistory('in')" id="filter-in" class="px-5 py-2 bg-slate-100 text-slate-600 text-xs font-black rounded-full" data-t="in">Masuk</button>
-                        <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 text-slate-600 text-xs font-black rounded-full" data-t="out">Keluar</button>
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                        <button onclick="window.filterHistory('all')" id="filter-all" class="px-5 py-2 bg-slate-900 dark:bg-indigo-600 text-white text-xs font-black rounded-full whitespace-nowrap" data-t="all">Semua</button>
+                        <button onclick="window.filterHistory('in')" id="filter-in" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="in">Masuk</button>
+                        <button onclick="window.filterHistory('out')" id="filter-out" class="px-5 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-black rounded-full whitespace-nowrap" data-t="out">Keluar</button>
                     </div>
+                    <select id="time-filter" onchange="window.changeTimeFilter(this.value)" class="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold rounded-xl px-3 py-2 outline-none">
+                        <option value="all_time" data-t="filter_all_time">Semua Waktu</option>
+                        <option value="this_month" data-t="filter_this_month">Bulan Ini</option>
+                        <option value="last_month" data-t="filter_last_month">Bulan Lalu</option>
+                    </select>
                 </div>
             </div>
             <div id="global-history-container" class="p-6 space-y-4"></div>
         </main>
 
         <main id="view-profile" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden">
-            <div class="p-10 bg-white dark:bg-slate-900 text-center relative border-b dark:border-slate-800">
-                <div class="relative inline-block mb-5">
-                    <div id="profile-avatar" class="w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black border"></div>
-                    <button onclick="window.openAvatarModal()" class="absolute bottom-0 right-0 bg-slate-900 text-white p-2 rounded-full border-4 border-white"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+            <div class="p-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-center relative">
+                <div class="relative inline-block mx-auto mb-5">
+                    <div id="profile-avatar" class="w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black border border-black/5 shadow-inner"></div>
+                    <button onclick="window.openAvatarModal()" class="absolute bottom-0 right-0 bg-slate-900 dark:bg-slate-700 text-white p-2.5 rounded-full border-4 border-white dark:border-slate-900 shadow-md active:scale-90 transition-transform">
+                        <i data-lucide="pencil" class="w-4 h-4"></i>
+                    </button>
                 </div>
                 <h1 id="profile-username" class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">-</h1>
-                <p id="profile-email" class="text-xs text-slate-400"></p>
-                <div class="mt-8 space-y-4 text-left">
-                    <button onclick="window.requestNotificationPermission()" class="w-full p-5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex justify-between items-center shadow-sm active:scale-95 transition-transform border border-indigo-100 dark:border-indigo-800">
-                        <span class="font-bold flex items-center gap-3"><i data-lucide="bell-ring" class="w-5 h-5"></i> Aktifkan Notifikasi</span>
-                        <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </button>
-                    <button onclick="window.toggleDarkMode()" class="w-full p-5 bg-white dark:bg-slate-900 rounded-2xl flex justify-between shadow-sm">
-                        <span class="font-bold dark:text-white" data-t="dark_mode">Mode Gelap</span>
-                        <div class="relative inline-block w-10 h-5"><input type="checkbox" id="toggle-dark" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer transition-all"/><label for="toggle-dark" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer"></label></div>
-                    </button>
-                    <button onclick="window.logoutGoogle()" class="w-full p-5 bg-rose-50 text-rose-600 rounded-2xl font-black text-center" data-t="logout">Keluar (Logout)</button>
+                <p id="profile-email" class="text-[10px] font-bold text-slate-400 mt-1 mb-2"></p>
+                <p id="profile-stats" class="text-xs font-bold text-indigo-500 dark:text-indigo-400 uppercase tracking-widest bg-indigo-50 dark:bg-indigo-900/30 inline-block px-4 py-1.5 rounded-full">0 Tabungan Aktif</p>
+            </div>
+
+            <div class="p-6 space-y-8 mt-4">
+                <div>
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="data_activities">Data & Aktivitas</h3>
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
+                        <div onclick="window.switchView('view-archive', null, true)" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-xl"><i data-lucide="archive" class="w-5 h-5"></i></div>
+                                <div>
+                                    <p class="text-sm font-black text-slate-700 dark:text-slate-200 tracking-tight" data-t="archive">Arsip Tabungan</p>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase" data-t="archive_desc">Target Selesai 100%</p>
+                                </div>
+                            </div>
+                            <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
+                        </div>
+                        <div onclick="window.logoutGoogle()" class="flex items-center justify-between p-5 cursor-pointer active:bg-rose-50 dark:active:bg-rose-900/20 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-rose-50 dark:bg-rose-900/20 text-rose-500 rounded-xl"><i data-lucide="log-out" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-rose-600 dark:text-rose-400" data-t="logout">Keluar (Logout)</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+                <div>
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-2 mb-4" data-t="app_settings">Pengaturan Aplikasi</h3>
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm divide-y divide-slate-100 dark:divide-slate-800">
+                        
+                        <div class="flex items-center justify-between p-5 cursor-pointer active:bg-indigo-50 dark:active:bg-indigo-900/20 transition-colors" onclick="window.requestNotificationPermission()">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-500 rounded-xl"><i data-lucide="bell-ring" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-indigo-600 dark:text-indigo-400" data-t="enable_notif">Aktifkan Notifikasi</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="text-indigo-300 dark:text-indigo-600 w-5 h-5"></i>
+                        </div>
+
+                        <div id="btn-install-app" class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800 transition-colors" onclick="window.handleInstallApp()">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-sky-50 dark:bg-sky-900/20 text-sky-500 rounded-xl"><i data-lucide="download" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="install_app">Install Aplikasi</span>
+                            </div>
+                            <i data-lucide="chevron-right" class="text-slate-300 w-5 h-5"></i>
+                        </div>
+
+                        <div class="flex items-center justify-between p-5">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-slate-100 dark:bg-slate-800 text-slate-500 rounded-xl"><i data-lucide="moon" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="dark_mode">Mode Gelap</span>
+                            </div>
+                            <div class="relative inline-block w-10 h-5">
+                                <input type="checkbox" id="toggle-dark" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-2 appearance-none cursor-pointer border-slate-200 transition-all" onchange="window.toggleDarkMode()"/>
+                                <label for="toggle-dark" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-200 cursor-pointer transition-colors"></label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-5 cursor-pointer active:bg-slate-50 dark:active:bg-slate-800" onclick="window.toggleLanguage()">
+                            <div class="flex items-center gap-4">
+                                <div class="p-2.5 bg-blue-50 dark:bg-blue-900/20 text-blue-500 rounded-xl"><i data-lucide="languages" class="w-5 h-5"></i></div>
+                                <span class="text-sm font-black text-slate-700 dark:text-slate-200" data-t="language_name">Bahasa</span>
+                            </div>
+                            <span id="lang-display" class="text-[10px] font-black uppercase text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">ID</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <main id="view-archive" class="flex-1 overflow-y-auto no-scrollbar pb-24 bg-slate-50 dark:bg-slate-950 hidden">
+            <div class="sticky top-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md z-10 px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex items-center gap-3">
+                <button onclick="window.history.back()" class="p-2 text-slate-600 dark:text-slate-400 active:scale-90 transition-transform"><i data-lucide="chevron-left" class="w-7 h-7"></i></button>
+                <h1 class="font-bold text-lg text-slate-800 dark:text-white" data-t="archive">Arsip Tabungan</h1>
+            </div>
+            <div class="p-6" id="archive-container"></div>
+        </main>
+
+        <main id="view-create" class="flex-1 overflow-y-auto no-scrollbar pb-32 bg-white dark:bg-slate-950 hidden relative">
+             <div class="sticky top-0 bg-white z-10 px-5 py-4 border-b border-slate-100 dark:border-slate-800 flex items-center gap-3 dark:bg-slate-900">
+                <button onclick="window.history.back()" class="p-2 text-slate-600 active:scale-90 dark:text-slate-400"><i data-lucide="x" class="w-7 h-7"></i></button>
+                <h1 class="font-bold text-lg text-slate-800 dark:text-white" data-t="savings_goal">Buat Tabungan</h1>
+            </div>
+            <div class="p-6 space-y-8">
+                <div>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1" data-t="goal_name">Nama Tujuan</label>
+                    <input type="text" id="create-name" autocomplete="off" spellcheck="false" placeholder="Beli Laptop..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-2xl outline-none focus:ring-4 focus:ring-indigo-500/10 font-bold text-slate-900 dark:text-white transition-all">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 px-1" data-t="category">Kategori</label>
+                    <div id="create-categories" class="flex gap-3 overflow-x-auto no-scrollbar pb-2"></div>
+                </div>
+
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm font-black text-slate-800 dark:text-slate-200" data-t="target_nominal">Target Nominal?</p>
+                        <div class="relative inline-block w-12 h-6">
+                            <input type="checkbox" id="toggle-target" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-200 transition-all duration-300" onchange="document.getElementById('target-input-div').classList.toggle('hidden')"/>
+                            <label for="toggle-target" class="toggle-label block h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                    </div>
+                    <div id="target-input-div" class="hidden mt-6 relative text-center">
+                        <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-black text-xl">Rp</span>
+                        <input type="text" id="create-target" autocomplete="off" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none">
+                    </div>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-[2rem] border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center">
+                        <p class="text-sm font-black text-slate-800 dark:text-slate-200">Milestone?</p>
+                        <div class="relative inline-block w-12 h-6">
+                            <input type="checkbox" id="toggle-milestone" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer border-slate-200 transition-all duration-300" onchange="document.getElementById('milestone-input-div').classList.toggle('hidden')"/>
+                            <label for="toggle-milestone" class="toggle-label block h-6 rounded-full bg-slate-200 cursor-pointer transition-colors duration-300"></label>
+                        </div>
+                    </div>
+                    <div id="milestone-input-div" class="hidden mt-6 space-y-4">
+                        <div id="milestone-rows-container">
+                            <div class="milestone-row bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-3 shadow-sm relative">
+                                <input type="text" autocomplete="off" spellcheck="false" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
+                                <div class="relative">
+                                    <span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span>
+                                    <input type="text" inputmode="numeric" autocomplete="off" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white">
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="window.addMilestoneRow()" class="w-full py-3 border-2 border-dashed border-slate-300 text-slate-400 text-[10px] font-black uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-colors">+ Tambah Rincian</button>
+                    </div>
+                </div>
+            </div>
+            <div class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 max-w-[480px] mx-auto z-20">
+                <button id="btn-save-room" onclick="window.handleCreateRoom()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-2xl active:scale-95 transition-all">Simpan</button>
             </div>
         </main>
 
         <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-10 pb-safe hidden">
-            <button onclick="window.navigateTab('view-home', 'nav-home')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-indigo-600 transition-all" id="nav-home"><i data-lucide="home" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase" data-t="nav_home">Home</span></button>
-            <button onclick="window.navigateTab('view-history', 'nav-history')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-300 transition-all" id="nav-history"><i data-lucide="pie-chart" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase" data-t="nav_history">Riwayat</span></button>
-            <button onclick="window.navigateTab('view-profile', 'nav-profile')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-300 transition-all" id="nav-profile"><i data-lucide="user" class="w-6 h-6"></i><span class="text-[9px] font-black uppercase" data-t="nav_profile">Profil</span></button>
+            <button onclick="window.navigateTab('view-home', 'nav-home')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-indigo-600 transition-all" id="nav-home">
+                <i data-lucide="home" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_home">Home</span>
+            </button>
+            <button onclick="window.navigateTab('view-history', 'nav-history')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-300 transition-all" id="nav-history">
+                <i data-lucide="pie-chart" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_history">Riwayat</span>
+            </button>
+            <button onclick="window.navigateTab('view-profile', 'nav-profile')" class="nav-btn flex-1 flex flex-col items-center gap-1 text-slate-300 transition-all" id="nav-profile">
+                <i data-lucide="user" class="w-6 h-6"></i>
+                <span class="text-[9px] font-black uppercase tracking-tighter" data-t="nav_profile">Profil</span>
+            </button>
         </nav>
 
-        <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[50] hidden" onclick="window.closeAllModals()"></div>
-        
+        <div id="modal-overlay" class="fixed inset-0 bg-slate-900/50 dark:bg-slate-950/80 backdrop-blur-sm z-[50] hidden transition-opacity" onclick="window.closeAllModals()"></div>
+
         <div id="modal-member-list" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-slate-50 dark:bg-slate-950 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden flex flex-col max-h-[85vh]">
-            <div class="p-6 flex justify-between items-center bg-white dark:bg-slate-900 border-b dark:border-slate-800 rounded-t-[2.5rem] sticky top-0 z-10">
-                <h3 class="font-black text-xl dark:text-white">Daftar Anggota</h3>
-                <button onclick="window.closeAllModals()" class="p-2"><i data-lucide="x"></i></button>
+            <div class="p-6 pb-4 flex justify-between items-center bg-white dark:bg-slate-900 rounded-t-[2.5rem] border-b border-slate-100 dark:border-slate-800 sticky top-0 z-10">
+                <h3 class="font-black text-xl text-slate-900 dark:text-white">Daftar Anggota</h3>
+                <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto no-scrollbar flex-1 space-y-4" id="member-list-container"></div>
+            <div class="p-6 overflow-y-auto no-scrollbar flex-1 space-y-4" id="member-list-container">
+                </div>
         </div>
 
-        <main id="view-create" class="fixed inset-0 z-[60] bg-white dark:bg-slate-950 hidden flex flex-col max-w-[480px] mx-auto overflow-y-auto no-scrollbar">
-            <div class="sticky top-0 bg-white dark:bg-slate-900 p-5 border-b flex items-center gap-3">
-                <button onclick="window.history.back()" class="p-2"><i data-lucide="x"></i></button>
-                <h1 class="font-bold text-lg dark:text-white">Buat Tabungan</h1>
-            </div>
-            <div class="p-6 space-y-8">
-                <div><label class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3" data-t="goal_name">Nama Tujuan</label><input type="text" id="create-name" placeholder="Beli Laptop..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border rounded-2xl outline-none font-bold dark:text-white transition-all"></div>
-                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white dark:bg-slate-900 border-t max-w-[480px] mx-auto z-20"><button onclick="window.handleCreateRoom()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-2xl">Simpan</button></div>
-            </div>
-        </main>
+        <div id="modal-transaction" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 id="trx-title" class="font-black text-2xl text-slate-900 dark:text-white">Transaksi</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                
+                <input type="hidden" id="trx-type" value="in">
+                
+                <div class="space-y-4 mb-8">
+                    <div id="trx-milestone-container" class="hidden">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Pilih Milestone</label>
+                        <select id="trx-milestone-select" class="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                        </select>
+                    </div>
 
-        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0">
-            <div class="w-full text-center">
-                <div class="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-6"><img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" class="w-14 h-14"></div>
-                <h2 class="text-3xl font-black dark:text-white mb-8 tracking-tighter">Tabungan Bersama</h2>
-                <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border dark:border-slate-700 text-slate-700 dark:text-white font-black rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all"><svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg><span>Masuk dengan Google</span></button>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Nominal</label>
+                        <div class="relative">
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xl">Rp</span>
+                            <input type="text" id="trx-amount" autocomplete="off" inputmode="numeric" placeholder="0" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-black text-2xl text-slate-900 dark:text-white outline-none">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="label_depositor">Penyetor</label>
+                        <input type="text" id="trx-user-display" readonly class="w-full p-4 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-600 dark:text-slate-400 outline-none">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="label_note">Catatan (Opsional)</label>
+                        <input type="text" id="trx-note" autocomplete="off" placeholder="Bayar cicilan..." class="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                    </div>
+                </div>
+                
+                <button id="btn-submit-trx" onclick="window.handleTransactionSubmit()" class="w-full py-5 text-white font-black text-lg rounded-[1.5rem] shadow-xl active:scale-95 transition-all" data-t="continue">Lanjutkan</button>
+            </div>
+        </div>
+
+        <div id="modal-action-sheet" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-xl text-slate-900 dark:text-white">Pilih Aksi</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="space-y-4">
+                    <button onclick="window.closeAllModals(); setTimeout(() => window.openTransactionModal('nabung'), 300)" class="w-full flex items-center gap-4 p-5 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl active:scale-[0.98] transition-transform border border-emerald-100 dark:border-emerald-800/50 shadow-sm">
+                        <div class="p-3 bg-emerald-500 text-white rounded-xl shadow-lg shadow-emerald-200 dark:shadow-none"><i data-lucide="arrow-down" class="w-6 h-6"></i></div>
+                        <div class="text-left flex-1">
+                            <span class="block font-black text-emerald-700 dark:text-emerald-400 text-lg">Nabung</span>
+                            <span class="block text-[10px] font-bold text-emerald-600/70 dark:text-emerald-400/70 uppercase tracking-wide">Tambah saldo tabungan</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-emerald-300 dark:text-emerald-700"></i>
+                    </button>
+                    <button onclick="window.closeAllModals(); setTimeout(() => window.openTransactionModal('tarik'), 300)" class="w-full flex items-center gap-4 p-5 bg-rose-50 dark:bg-rose-900/20 rounded-2xl active:scale-[0.98] transition-transform border border-rose-100 dark:border-rose-800/50 shadow-sm">
+                        <div class="p-3 bg-rose-500 text-white rounded-xl shadow-lg shadow-rose-200 dark:shadow-none"><i data-lucide="arrow-up" class="w-6 h-6"></i></div>
+                        <div class="text-left flex-1">
+                            <span class="block font-black text-rose-700 dark:text-rose-400 text-lg">Tarik</span>
+                            <span class="block text-[10px] font-bold text-rose-600/70 dark:text-rose-400/70 uppercase tracking-wide">Ambil saldo tabungan</span>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-rose-300 dark:text-rose-700"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-confirm-trx" class="fixed inset-0 z-[70] flex items-center justify-center p-8 hidden bg-slate-900/80 max-w-[480px] mx-auto backdrop-blur-sm transition-opacity duration-300 opacity-0">
+            <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] w-full text-center relative shadow-2xl transform scale-95 transition-transform duration-300" id="confirm-trx-card">
+                <div class="w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4 text-4xl drop-shadow-md" id="confirm-trx-icon">💰</div>
+                <h3 class="font-black text-xl text-slate-900 dark:text-white mb-3">Konfirmasi Transaksi</h3>
+                <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mb-8" id="confirm-trx-desc">Anda akan menabung...</p>
+                <div class="flex gap-3">
+                    <button onclick="window.closeConfirmModal()" class="flex-1 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-black rounded-2xl active:scale-95 transition-transform border border-slate-200 dark:border-slate-700">Batal</button>
+                    <button id="btn-confirm-yes" onclick="window.executeTransaction()" class="flex-1 py-4 bg-premium text-white font-black rounded-2xl shadow-xl shadow-indigo-200 dark:shadow-none active:scale-95 transition-transform">Lanjutkan</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="modal-install" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="install_title">Cara Install</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div id="install-instructions" class="space-y-4">
+                    </div>
+            </div>
+        </div>
+
+        <div id="modal-onboarding" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 hidden opacity-0 overflow-y-auto no-scrollbar">
+            <div class="w-full text-center py-8">
+                <div class="w-24 h-24 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-6 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-14 h-14">
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-2 tracking-tighter">Tabungan Bersama</h2>
+                <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mb-8" data-t="login_desc">Simpan data tabungan Anda dengan aman di awan.</p>
+                
+                <div class="text-left space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="email_label">Email</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                            <input type="email" id="auth-email" placeholder="nama@email.com" class="w-full p-4 pl-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2" data-t="pass_label">Password</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                            <input type="password" id="auth-pass" placeholder="••••••••" oninput="window.checkPasswordStrength()" class="w-full p-4 pl-12 pr-12 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl font-bold text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            <button onclick="window.togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 transition-colors">
+                                <i id="auth-pass-eye" data-lucide="eye" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <div id="pass-hints" class="hidden mt-3 px-2 space-y-1.5 text-[10px] font-bold">
+                            <p id="hint-length" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Minimal 6 karakter</span></p>
+                            <p id="hint-case" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Terdapat huruf besar & kecil</span></p>
+                            <p id="hint-number" class="text-rose-500 flex items-center gap-1.5 transition-colors"><i data-lucide="x" class="w-3.5 h-3.5"></i> <span>Terdapat angka</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center" id="forgot-pass-container">
+                        <div></div>
+                        <button onclick="window.handleForgotPassword()" id="btn-forgot-pass" class="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline" data-t="forgot_pass">Lupa Password?</button>
+                    </div>
+
+                    <p id="auth-error-msg" class="text-xs text-rose-500 font-bold hidden text-center px-2 mt-2 leading-tight"></p>
+                    <p id="auth-success-msg" class="text-xs text-emerald-500 font-bold hidden text-center px-2 mt-2 leading-tight"></p>
+                </div>
+
+                <button id="btn-email-auth" onclick="window.handleEmailAuth()" class="w-full py-4 mt-6 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl transition-all active:scale-95" data-t="login_btn">Masuk</button>
+                
+                <p class="mt-5 text-xs font-bold text-slate-500 dark:text-slate-400">
+                    <span id="auth-switch-text" data-t="no_account">Belum punya akun?</span> 
+                    <button onclick="window.toggleAuthMode()" class="text-indigo-600 dark:text-indigo-400 ml-1 hover:underline" id="auth-switch-btn" data-t="register_link">Daftar Sekarang</button>
+                </p>
+
+                <div class="flex items-center my-6 gap-3">
+                    <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest" data-t="or">ATAU</span>
+                    <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                </div>
+
+                <button id="btn-google-login" onclick="window.loginWithGoogle()" class="w-full py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-black rounded-[1.5rem] shadow-sm flex items-center justify-center gap-3 active:scale-95 transition-all">
+                    <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/><path fill="none" d="M1 1h22v22H1z"/></svg>
+                    <span data-t="login_google">Masuk dengan Google</span>
+                </button>
             </div>
         </div>
 
         <div id="modal-name-entry" class="fixed inset-0 z-[60] flex items-center justify-center p-8 hidden bg-white dark:bg-slate-900 max-w-[480px] mx-auto transition-opacity duration-500 opacity-0">
             <div class="w-full text-center">
-                <h2 class="text-3xl font-black dark:text-white mb-8">Konfirmasi Profil</h2>
-                <input type="text" id="onboarding-name" placeholder="Nama Anda..." class="w-full p-5 bg-slate-50 dark:bg-slate-800 border rounded-2xl font-bold text-xl outline-none dark:text-white mb-6">
-                <button id="btn-save-name" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Simpan & Masuk</button>
+                <div class="w-28 h-28 bg-indigo-50 dark:bg-indigo-900/30 rounded-full mx-auto flex items-center justify-center mb-10 shadow-inner border border-indigo-100 dark:border-indigo-900/30">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2830/2830284.png" alt="Logo" class="w-16 h-16">
+                </div>
+                <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">Konfirmasi Profil</h2>
+                <div class="text-left mb-6 relative">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-1">Nama Tampilan</label>
+                    <input type="text" id="onboarding-name" autocomplete="off" spellcheck="false" placeholder="Contoh: Leonardo Suprayogi" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] font-bold text-xl outline-none focus:ring-4 focus:ring-indigo-500/10 transition-all text-slate-900 dark:text-white">
+                    <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold mt-3 px-2 flex items-start gap-1.5 leading-tight">
+                        <i data-lucide="info" class="w-3.5 h-3.5 shrink-0"></i>
+                        <span data-t="name_warning">*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.</span>
+                    </p>
+                    <p id="name-error-msg" class="text-xs text-rose-500 font-bold hidden text-left px-2 mt-3 leading-tight"></p>
+                </div>
+                <button id="btn-save-name" onclick="window.saveOnboardingName()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl">Simpan Profil & Masuk</button>
             </div>
         </div>
+
+        <div id="modal-avatar" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden flex flex-col max-h-[80vh]">
+            <div class="p-8 pb-4 flex justify-between items-center border-b border-slate-100 dark:border-slate-800">
+                <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="choose_avatar">Pilih Avatar</h3>
+                <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+            </div>
+            <div class="p-8 overflow-y-auto no-scrollbar flex-1">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Warna Latar</p>
+                <div id="color-options" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 mb-6"></div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">Emoji Ikon</p>
+                <div id="emoji-options" class="grid grid-cols-5 gap-4"></div>
+            </div>
+            <div class="p-6 border-t border-slate-100 dark:border-slate-800">
+                <button onclick="window.saveAvatarSelection()" class="w-full py-4 bg-slate-900 dark:bg-indigo-600 text-white font-black rounded-[1.25rem] shadow-lg active:scale-95 transition-all" data-t="save_changes">Simpan</button>
+            </div>
+        </div>
+
+        <div id="modal-edit" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-8">
+                    <h3 class="font-black text-2xl text-slate-900 dark:text-white" data-t="edit_goal">Ubah Tabungan</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="space-y-6 mb-10 text-left">
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="goal_name">Nama Tujuan</label>
+                        <input type="text" id="edit-name" autocomplete="off" spellcheck="false" class="w-full p-5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black text-slate-400 uppercase mb-2" data-t="target_nominal">Target Nominal</label>
+                        <div class="relative">
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rp</span>
+                            <input type="text" id="edit-target" autocomplete="off" inputmode="numeric" class="money-input w-full p-5 pl-14 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-800 rounded-2xl font-bold text-slate-900 dark:text-white outline-none">
+                        </div>
+                    </div>
+                </div>
+                <button id="btn-save-edit" onclick="window.handleEditSubmit()" class="w-full py-5 bg-premium text-white font-black text-lg rounded-[1.5rem] shadow-xl flex items-center justify-center gap-3" data-t="save_changes">Simpan Perubahan</button>
+            </div>
+        </div>
+
+        <div id="modal-manage" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="options">Opsi</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="space-y-3" id="manage-options-container"></div>
+            </div>
+        </div>
+
+        <div id="modal-share" class="fixed bottom-0 left-0 right-0 max-w-[480px] mx-auto bg-white dark:bg-slate-900 rounded-t-[2.5rem] z-[55] transform translate-y-full transition-transform duration-300 shadow-2xl hidden">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-xl text-slate-900 dark:text-white" data-t="share_title">Undang Teman</h3>
+                    <button onclick="window.closeAllModals()" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-full active:scale-90 transition-transform"><i data-lucide="x" class="w-5 h-5 text-slate-500"></i></button>
+                </div>
+                <div class="bg-slate-50 dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 flex justify-between items-center mb-6">
+                    <p id="share-link-text" class="text-sm font-bold text-slate-500 truncate mr-4">link...</p>
+                    <button onclick="window.copyShareLink()" class="p-3 bg-indigo-100 text-indigo-600 rounded-xl active:scale-90 transition-transform"><i data-lucide="copy" class="w-5 h-5"></i></button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
         // --- CONFIG ---
@@ -324,6 +715,76 @@
         const auth = getAuth(app);
         const messaging = getMessaging(app);
 
+        // --- TRANSLATIONS ---
+        const i18n = {
+            id: {
+                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk", outcome: "Keluar",
+                savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
+                archive_now: "Arsipkan Sekarang", milestone_list: "Daftar Milestone", history: "Riwayat Transaksi",
+                withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
+                archive: "Arsip Tabungan", archive_desc: "Target 100% Selesai", dark_mode: "Mode Gelap", language_name: "Bahasa",
+                language_val: "ID", edit_goal: "Ubah Tabungan", goal_name: "Nama Tujuan", target_nominal: "Target Nominal",
+                save_changes: "Simpan Perubahan", goal_reached: "Tercapai!", celeb_desc: "Tabungan", celeb_done: "lunas 100%!",
+                continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
+                all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
+                no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Belum ada riwayat",
+                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi", category: "Kategori",
+                install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan", leave: "Keluar Tabungan",
+                share_title: "Undang Teman", enable_notif: "Aktifkan Notifikasi",
+                install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
+                install_android_desc: "Aplikasi siap diinstall ke perangkat Anda.", install_android_step1: "Tekan ikon Bagikan / Titik Tiga", install_android_step2: "Pilih 'Install Aplikasi' atau 'Tambahkan ke Layar Utama'",
+                install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
+                login_desc: "Simpan data tabungan Anda dengan aman di awan.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
+                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
+                filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
+                empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
+                notif_title: "Aktivitas Baru!",
+                filter_room_all: "Semua", filter_room_personal: "Pribadi", filter_room_shared: "Bersama",
+                type_message: "Ketik pesan...", tab_summary: "Ringkasan", tab_discussion: "Diskusi",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Lupa Password?",
+                login_btn: "Masuk", register_btn: "Daftar Akun", no_account: "Belum punya akun?",
+                register_link: "Daftar Sekarang", has_account: "Sudah punya akun?", login_link: "Masuk di sini", or: "ATAU",
+                pass_reset_sent: "Email reset password telah dikirim!"
+            },
+            en: {
+                welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
+                savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
+                archive_now: "Archive Now", milestone_list: "Milestone List", history: "Transaction History",
+                withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
+                archive: "Archive", archive_desc: "100% Goal Completed", dark_mode: "Dark Mode", language_name: "Language",
+                language_val: "EN", edit_goal: "Edit Saving", goal_name: "Goal Name", target_nominal: "Target Amount",
+                save_changes: "Save Changes", goal_reached: "Reached!", celeb_desc: "Saving", celeb_done: "is 100% completed!",
+                continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
+                all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
+                no_goals: "No goals yet", no_archive: "No archived items", empty_history: "No history yet",
+                placeholder_goal: "Buy a Laptop...", install_app: "Install App", category: "Category",
+                install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal", leave: "Leave Goal",
+                share_title: "Invite Friends", enable_notif: "Enable Notifications",
+                install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
+                install_android_desc: "App is ready to be installed on your device.", install_android_step1: "Tap the Share / Three Dots icon", install_android_step2: "Select 'Install App' or 'Add to Home screen'",
+                install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
+                login_desc: "Save your savings data securely in the cloud.", login_google: "Sign in with Google", logout: "Log Out",
+                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
+                filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
+                empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
+                notif_title: "New Activity!",
+                filter_room_all: "All", filter_room_personal: "Personal", filter_room_shared: "Shared",
+                type_message: "Type message...", tab_summary: "Summary", tab_discussion: "Discussion",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Forgot Password?",
+                login_btn: "Login", register_btn: "Register Account", no_account: "Don't have an account?",
+                register_link: "Register Now", has_account: "Already have an account?", login_link: "Login here", or: "OR",
+                pass_reset_sent: "Password reset email sent!"
+            }
+        };
+
+        const CATEGORIES = [
+            { id: 'liburan', label: 'Liburan', icon: '✈️', color: '#3b82f6' },
+            { id: 'gadget', label: 'Gadget', icon: '💻', color: '#8b5cf6' },
+            { id: 'pendidikan', label: 'Pendidikan', icon: '🎓', color: '#10b981' },
+            { id: 'darurat', label: 'Darurat', icon: '🏥', color: '#f43f5e' },
+            { id: 'lainnya', label: 'Lainnya', icon: '🛍️', color: '#f59e0b' }
+        ];
+
         // --- APP STATE ---
         const DB_KEY = 'tabungan_app_v1_release_final';
         let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
@@ -331,210 +792,2005 @@
             avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
             joinedRooms: [], darkMode: false, language: 'id'
         };
+        let tempAvatarSelection = { ...appData.avatar };
+        let tempCategorySelection = 'lainnya'; 
+
         let globalRooms = [];
         let globalHistory = [];
         let currentRoomId = null;
+        let roomToDelete = null;
+        let isBalanceHidden = false;
+        
+        let currentHistoryFilter = 'all'; 
+        let currentTimeFilter = 'all_time';
+        let currentRoomFilter = 'all'; 
+        let isInitialHistoryLoad = true; 
+        
         let currentUserHistoryFilter = null;
-        let chatUnsubscribe = null;
+
+        let chatUnsubscribe = null; 
+        let lastBackPress = 0; 
+        let lastChatCounts = {}; 
+
+        let replyingTo = null;
+        let historyRenderLimit = 15;
+        let chatRenderLimit = 20;
+
+        let isLoginMode = true;
+        let pendingTransaction = null; 
+
+        let deferredPrompt;
+
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install', 'modal-member-list'];
 
-        // --- FUNCTIONS ---
+        window.safeStr = (str) => {
+            if(!str) return '';
+            return String(str).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        };
+
+        // --- DYNAMIC MANIFEST & SERVICE WORKER ---
+        const manifestData = {
+            "name": "Tabungan Bersama",
+            "short_name": "Tabungan",
+            "start_url": "/?source=pwa",
+            "display": "standalone",
+            "background_color": "#f8fafc",
+            "theme_color": "#4f46e5",
+            "icons": [
+                { "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+                { "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+            ]
+        };
+        const manifestString = JSON.stringify(manifestData);
+        const manifestLink = document.getElementById('manifest-link');
+        if (manifestLink) { manifestLink.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(manifestString); }
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', function(e) { self.skipWaiting(); });
+                self.addEventListener('activate', function(e) { e.waitUntil(self.clients.claim()); });
+                self.addEventListener('fetch', function(e) { 
+                    e.respondWith(
+                        fetch(e.request).catch(function() { 
+                            return new Response('<html><body style="font-family:sans-serif;text-align:center;padding-top:50px;">Aplikasi Offline</body></html>', {headers: {'Content-Type': 'text/html'}}); 
+                        })
+                    ); 
+                });
+            `;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
+        }
+
+        // --- ROUTING / HARDWARE BACK BUTTON ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        history.replaceState({ viewId: 'exit' }, "", location.href);
+        history.pushState({ viewId: 'view-home', navId: 'nav-home', isTab: true }, "", location.href);
+
+        window.addEventListener('popstate', (e) => {
+            const modals = document.querySelectorAll('.fixed.z-\\[55\\], .fixed.z-\\[60\\], .fixed.z-\\[70\\]');
+            let isModalOpen = false;
+            modals.forEach(m => {
+                if(m && !m.classList.contains('hidden') && !m.classList.contains('translate-y-full') && !m.classList.contains('opacity-0')) { isModalOpen = true; }
+            });
+
+            if (isModalOpen) {
+                window.closeAllModals();
+                history.pushState(e.state, "", location.href); 
+                return;
+            }
+
+            if (e.state && e.state.viewId === 'exit') {
+                const now = Date.now();
+                if (now - lastBackPress < 2000) { history.go(-1); } 
+                else {
+                    history.pushState({ viewId: 'view-home', navId: 'nav-home', isTab: true }, "", location.href);
+                    window.switchView('view-home', 'nav-home', false);
+                    lastBackPress = now;
+                    window.showToast("Tekan sekali lagi untuk keluar");
+                }
+                return;
+            }
+
+            if (e.state && e.state.viewId) { window.switchView(e.state.viewId, e.state.navId, false); }
+        });
+
+        window.navigateTab = (viewId, navId) => {
+            const currentState = history.state || {};
+            if (viewId === currentState.viewId) return;
+
+            if (viewId === 'view-home') {
+                if (currentState.isTab && currentState.viewId !== 'view-home') { history.back(); } 
+                else { window.switchView(viewId, navId, 'replace'); }
+            } else {
+                if (currentState.viewId === 'view-home') { window.switchView(viewId, navId, true); } 
+                else if (currentState.isTab) { window.switchView(viewId, navId, 'replace'); } 
+                else { window.switchView(viewId, navId, true); }
+            }
+        };
+
+        window.addEventListener('resize', () => {
+            const diskusiTab = document.getElementById('room-tab-diskusi');
+            if (diskusiTab && !diskusiTab.classList.contains('hidden')) { window.scrollToBottomChat(true); }
+        });
+
+        // --- HELPERS ---
         window.saveLocal = () => localStorage.setItem(DB_KEY, JSON.stringify(appData));
+        
         window.showToast = (msg, isError = false) => {
             const t = document.getElementById('toast');
-            if(!t) return;
-            t.innerText = msg;
-            t.className = `fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 ${isError ? 'bg-rose-600' : 'bg-slate-900 dark:bg-slate-800'} text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none toast-visible`;
-            setTimeout(() => t.classList.remove('toast-visible'), 3000);
+            if(t) { 
+                t.innerText = msg; 
+                t.className = `fixed bottom-24 left-1/2 transform -translate-x-1/2 translate-y-4 ${isError ? 'bg-rose-600' : 'bg-slate-900 dark:bg-slate-800'} text-white px-6 py-3 rounded-full text-sm font-bold shadow-2xl opacity-0 transition-all duration-300 z-[100] whitespace-nowrap pointer-events-none`;
+                void t.offsetWidth;
+                t.classList.add('toast-visible'); 
+                setTimeout(() => t.classList.remove('toast-visible'), 3000); 
+            }
+        };
+
+        window.showAuthError = (msg) => {
+            const el = document.getElementById('auth-error-msg');
+            const sEl = document.getElementById('auth-success-msg');
+            if (el && sEl) {
+                sEl.classList.add('hidden');
+                if (msg) { el.innerText = msg; el.classList.remove('hidden'); } 
+                else { el.classList.add('hidden'); }
+            }
+        };
+        
+        window.showAuthSuccess = (msg) => {
+            const el = document.getElementById('auth-success-msg');
+            const eEl = document.getElementById('auth-error-msg');
+            if (el && eEl) {
+                eEl.classList.add('hidden');
+                if (msg) { el.innerText = msg; el.classList.remove('hidden'); } 
+                else { el.classList.add('hidden'); }
+            }
+        };
+        
+        window.showRealtimeNotif = (msg) => {
+            const notif = document.getElementById('realtime-notif');
+            const textEl = document.getElementById('realtime-notif-text');
+            if(notif && textEl) {
+                textEl.innerText = msg;
+                notif.classList.remove('-translate-y-full');
+                notif.classList.add('translate-y-4');
+                setTimeout(() => {
+                    notif.classList.remove('translate-y-4');
+                    notif.classList.add('-translate-y-full');
+                }, 4000);
+            }
+        }
+
+        window.closeAllModals = () => {
+            modalIds.forEach(id => { 
+                const m = document.getElementById(id); 
+                if(m) {
+                    m.classList.add('translate-y-full');
+                    if(id === 'modal-name-entry' || id === 'modal-confirm-trx') m.classList.add('hidden');
+                    else setTimeout(() => m.classList.add('hidden'), 300);
+                }
+            });
+            const overlay = document.getElementById('modal-overlay'); if(overlay) overlay.classList.add('hidden');
+            window.closeConfirmModal(); 
         };
 
         window.showModal = (id) => {
-            document.getElementById('modal-overlay').classList.remove('hidden');
+            const overlay = document.getElementById('modal-overlay');
             const m = document.getElementById(id);
-            if(m) { m.classList.remove('hidden'); setTimeout(() => m.classList.remove('translate-y-full'), 10); }
+            if(id !== 'modal-name-entry' && id !== 'modal-confirm-trx' && overlay) overlay.classList.remove('hidden');
+            if(m) {
+                m.classList.remove('hidden');
+                setTimeout(() => m.classList.remove('translate-y-full'), 10);
+            }
+        };
+        
+        const createSpinner = () => `<svg class="spinner" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg>`;
+
+        function applyTranslations() {
+            const lang = i18n[appData.language];
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (lang[key]) el.innerText = lang[key];
+            });
+            const langDisp = document.getElementById('lang-display');
+            if (langDisp) langDisp.innerText = appData.language.toUpperCase();
+            
+            const createNameInp = document.getElementById('create-name');
+            if(createNameInp) createNameInp.placeholder = lang.placeholder_goal;
+
+            const chatInp = document.getElementById('chat-input');
+            if(chatInp) chatInp.placeholder = lang.type_message;
+
+            const monthStr = new Date().toLocaleString(appData.language === 'id' ? 'id-ID' : 'en-US', { month: 'short' });
+            const lblIn = document.getElementById('label-income');
+            if (lblIn) lblIn.innerText = `${lang.income} (${monthStr})`;
+            const lblOut = document.getElementById('label-outcome');
+            if (lblOut) lblOut.innerText = `${lang.outcome} (${monthStr})`;
+
+            if(!isLoginMode) {
+                const asText = document.getElementById('auth-switch-text'); if(asText) asText.innerText = lang.has_account;
+                const asBtn = document.getElementById('auth-switch-btn'); if(asBtn) asBtn.innerText = lang.login_link;
+                const eaBtn = document.getElementById('btn-email-auth'); if(eaBtn) eaBtn.innerText = lang.register_btn;
+            } else {
+                const asText = document.getElementById('auth-switch-text'); if(asText) asText.innerText = lang.no_account;
+                const asBtn = document.getElementById('auth-switch-btn'); if(asBtn) asBtn.innerText = lang.register_link;
+                const eaBtn = document.getElementById('btn-email-auth'); if(eaBtn) eaBtn.innerText = lang.login_btn;
+            }
+        }
+        window.applyTranslations = applyTranslations;
+
+        window.toggleLanguage = () => {
+            appData.language = appData.language === 'id' ? 'en' : 'id';
+            window.saveLocal();
+            applyTranslations();
+            updateUI();
+            window.showToast(appData.language === 'id' ? "Bahasa diubah" : "Language changed");
         };
 
-        window.closeAllModals = () => {
-            modalIds.forEach(id => { const m = document.getElementById(id); if(m) { m.classList.add('translate-y-full'); setTimeout(() => m.classList.add('hidden'), 300); } });
-            document.getElementById('modal-overlay').classList.add('hidden');
+        window.toggleDarkMode = () => {
+            const toggle = document.getElementById('toggle-dark');
+            if (!toggle) return;
+            appData.darkMode = toggle.checked;
+            window.saveLocal();
+            if (appData.darkMode) document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         };
 
-        // --- PUSH NOTIFICATION PERMISSION ---
-        window.requestNotificationPermission = async () => {
+        window.handleInstallApp = async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') { deferredPrompt = null; }
+            } else {
+                window.showInstallTutorial();
+            }
+        };
+
+        window.showInstallTutorial = () => {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const container = document.getElementById('install-instructions');
+            const lang = i18n[appData.language];
+
+            if(isIOS) {
+                container.innerHTML = `
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">${lang.install_ios_desc}</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2">
+                        <i data-lucide="share" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">1. ${lang.install_ios_step1}</p>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                        <i data-lucide="plus-square" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">2. ${lang.install_ios_step2}</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <p class="text-sm font-bold text-slate-500 dark:text-slate-400 mb-3">${lang.install_android_desc}</p>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl mb-2">
+                        <i data-lucide="more-vertical" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">1. ${lang.install_android_step1}</p>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                        <i data-lucide="download" class="w-6 h-6 text-indigo-500"></i>
+                        <p class="text-sm font-black dark:text-white">2. ${lang.install_android_step2}</p>
+                    </div>
+                `;
+            }
+            lucide.createIcons();
+            window.showModal('modal-install');
+        }
+
+        async function syncJoinedRoomsToCloud() {
+            if(appData.uid) {
+                try { await updateDoc(doc(db, "users", appData.uid), { joinedRooms: appData.joinedRooms }); } catch(e) {}
+            }
+        }
+
+        async function joinRoomMembers(roomId) {
+            if(!appData.uid || !appData.user) return;
             try {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    const token = await getToken(messaging, { 
-                        vapidKey: "BM7sTXFhzw8wQ-jzRckvZz3nTAcHqRuf_IjrIFY5nLr6wa9jqDMULwGh1w7Cx7nnLrsceHfSt0VD4wyeEOBWrU6c" 
-                    });
-                    if (token && appData.uid) {
-                        await updateDoc(doc(db, "users", appData.uid), { fcmToken: token });
-                        console.log("Token FCM disimpan.");
+                const rRef = doc(db, "rooms", roomId);
+                const snap = await getDoc(rRef);
+                if(snap.exists()) {
+                    let members = snap.data().members || [];
+                    if(!members.some(m => m.uid === appData.uid)) {
+                        members.push({ uid: appData.uid, name: appData.user, avatar: appData.avatar });
+                        await updateDoc(rRef, { members: members });
                     }
                 }
-            } catch (e) { console.error("Gagal mendapat izin notif:", e); }
+            } catch(e) {}
+        }
+
+        async function syncUserToRooms(userUid, newName, newAvatar) {
+            if(!appData.joinedRooms || appData.joinedRooms.length === 0) return;
+            appData.joinedRooms.forEach(async (roomId) => {
+                try {
+                    const rRef = doc(db, "rooms", roomId);
+                    const snap = await getDoc(rRef);
+                    if(snap.exists()) {
+                        let members = snap.data().members || [];
+                        let isChanged = false;
+                        members = members.map(m => {
+                            if (m.uid === userUid) {
+                                isChanged = true;
+                                return { ...m, name: newName || m.name, avatar: newAvatar || m.avatar };
+                            }
+                            return m;
+                        });
+                        if(isChanged) { await updateDoc(rRef, { members: members }); }
+                    }
+                } catch(e) {}
+            });
+        }
+
+        // --- PUSH NOTIFICATION TRIGGER (NETLIFY) ---
+        window.sendPushToMembers = async (title, body) => {
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            if (!r) return;
+
+            r.members.forEach(async (member) => {
+                if (member.uid !== appData.uid) {
+                    const userSnap = await getDoc(doc(db, "users", member.uid));
+                    const token = userSnap.data()?.fcmToken;
+                    
+                    if (token) {
+                        fetch('/.netlify/functions/send-notif', {
+                            method: 'POST',
+                            body: JSON.stringify({ token: token, title: title, body: body }),
+                        }).catch(e => console.log("Notif function called."));
+                    }
+                }
+            });
         };
 
-        // --- PRESENCE LOGIC ---
-        window.updateOnlineStatus = async (status) => {
-            if (!appData.uid) return;
-            try { await updateDoc(doc(db, "users", appData.uid), { isOnline: status, lastSeen: Date.now() }); } catch (e) {}
+        // --- AUTH LOGIC (EMAIL + GOOGLE) ---
+        window.checkPasswordStrength = () => {
+            if (isLoginMode) return; 
+            const pass = document.getElementById('auth-pass').value;
+            
+            const updateHint = (id, isValid) => {
+                const p = document.getElementById('hint-' + id);
+                if (!p) return;
+                const text = p.querySelector('span').innerText;
+                if (isValid) {
+                    p.classList.replace('text-rose-500', 'text-emerald-500');
+                    p.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> <span>${text}</span>`;
+                } else {
+                    p.classList.replace('text-emerald-500', 'text-rose-500');
+                    p.innerHTML = `<i data-lucide="x" class="w-3.5 h-3.5"></i> <span>${text}</span>`;
+                }
+            };
+            
+            updateHint('length', pass.length >= 6);
+            updateHint('case', /[a-z]/.test(pass) && /[A-Z]/.test(pass));
+            updateHint('number', /[0-9]/.test(pass));
+            lucide.createIcons();
         };
 
-        window.formatLastSeen = (timestamp, locale = 'id') => {
-            if (!timestamp) return locale === 'id' ? "Belum pernah online" : "Never";
-            const now = new Date();
-            const diff = Math.floor((now - new Date(timestamp)) / 1000);
-            if (diff < 60) return "Baru saja dilihat";
-            if (diff < 3600) return `${Math.floor(diff/60)} menit lalu`;
-            return new Date(timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+        window.togglePasswordVisibility = () => {
+            const input = document.getElementById('auth-pass');
+            const icon = document.getElementById('auth-pass-eye');
+            if(input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons();
         };
 
-        document.addEventListener("visibilitychange", () => window.updateOnlineStatus(document.visibilityState === 'visible'));
+        window.toggleAuthMode = () => {
+            isLoginMode = !isLoginMode;
+            const fpContainer = document.getElementById('forgot-pass-container');
+            const passHints = document.getElementById('pass-hints');
+            
+            if(isLoginMode) {
+                fpContainer.classList.remove('hidden');
+                passHints.classList.add('hidden');
+            } else {
+                fpContainer.classList.add('hidden');
+                passHints.classList.remove('hidden');
+                window.checkPasswordStrength();
+            }
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+            applyTranslations();
+        };
 
-        // --- AUTH ---
+        window.handleForgotPassword = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+
+            if(!email) {
+                window.showAuthError(appData.language === 'id' ? 'Tulis email Anda di kolom atas terlebih dahulu.' : 'Please enter your email above first.');
+                return;
+            }
+            
+            try {
+                await sendPasswordResetEmail(auth, email);
+                window.showAuthSuccess(appData.language === 'id' ? "Email reset terkirim! Silakan cek kotak masuk atau folder SPAM Anda." : "Password reset email sent! Check your inbox or SPAM folder.");
+            } catch(e) { 
+                let msg = "Gagal mengirim email reset.";
+                if(e.code === 'auth/user-not-found') msg = "Email tidak terdaftar.";
+                else if(e.code === 'auth/invalid-email') msg = "Format email tidak valid.";
+                window.showAuthError(msg); 
+            }
+        };
+
+        window.handleEmailAuth = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+
+            if(!email || !pass) return window.showAuthError("Email dan password harus diisi lengkap.");
+
+            if(!isLoginMode) {
+                if(pass.length < 6 || !/[a-z]/.test(pass) || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass)) {
+                    return window.showAuthError("Password belum memenuhi syarat (cek indikator di atas).");
+                }
+            }
+
+            const btn = document.getElementById('btn-email-auth');
+            const origText = btn.innerText;
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+
+            try {
+                if(isLoginMode) { await signInWithEmailAndPassword(auth, email, pass); } 
+                else { await createUserWithEmailAndPassword(auth, email, pass); }
+            } catch(error) {
+                let msg = "Terjadi kesalahan. Silakan coba lagi.";
+                if(error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') msg = "Email atau password yang Anda masukkan salah.";
+                else if(error.code === 'auth/email-already-in-use') msg = "Email sudah terdaftar. Silakan pindah ke mode Masuk (Login).";
+                else if(error.code === 'auth/invalid-email') msg = "Format email tidak valid.";
+                else if(error.code === 'auth/too-many-requests') msg = "Terlalu banyak percobaan. Silakan coba beberapa saat lagi.";
+                
+                window.showAuthError(msg);
+                btn.disabled = false;
+                btn.innerText = origText;
+            }
+        };
+
         window.loginWithGoogle = async () => {
+            const btn = document.getElementById('btn-google-login');
+            const origHTML = btn.innerHTML;
+            window.showAuthError(""); 
+            window.showAuthSuccess("");
+
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
             const provider = new GoogleAuthProvider();
-            try { await signInWithPopup(auth, provider); } catch (e) { console.error(e); }
+            try { await signInWithPopup(auth, provider); } 
+            catch (error) {
+                if(error.code !== 'auth/popup-closed-by-user') window.showAuthError("Gagal login dengan Google.");
+                btn.disabled = false;
+                btn.innerHTML = origHTML;
+            }
         };
+
+        const splashStartTime = Date.now();
+        const MIN_SPLASH_TIME = 2000;
 
         onAuthStateChanged(auth, async (user) => {
+            const modalLogin = document.getElementById('modal-onboarding');
+            const modalName = document.getElementById('modal-name-entry');
+            const viewHome = document.getElementById('view-home');
+            const bottomNav = document.getElementById('bottom-nav');
+            const splashScreen = document.getElementById('splash-screen');
+
+            const hideSplash = (callback) => {
+                const elapsed = Date.now() - splashStartTime;
+                const delay = Math.max(0, MIN_SPLASH_TIME - elapsed);
+                setTimeout(() => {
+                    if (splashScreen && !splashScreen.classList.contains('hidden')) {
+                        splashScreen.classList.add('opacity-0');
+                        setTimeout(() => {
+                            splashScreen.classList.add('hidden');
+                            if (callback) callback();
+                        }, 700); 
+                    } else if (callback) { callback(); }
+                }, delay);
+            };
+
             if (user) {
-                appData.uid = user.uid;
                 appData.email = user.email;
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists()) {
-                    const d = snap.data();
-                    appData.user = d.name;
-                    appData.joinedRooms = d.joinedRooms || [];
-                    document.getElementById('modal-onboarding').classList.add('hidden');
-                    document.getElementById('view-home').classList.remove('hidden');
-                    document.getElementById('bottom-nav').classList.remove('hidden');
-                    document.getElementById('splash-screen').classList.add('hidden');
-                    window.updateOnlineStatus(true);
-                    startRealtimeSync();
-                    updateUI();
-                    setTimeout(() => window.requestNotificationPermission(), 5000);
-                } else {
-                    document.getElementById('modal-onboarding').classList.add('hidden');
-                    document.getElementById('modal-name-entry').classList.remove('hidden');
-                    document.getElementById('modal-name-entry').classList.add('opacity-100');
-                    document.getElementById('splash-screen').classList.add('hidden');
-                }
+                appData.uid = user.uid;
+                window.saveLocal();
+                if (modalLogin) modalLogin.classList.add('hidden');
+
+                try {
+                    const userDocRef = doc(db, "users", user.uid);
+                    const userSnap = await getDoc(userDocRef);
+
+                    if (userSnap.exists()) {
+                        const cloudData = userSnap.data();
+                        appData.user = cloudData.name || user.displayName || 'Pengguna';
+                        if (cloudData.avatar) {
+                            appData.avatar = cloudData.avatar;
+                            tempAvatarSelection = { ...appData.avatar };
+                        }
+                        
+                        if (cloudData.joinedRooms) {
+                            const mergedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
+                            appData.joinedRooms = mergedRooms;
+                            if (appData.joinedRooms.length > cloudData.joinedRooms.length) syncJoinedRoomsToCloud();
+                        }
+                        
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const sharedId = urlParams.get('id');
+                        if(sharedId && !appData.joinedRooms.includes(sharedId)) { 
+                            appData.joinedRooms.push(sharedId); 
+                            syncJoinedRoomsToCloud();
+                            joinRoomMembers(sharedId);
+                        }
+
+                        window.saveLocal();
+                        startRealtimeSync();
+                        updateUI();
+                        window.updateOnlineStatus(true);
+
+                        hideSplash(() => {
+                            if (modalName) modalName.classList.add('hidden');
+                            if (viewHome) viewHome.classList.remove('hidden');
+                            if (bottomNav) bottomNav.classList.remove('hidden');
+                        });
+                    } else {
+                        hideSplash(() => {
+                            if (modalName) {
+                                modalName.classList.remove('hidden');
+                                setTimeout(() => modalName.classList.remove('opacity-0'), 50);
+                                const nameInput = document.getElementById('onboarding-name');
+                                if (nameInput && !nameInput.value && user.displayName) nameInput.value = user.displayName;
+                            }
+                        });
+                    }
+                } catch (error) { hideSplash(); }
             } else {
-                document.getElementById('modal-onboarding').classList.remove('hidden');
-                document.getElementById('modal-onboarding').classList.add('opacity-100');
-                document.getElementById('splash-screen').classList.add('hidden');
+                hideSplash(() => {
+                    if (modalLogin) {
+                        modalLogin.classList.remove('hidden');
+                        setTimeout(() => modalLogin.classList.remove('opacity-0'), 50);
+                    }
+                    if (modalName) modalName.classList.add('hidden');
+                    if (viewHome) viewHome.classList.add('hidden');
+                    if (bottomNav) bottomNav.classList.add('hidden');
+                });
             }
         });
 
         window.saveOnboardingName = async () => {
-            const name = document.getElementById('onboarding-name').value.trim();
-            if (name.length < 3) return;
-            appData.user = name;
-            await setDoc(doc(db, "users", appData.uid), { name, uid: appData.uid, joinedRooms: [], isOnline: true, lastSeen: Date.now() });
-            location.reload();
+            const btn = document.getElementById('btn-save-name');
+            const nameEl = document.getElementById('onboarding-name');
+            const errEl = document.getElementById('name-error-msg');
+            
+            if(!nameEl || !errEl) return;
+            const name = nameEl.value.trim();
+            errEl.classList.add('hidden');
+
+            if(name.length < 3) {
+                errEl.innerText = "Nama terlalu pendek (minimal 3 karakter).";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if(!/^[a-zA-Z0-9\s_]+$/.test(name)) {
+                errEl.innerText = "Nama hanya boleh berisi huruf, angka, dan spasi/underscore.";
+                errEl.classList.remove('hidden');
+                return;
+            }
+            
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            appData.user = name; window.saveLocal();
+
+            try {
+                await setDoc(doc(db, "users", appData.uid), {
+                    name: appData.user, email: appData.email, avatar: appData.avatar, joinedRooms: appData.joinedRooms, createdAt: Date.now()
+                });
+                await syncUserToRooms(appData.uid, appData.user, appData.avatar);
+            } catch(e) { }
+            
+            document.getElementById('modal-name-entry').classList.add('hidden');
+            const viewHome = document.getElementById('view-home');
+            const bottomNav = document.getElementById('bottom-nav');
+            if(viewHome) viewHome.classList.remove('hidden');
+            if(bottomNav) bottomNav.classList.remove('hidden');
+
+            startRealtimeSync();
+            updateUI();
+            window.updateOnlineStatus(true);
+            btn.disabled = false; btn.innerText = "Simpan Profil & Masuk";
         };
 
-        // --- REALTIME SYNC & UI ---
+        window.logoutGoogle = async () => {
+            if(!confirm("Apakah Anda yakin ingin keluar dari akun?")) return;
+            try {
+                await signOut(auth);
+                appData.user = ''; appData.email = ''; appData.uid = ''; appData.joinedRooms = []; 
+                window.saveLocal();
+                location.reload(); 
+            } catch (error) { window.showToast("Gagal keluar.", true); }
+        };
+
         function startRealtimeSync() {
             onSnapshot(collection(db, "rooms"), (snap) => {
                 globalRooms = [];
-                snap.forEach(d => { if(appData.joinedRooms.includes(d.id)) globalRooms.push(d.data()); });
+                snap.forEach(doc => {
+                    const r = doc.data();
+                    if(appData.joinedRooms.includes(r.id)) globalRooms.push(r);
+                });
+                globalRooms.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
                 updateUI();
+                if(currentRoomId) refreshRoomUI(currentRoomId);
             });
+
             onSnapshot(collection(db, "history"), (snap) => {
+                let hasNewContent = false;
+                let latestTx = null;
+
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        hasNewContent = true;
+                        latestTx = change.doc.data();
+                    }
+                });
+
                 globalHistory = [];
-                snap.forEach(d => { if(appData.joinedRooms.includes(d.data().roomId)) globalHistory.push(d.data()); });
+                snap.forEach(doc => {
+                    const h = doc.data();
+                    if(appData.joinedRooms.includes(h.roomId)) globalHistory.push(h);
+                });
                 globalHistory.sort((a,b) => b.timestamp - a.timestamp);
+                
                 updateUI();
+                if(currentRoomId) refreshRoomUI(currentRoomId);
+
+                // Notif Realtime Dalam Aplikasi untuk Trx
+                if (!isInitialHistoryLoad && hasNewContent && latestTx) {
+                    if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
+                        const isId = appData.language === 'id';
+                        const vIn = isId ? 'menabung' : 'added';
+                        const vOut = isId ? 'menarik' : 'withdrew';
+                        const prep = latestTx.type === 'in' ? (isId ? 'di' : 'to') : (isId ? 'dari' : 'from');
+                        window.showRealtimeNotif(`🔔 ${latestTx.userName} ${latestTx.type === 'in' ? vIn : vOut} Rp ${latestTx.amount.toLocaleString('id-ID')} ${prep} ${latestTx.roomName}`);
+                    }
+                }
+            });
+
+            let isInitialGlobalChatLoad = true;
+            onSnapshot(collection(db, "chats"), (snap) => {
+                let hasNewChat = false;
+                let latestChat = null;
+
+                snap.docChanges().forEach((change) => {
+                    if (change.type === "added") {
+                        hasNewChat = true;
+                        latestChat = change.doc.data();
+                    }
+                });
+
+                if (!isInitialGlobalChatLoad && hasNewChat && latestChat) {
+                    if (latestChat.uid !== appData.uid && appData.joinedRooms.includes(latestChat.roomId)) {
+                        const isViewingCurrentRoomChat = (currentRoomId === latestChat.roomId && document.getElementById('room-tab-diskusi') && !document.getElementById('room-tab-diskusi').classList.contains('hidden'));
+
+                        if (!isViewingCurrentRoomChat) {
+                            const r = globalRooms.find(x => x.id === latestChat.roomId);
+                            const rName = r ? r.name : 'Tabungan';
+                            let msgPrev = latestChat.type === 'sticker' ? latestChat.message : latestChat.message;
+                            if(msgPrev.length > 25) msgPrev = msgPrev.substring(0,25) + '...';
+                            window.showRealtimeNotif(`💬 ${latestChat.name} (${rName}): ${msgPrev}`);
+                        }
+                    }
+                }
+            });
+
+            setTimeout(() => { isInitialHistoryLoad = false; }, 2000);
+            setTimeout(() => { isInitialGlobalChatLoad = false; }, 2500);
+        }
+
+        // --- CORE ACTIONS ---
+        window.selectCategory = (catId) => {
+            tempCategorySelection = catId;
+            document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('selected'));
+            document.getElementById(`cat-btn-${catId}`).classList.add('selected');
+        }
+
+        window.addMilestoneRow = () => {
+            const container = document.getElementById('milestone-rows-container');
+            if(!container) return;
+            const row = document.createElement('div');
+            row.className = 'milestone-row bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-800 mb-3 shadow-sm relative';
+            row.innerHTML = `
+                <button onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-slate-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                <input type="text" autocomplete="off" spellcheck="false" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
+                <div class="relative"><span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span><input type="text" inputmode="numeric" autocomplete="off" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white"></div>`;
+            container.appendChild(row); lucide.createIcons();
+            row.querySelector('.ms-price').addEventListener('input', function() {
+                const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : '';
+            });
+        };
+
+        window.handleCreateRoom = async () => {
+            const btn = document.getElementById('btn-save-room');
+            const nameEl = document.getElementById('create-name');
+            if(!nameEl || !nameEl.value.trim()) return window.showToast("Isi nama tabungan terlebih dahulu.", true);
+            const name = nameEl.value.trim();
+            if(globalRooms.some(r => r.name.toLowerCase() === name.toLowerCase())) return window.showToast("Nama tabungan sudah ada!", true);
+
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            const roomId = 'room_' + Date.now();
+            const toggleTgt = document.getElementById('toggle-target');
+            const targetInp = document.getElementById('create-target');
+            const targetVal = (toggleTgt && toggleTgt.checked && targetInp) ? parseInt(targetInp.value.replace(/\D/g, '')) : 0;
+            
+            let milestones = [];
+            const toggleMs = document.getElementById('toggle-milestone');
+            if(toggleMs && toggleMs.checked) {
+                document.querySelectorAll('.milestone-row').forEach(row => {
+                    const mName = row.querySelector('.ms-name').value.trim();
+                    const mPrice = parseInt(row.querySelector('.ms-price').value.replace(/\D/g, '')) || 0;
+                    if(mName && mPrice > 0) milestones.push({ name: mName, price: mPrice, done: false });
+                });
+            }
+
+            const me = { uid: appData.uid, name: appData.user, avatar: appData.avatar };
+            
+            const newRoom = { 
+                id: roomId, name: name, category: tempCategorySelection, adminUid: appData.uid, 
+                balance: 0, hasTarget: targetVal > 0, target: targetVal, 
+                hasMilestones: milestones.length > 0, milestones: milestones, 
+                isArchived: false, createdAt: new Date().toISOString(), members: [me] 
+            };
+            
+            appData.joinedRooms.push(roomId); 
+            window.saveLocal();
+            syncJoinedRoomsToCloud(); 
+
+            try {
+                await setDoc(doc(db, "rooms", roomId), newRoom);
+                window.switchView('view-home', 'nav-home', true);
+                window.showToast("Berhasil dibuat!");
+                nameEl.value = ''; btn.disabled = false; btn.innerText = 'Simpan';
+            } catch(e) { window.showToast("Terjadi kesalahan.", true); btn.disabled = false; }
+        };
+
+        window.openEditModal = () => {
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            if(!r) return;
+            const isAdmin = !r.adminUid || r.adminUid === appData.uid;
+            if(!isAdmin) return window.showToast("Hanya pembuat tabungan yang bisa mengubah ini.", true);
+
+            const editName = document.getElementById('edit-name');
+            const editTarget = document.getElementById('edit-target');
+            if(editName) editName.value = r.name;
+            if(editTarget) editTarget.value = r.target ? r.target.toLocaleString('id-ID') : '';
+            window.showModal('modal-edit');
+        };
+
+        window.handleEditSubmit = async () => {
+            const btn = document.getElementById('btn-save-edit');
+            const nameEl = document.getElementById('edit-name');
+            const targetEl = document.getElementById('edit-target');
+            if(!nameEl || !targetEl) return;
+            const name = nameEl.value.trim();
+            const target = parseInt(targetEl.value.replace(/\D/g, '')) || 0;
+            if(!name) return window.showToast("Isi nama tujuan terlebih dahulu.", true);
+
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { name: name, target: target, hasTarget: target > 0 });
+                window.closeAllModals();
+                window.showToast("Disimpan!");
+                btn.disabled = false; btn.innerText = i18n[appData.language].save_changes;
+            } catch(e) { window.showToast("Terjadi kesalahan.", true); btn.disabled = false; }
+        };
+
+        // --- ROOM TABS SWITCHING ---
+        window.switchRoomTab = (tab) => {
+            const tRingkasan = document.getElementById('tab-ringkasan');
+            const tDiskusi = document.getElementById('tab-diskusi');
+            const cRingkasan = document.getElementById('room-tab-ringkasan');
+            const cDiskusi = document.getElementById('room-tab-diskusi');
+            const fab = document.getElementById('fab-trx');
+
+            if(!tRingkasan || !tDiskusi || !cRingkasan || !cDiskusi) return;
+
+            if(tab === 'ringkasan') {
+                tRingkasan.classList.replace('bg-white', 'bg-slate-900');
+                tRingkasan.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600');
+                tRingkasan.classList.replace('text-slate-600', 'text-white');
+                tRingkasan.classList.replace('dark:text-slate-400', 'text-white');
+                tRingkasan.classList.remove('border', 'border-slate-200', 'dark:border-slate-700');
+
+                tDiskusi.classList.replace('bg-slate-900', 'bg-white');
+                tDiskusi.classList.replace('dark:bg-indigo-600', 'dark:bg-slate-800');
+                tDiskusi.classList.replace('text-white', 'text-slate-600');
+                tDiskusi.classList.replace('text-white', 'dark:text-slate-400');
+                if(!tDiskusi.classList.contains('border')) tDiskusi.classList.add('border', 'border-slate-200', 'dark:border-slate-700');
+
+                cRingkasan.classList.remove('hidden');
+                cDiskusi.classList.add('hidden');
+                if(fab) fab.classList.remove('hidden');
+                
+                const scroller = document.getElementById('view-detail');
+                if (scroller) {
+                    scroller.style.scrollBehavior = 'auto'; 
+                    scroller.scrollTop = 0;
+                }
+            } else {
+                tDiskusi.classList.replace('bg-white', 'bg-slate-900');
+                tDiskusi.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600');
+                tDiskusi.classList.replace('text-slate-600', 'text-white');
+                tDiskusi.classList.replace('dark:text-slate-400', 'text-white');
+                tDiskusi.classList.remove('border', 'border-slate-200', 'dark:border-slate-700');
+
+                tRingkasan.classList.replace('bg-slate-900', 'bg-white');
+                tRingkasan.classList.replace('dark:bg-indigo-600', 'dark:bg-slate-800');
+                tRingkasan.classList.replace('text-white', 'text-slate-600');
+                tRingkasan.classList.replace('text-white', 'dark:text-slate-400');
+                if(!tRingkasan.classList.contains('border')) tRingkasan.classList.add('border', 'border-slate-200', 'dark:border-slate-700');
+
+                cRingkasan.classList.add('hidden');
+                cDiskusi.classList.remove('hidden');
+                if(fab) fab.classList.add('hidden');
+                
+                const dot = document.getElementById('chat-unread-dot');
+                if (dot) dot.classList.add('hidden');
+                
+                window.scrollToBottomChat(true); 
+            }
+        };
+
+        let currentRoomChatsData = [];
+        window.openRoomDetail = (id) => { 
+            window.isFirstChatRender = true;
+            currentRoomId = id; 
+            refreshRoomUI(id); 
+            window.switchRoomTab('ringkasan');
+            
+            window.switchView('view-detail', null, true); 
+            
+            chatRenderLimit = 20; 
+            if(chatUnsubscribe) chatUnsubscribe();
+            
+            chatUnsubscribe = onSnapshot(collection(db, "chats"), (snap) => {
+                const msgs = [];
+                snap.forEach(d => { if(d.data().roomId === id) msgs.push(d.data()); });
+                msgs.sort((a,b) => a.timestamp - b.timestamp);
+                
+                currentRoomChatsData = msgs;
+                
+                const newCount = msgs.length;
+                if (lastChatCounts[id] !== undefined && newCount > lastChatCounts[id]) {
+                    const cDiskusi = document.getElementById('room-tab-diskusi');
+                    if (cDiskusi && cDiskusi.classList.contains('hidden')) {
+                        const dot = document.getElementById('chat-unread-dot');
+                        if (dot) dot.classList.remove('hidden');
+                    }
+                }
+                lastChatCounts[id] = newCount;
+                
+                renderChats(msgs);
+            });
+        };
+
+        window.loadMoreChats = () => {
+            chatRenderLimit += 20;
+            renderChats(currentRoomChatsData);
+        };
+
+        window.loadMoreHistory = () => {
+            historyRenderLimit += 15;
+            updateUI();
+        };
+
+        window.scrollToBottomChat = (instant = false) => {
+            const diskusiTab = document.getElementById('room-tab-diskusi');
+            if (diskusiTab && diskusiTab.classList.contains('hidden')) return;
+
+            const scroller = document.getElementById('view-detail');
+            if(scroller) {
+                scroller.style.scrollBehavior = instant ? 'auto' : 'smooth';
+                scroller.scrollTop = scroller.scrollHeight;
+                document.getElementById('chat-scroll-btn').classList.add('hidden');
+                const dot = document.getElementById('chat-unread-dot-hint');
+                if (dot) dot.classList.add('hidden');
+            }
+        };
+
+        const viewDetailScroller = document.getElementById('view-detail');
+        if(viewDetailScroller) {
+            viewDetailScroller.addEventListener('scroll', function() {
+                const btn = document.getElementById('chat-scroll-btn');
+                const diskusiTab = document.getElementById('room-tab-diskusi');
+                if (!btn || !diskusiTab || diskusiTab.classList.contains('hidden')) return;
+                
+                if (this.scrollHeight - this.scrollTop - this.clientHeight <= 100) {
+                    btn.classList.add('hidden');
+                }
             });
         }
 
-        window.openMemberListModal = async () => {
-            const r = globalRooms.find(x => x.id === currentRoomId);
-            const container = document.getElementById('member-list-container');
-            container.innerHTML = '';
-            for (const m of r.members) {
-                const uSnap = await getDoc(doc(db, "users", m.uid));
-                const uData = uSnap.data();
-                const status = uData.isOnline ? '<span class="text-emerald-500">● Online</span>' : `<span class="text-slate-400">Terakhir: ${window.formatLastSeen(uData.lastSeen)}</span>`;
-                container.innerHTML += `
-                    <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center font-bold">${m.name.charAt(0)}</div>
-                        <div class="flex-1"><h4 class="font-bold dark:text-white">${m.name}</h4><p class="text-[10px]">${status}</p></div>
-                        <button onclick="window.filterHistoryByUser('${m.name}')" class="p-2 bg-indigo-50 rounded-lg text-indigo-600"><i data-lucide="history" class="w-4 h-4"></i></button>
+        function getChatDateLabel(timestamp, lang) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const msgDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const diffTime = today - msgDate;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            const isId = lang === 'id';
+
+            if (diffDays === 0) return isId ? 'Hari Ini' : 'Today';
+            if (diffDays === 1) return isId ? 'Kemarin' : 'Yesterday';
+            
+            if (diffDays > 1 && diffDays < 7) {
+                const daysId = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const daysEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                return isId ? daysId[date.getDay()] : daysEn[date.getDay()];
+            }
+            
+            const monthsId = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agt', 'Sep', 'Okt', 'Nov', 'Des'];
+            const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthStr = isId ? monthsId[date.getMonth()] : monthsEn[date.getMonth()];
+            return `${date.getDate()} ${monthStr} ${date.getFullYear()}`;
+        }
+
+        if (!window.animatedStickersTracker) {
+            window.animatedStickersTracker = new Set();
+        }
+
+        window.animateSticker = (el) => {
+            if (el.dataset.animating === 'true') return; 
+            el.dataset.animating = 'true';
+            
+            el.classList.remove('anim-float-temp');
+            void el.offsetWidth; 
+            el.classList.add('anim-float-temp');
+            
+            setTimeout(() => {
+                el.dataset.animating = 'false';
+            }, 2400); 
+        };
+
+        let swipeStartX = 0;
+        let swipeCurrentX = 0;
+        let swipeStartY = 0;
+        let isChatSwiping = false;
+        let isVerticalScrolling = false;
+
+        window.chatSwipeStart = (e, el) => {
+            if (e.type === 'touchstart' && e.touches.length > 1) return; 
+            swipeStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            swipeStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            isChatSwiping = false;
+            isVerticalScrolling = false;
+            
+            const wrapper = el.querySelector('.chat-bubble-wrapper');
+            const ind = el.querySelector('.reply-indicator');
+            if(wrapper) wrapper.style.transition = 'none';
+            if(ind) ind.style.transition = 'none';
+        };
+
+        window.chatSwipeMove = (e, el) => {
+            if (isVerticalScrolling) return;
+            if (e.type.includes('mouse') && swipeStartX === 0) return;
+
+            swipeCurrentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            const diffX = swipeCurrentX - swipeStartX;
+            const diffY = Math.abs(currentY - swipeStartY);
+
+            if (!isChatSwiping) {
+                if (diffY > 10 && diffY > Math.abs(diffX)) {
+                    isVerticalScrolling = true;
+                    return;
+                }
+                if (diffX > 10 && Math.abs(diffX) > diffY) {
+                    isChatSwiping = true;
+                }
+            }
+
+            if (isChatSwiping) {
+                if (diffX > 0 && e.cancelable) e.preventDefault();
+                
+                const dragDist = Math.max(0, Math.min(diffX, 80)); 
+                
+                const wrapper = el.querySelector('.chat-bubble-wrapper');
+                if(wrapper) wrapper.style.transform = `translateX(${dragDist}px)`;
+                
+                const indicator = el.querySelector('.reply-indicator');
+                if(indicator) {
+                    const progress = Math.min(dragDist / 60, 1);
+                    indicator.style.opacity = progress;
+                    indicator.style.transform = `translate(${dragDist * 0.3}px, -50%) scale(${0.5 + (progress * 0.5)})`;
+                }
+            }
+        };
+
+        window.chatSwipeEnd = (e, el, chatId, userName, msgText) => {
+            if (!swipeStartX) return; 
+            
+            const diffX = swipeCurrentX - swipeStartX;
+            const wrapper = el.querySelector('.chat-bubble-wrapper');
+            const indicator = el.querySelector('.reply-indicator');
+            
+            if(wrapper) {
+                wrapper.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                wrapper.style.transform = 'translateX(0px)';
+            }
+            
+            if(indicator) {
+                indicator.style.transition = 'all 0.3s ease';
+                indicator.style.opacity = '0';
+                indicator.style.transform = 'translate(-1rem, -50%) scale(0.5)';
+            }
+
+            if (isChatSwiping && diffX >= 60) {
+                window.setReply(chatId, userName, msgText);
+                if (window.navigator && window.navigator.vibrate) {
+                    window.navigator.vibrate(50);
+                }
+            }
+            
+            isChatSwiping = false;
+            isVerticalScrolling = false;
+            swipeStartX = 0;
+            swipeCurrentX = 0;
+            swipeStartY = 0;
+        };
+
+        window.setReply = (chatId, userName, message) => {
+            replyingTo = { id: chatId, name: userName, message: message };
+            const preview = document.getElementById('reply-preview');
+            document.getElementById('reply-to-name').innerText = userName;
+            document.getElementById('reply-to-msg').innerText = message;
+            if(preview) preview.classList.remove('hidden');
+            document.getElementById('chat-input').focus();
+        };
+
+        window.cancelReply = () => {
+            replyingTo = null;
+            const preview = document.getElementById('reply-preview');
+            if(preview) preview.classList.add('hidden');
+        };
+
+        function renderChats(msgs) {
+            const box = document.getElementById('chat-messages');
+            const scroller = document.getElementById('view-detail');
+            if(!box || !scroller) return;
+
+            let isScrolledUp = false;
+            if (window.isFirstChatRender) {
+                isScrolledUp = false;
+            } else {
+                isScrolledUp = scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight > 100;
+            }
+
+            if(msgs.length === 0) {
+                box.innerHTML = `<p class="text-center text-xs text-slate-400 font-bold italic py-4 mt-8">Belum ada diskusi. Jadilah yang pertama!</p>`;
+                return;
+            }
+            
+            box.innerHTML = '';
+            
+            const visibleMsgs = msgs.slice(-chatRenderLimit);
+            if (msgs.length > chatRenderLimit) {
+                box.innerHTML += `<button onclick="window.loadMoreChats()" class="w-full text-center py-2 text-xs font-bold text-indigo-500 hover:text-indigo-600 transition-colors">Muat pesan sebelumnya...</button>`;
+            }
+
+            let lastDateLabel = '';
+            let latestIsMe = false;
+
+            visibleMsgs.forEach((m, idx) => {
+                const isMe = m.uid === appData.uid;
+                if(idx === visibleMsgs.length - 1) latestIsMe = isMe;
+                const avaChar = m.avatar.emoji || m.name.charAt(0).toUpperCase();
+                
+                const dateLabel = getChatDateLabel(m.timestamp, appData.language);
+                if (dateLabel !== lastDateLabel) {
+                    box.innerHTML += `<div class="flex justify-center my-4"><span class="bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">${dateLabel}</span></div>`;
+                    lastDateLabel = dateLabel;
+                }
+                
+                let formattedMsg = m.message;
+                if(m.type === 'text') {
+                    formattedMsg = formattedMsg.replace(/@([a-zA-Z0-9_]+)/g, (match, p1) => {
+                        const isMeMentioned = p1.toLowerCase() === appData.user.toLowerCase().replace(/\s+/g,'');
+                        return `<span class="${isMeMentioned ? 'mention-me' : 'mention-highlight'}">${match}</span>`;
+                    });
+                }
+                
+                const isMentioned = m.type === 'text' && formattedMsg.includes('mention-me');
+                
+                let animClass = '';
+                let dataAnim = 'false';
+                if(m.type === 'sticker') {
+                    if (!window.animatedStickersTracker.has(m.timestamp)) {
+                        animClass = 'anim-float-temp';
+                        dataAnim = 'true';
+                        window.animatedStickersTracker.add(m.timestamp);
+                    }
+                }
+
+                let replyHtmlMe = '';
+                let replyHtmlOther = '';
+                if (m.replyTo) {
+                    replyHtmlMe = `
+                    <div class="mb-1.5 p-2 bg-black/10 rounded-lg flex flex-col border-l-2 border-white/50 text-left">
+                        <span class="text-[9px] font-black opacity-80">${m.replyTo.name}</span>
+                        <span class="text-[10px] opacity-90 line-clamp-1">${m.replyTo.message}</span>
                     </div>`;
+                    replyHtmlOther = `
+                    <div class="mb-1.5 p-2 bg-black/5 dark:bg-white/5 rounded-lg flex flex-col border-l-2 border-indigo-400 text-left">
+                        <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400">${m.replyTo.name}</span>
+                        <span class="text-[10px] opacity-80 line-clamp-1 text-slate-700 dark:text-slate-300">${m.replyTo.message}</span>
+                    </div>`;
+                }
+
+                const safeMsg = window.safeStr(m.message);
+                const replyActionParams = `'${m.id || m.timestamp}', '${window.safeStr(isMe?'Anda':m.name)}', \`${safeMsg}\``;
+
+                if(isMe) {
+                    box.innerHTML += `
+                    <div class="relative w-full mb-2 chat-swipe-container overflow-x-hidden" 
+                         ontouchstart="window.chatSwipeStart(event, this)" 
+                         ontouchmove="window.chatSwipeMove(event, this)" 
+                         ontouchend="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmousedown="window.chatSwipeStart(event, this)"
+                         onmousemove="window.chatSwipeMove(event, this)"
+                         onmouseup="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmouseleave="window.chatSwipeEnd(event, this, ${replyActionParams})">
+                        
+                        <div class="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 reply-indicator transform -translate-x-4 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400 z-0 scale-50 pointer-events-none">
+                            <i data-lucide="reply" class="w-4 h-4"></i>
+                        </div>
+
+                        <div class="chat-bubble-wrapper w-full flex flex-col items-end pl-8 relative z-10 select-none">
+                            <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1 pointer-events-none">Anda</span>
+                            ${m.type === 'sticker' 
+                                ? `<div class="text-6xl cursor-pointer pointer-events-auto ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
+                                : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap text-left pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlMe}${formattedMsg}</div>`
+                            }
+                        </div>
+                    </div>`;
+                } else {
+                    box.innerHTML += `
+                    <div class="relative w-full mb-2 chat-swipe-container overflow-x-hidden"
+                         ontouchstart="window.chatSwipeStart(event, this)" 
+                         ontouchmove="window.chatSwipeMove(event, this)" 
+                         ontouchend="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmousedown="window.chatSwipeStart(event, this)"
+                         onmousemove="window.chatSwipeMove(event, this)"
+                         onmouseup="window.chatSwipeEnd(event, this, ${replyActionParams})"
+                         onmouseleave="window.chatSwipeEnd(event, this, ${replyActionParams})">
+                        
+                        <div class="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 reply-indicator transform -translate-x-4 flex items-center justify-center w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400 z-0 scale-50 pointer-events-none">
+                            <i data-lucide="reply" class="w-4 h-4"></i>
+                        </div>
+
+                        <div class="chat-bubble-wrapper w-full flex flex-col items-start pr-8 relative z-10 select-none"> 
+                            <div class="flex items-center gap-2 mb-1 pointer-events-none">
+                                <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
+                                <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
+                            </div>
+                            ${m.type === 'sticker' 
+                                ? `<div class="text-6xl cursor-pointer pointer-events-auto ml-7 ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
+                                : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlOther}${formattedMsg}</div>`
+                            }
+                        </div>
+                    </div>`;
+                }
+            });
+
+            setTimeout(() => {
+                const stickers = box.querySelectorAll('[data-animating="true"]');
+                stickers.forEach(s => s.dataset.animating = 'false');
+            }, 2400);
+
+            if (window.isFirstChatRender || latestIsMe || !isScrolledUp) {
+                setTimeout(() => window.scrollToBottomChat(window.isFirstChatRender), 10);
+                window.isFirstChatRender = false;
+            } else {
+                const btn = document.getElementById('chat-scroll-btn');
+                const dot = document.getElementById('chat-unread-dot-hint');
+                if (btn && dot) {
+                    btn.classList.remove('hidden');
+                    dot.classList.remove('hidden'); 
+                }
             }
             lucide.createIcons();
-            window.showModal('modal-member-list');
-        };
-
-        window.filterHistoryByUser = (name) => {
-            currentUserHistoryFilter = name;
-            window.closeAllModals();
-            refreshRoomUI(currentRoomId);
-        };
-
-        function updateUI() {
-            const homeAv = document.getElementById('home-avatar');
-            if(homeAv) homeAv.innerText = appData.user.charAt(0).toUpperCase();
-            document.getElementById('home-username').innerText = appData.user;
-            
-            const container = document.getElementById('rooms-container');
-            container.innerHTML = '';
-            globalRooms.forEach(r => {
-                container.innerHTML += `<div onclick="window.openRoomDetail('${r.id}')" class="p-6 bg-white dark:bg-slate-800 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-700">
-                    <h3 class="font-black text-lg dark:text-white">${r.name}</h3>
-                    <p class="text-2xl font-black mt-2 dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p>
-                </div>`;
-            });
-            lucide.createIcons();
         }
 
-        window.openRoomDetail = (id) => {
-            currentRoomId = id;
-            window.switchView('view-detail');
-            refreshRoomUI(id);
+        window.toggleStickerPanel = () => {
+            const panel = document.getElementById('sticker-panel');
+            if(panel) panel.classList.toggle('hidden');
+        };
+
+        window.sendSticker = async (sticker) => {
+            if(!currentRoomId) return;
+            window.toggleStickerPanel(); 
+            window.scrollToBottomChat(false);
+
+            const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'sticker', message: sticker, timestamp: Date.now() };
+            if(replyingTo) {
+                chat.replyTo = replyingTo;
+                window.cancelReply();
+            }
+            try { 
+                await setDoc(doc(db, "chats", 'chat_'+Date.now()), chat); 
+                window.sendPushToMembers(`Stiker dari ${appData.user}`, "Mengirim stiker ke obrolan.");
+            } catch(e) {}
+        }
+
+        window.sendChatMessage = async () => {
+            const inp = document.getElementById('chat-input');
+            const msg = inp.value.trim();
+            if(!msg || !currentRoomId) {
+                inp.focus(); 
+                return;
+            }
+            inp.value = '';
+            inp.focus(); 
+            
+            const panel = document.getElementById('sticker-panel');
+            if(panel && !panel.classList.contains('hidden')) panel.classList.add('hidden');
+
+            window.scrollToBottomChat(false);
+
+            const chat = { roomId: currentRoomId, uid: appData.uid, name: appData.user, avatar: appData.avatar, type: 'text', message: msg, timestamp: Date.now() };
+            
+            if(replyingTo) {
+                chat.replyTo = replyingTo;
+                window.cancelReply();
+            }
+
+            try { 
+                await setDoc(doc(db, "chats", 'chat_'+Date.now()), chat); 
+                window.sendPushToMembers(`Pesan dari ${appData.user}`, msg);
+            } catch(e) {}
+        };
+
+        const getReactionHTML = (trxId, reactionsData = {}) => {
+            const emojis = ['🔥', '👏', '❤️'];
+            let html = `<div class="flex gap-2 mt-2">`;
+            emojis.forEach(e => {
+                const users = reactionsData[e] || [];
+                const hasReacted = users.includes(appData.uid);
+                const count = users.length;
+                html += `
+                <button onclick="window.toggleReaction('${trxId}', '${e}')" class="flex items-center gap-1 px-2 py-1 rounded-full border ${hasReacted ? 'bg-indigo-50 border-indigo-200 dark:bg-indigo-900/30 dark:border-indigo-800' : 'bg-slate-50 border-slate-200 dark:bg-slate-800 dark:border-slate-700'} text-[10px] active:scale-90 transition-transform">
+                    <span>${e}</span> <span class="font-bold text-slate-500 ${hasReacted?'text-indigo-600 dark:text-indigo-400':''}">${count > 0 ? count : ''}</span>
+                </button>`;
+            });
+            html += `</div>`;
+            return html;
+        };
+
+        window.toggleReaction = async (trxId, emoji) => {
+            const hData = globalHistory.find(h => h.id === trxId);
+            if(!hData) return;
+            let reactions = hData.reactions || {};
+            const allEmojis = ['🔥', '👏', '❤️'];
+            let alreadyHadThisEmoji = false;
+
+            allEmojis.forEach(e => {
+                if(reactions[e]) {
+                    const idx = reactions[e].indexOf(appData.uid);
+                    if(idx > -1) {
+                        reactions[e].splice(idx, 1);
+                        if(e === emoji) alreadyHadThisEmoji = true; 
+                    }
+                }
+            });
+            
+            if(!alreadyHadThisEmoji) {
+                if(!reactions[emoji]) reactions[emoji] = [];
+                reactions[emoji].push(appData.uid);
+            }
+            
+            try { await updateDoc(doc(db, "history", trxId), { reactions: reactions }); } catch(e) {}
         };
 
         function refreshRoomUI(id) {
-            const r = globalRooms.find(x => x.id === id);
-            document.getElementById('detail-title').innerText = r.name;
-            document.getElementById('detail-balance').innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
+            const lang = i18n[appData.language];
+            const r = globalRooms.find(x => x.id === id); if(!r) return;
+            const titleEl = document.getElementById('detail-title');
+            const balanceEl = document.getElementById('detail-balance');
             
-            // Member Pile with Dots
-            const pile = document.getElementById('member-pile-container');
-            pile.innerHTML = '';
-            r.members.forEach(m => {
-                getDoc(doc(db, "users", m.uid)).then(s => {
-                    const isOnline = s.data().isOnline;
-                    pile.innerHTML += `<div class="relative"><div class="w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center border-2 border-white text-xs font-bold">${m.name.charAt(0)}</div>${isOnline ? '<span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>' : ''}</div>`;
-                });
-            });
-
-            const hList = document.getElementById('detail-history-list');
-            hList.innerHTML = '';
-            let filtered = globalHistory.filter(h => h.roomId === id);
-            if (currentUserHistoryFilter) {
-                hList.innerHTML = `<div class="flex justify-between bg-indigo-50 p-2 rounded-lg mb-4"><span class="text-xs font-bold text-indigo-600">Filter: ${currentUserHistoryFilter}</span><button onclick="window.clearFilter()" class="text-xs text-rose-500">Hapus</button></div>`;
-                filtered = filtered.filter(h => h.userName === currentUserHistoryFilter);
+            if(titleEl) titleEl.innerText = r.name;
+            if(balanceEl) balanceEl.innerText = 'Rp ' + r.balance.toLocaleString('id-ID');
+            
+            const catBadge = document.getElementById('detail-category-badge');
+            if(catBadge) {
+                if(r.category) {
+                    const catObj = CATEGORIES.find(c => c.id === r.category) || CATEGORIES[4];
+                    catBadge.innerText = `${catObj.icon} ${catObj.label}`;
+                    catBadge.classList.remove('hidden');
+                } else {
+                    catBadge.classList.add('hidden');
+                }
             }
-            filtered.forEach(h => {
-                hList.innerHTML += `<div class="flex justify-between items-center mb-2"><div class="flex-1"><p class="text-sm font-bold dark:text-white">${h.userName}</p><p class="text-[10px] text-slate-400">${h.date}</p></div><p class="font-bold ${h.type==='in'?'text-emerald-500':'text-rose-500'}">${h.type==='in'?'+':'-'}Rp ${h.amount.toLocaleString('id-ID')}</p></div>`;
-            });
+
+            const btnEdit = document.getElementById('btn-edit-room');
+            const isAdmin = !r.adminUid || r.adminUid === appData.uid;
+            if(btnEdit) {
+                if(isAdmin) btnEdit.classList.remove('hidden');
+                else btnEdit.classList.add('hidden');
+            }
+
+            const pile = document.getElementById('member-pile-container');
+            const countText = document.getElementById('member-count-text');
+            if(pile && r.members) {
+                pile.innerHTML = '';
+                r.members.slice(0, 5).forEach(m => {
+                    const char = m.avatar.emoji || m.name.charAt(0).toUpperCase();
+                    const isMe = m.uid === appData.uid;
+                    
+                    pile.innerHTML += `
+                    <div class="relative cursor-pointer hover:-translate-y-1 transition-transform" onclick="window.openMemberListModal()" title="${m.name}">
+                        <div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-black shadow-sm ${m.avatar.colorClass} ${m.avatar.textClass}">${char}</div>
+                        <span id="status-dot-${m.uid}" class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full hidden shadow-sm animate-pulse"></span>
+                    </div>`;
+
+                    if(isMe) {
+                        setTimeout(() => { const d = document.getElementById(`status-dot-${m.uid}`); if(d) d.classList.remove('hidden'); }, 50);
+                    } else {
+                        getDoc(doc(db, "users", m.uid)).then(snap => {
+                            if(snap.exists() && snap.data().isOnline) {
+                                const d = document.getElementById(`status-dot-${m.uid}`);
+                                if(d) d.classList.remove('hidden');
+                            }
+                        }).catch(()=>{});
+                    }
+                });
+                
+                if(r.members.length > 5) pile.innerHTML += `<div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 text-slate-500 flex items-center justify-center text-[10px] font-black shadow-sm relative z-10 cursor-pointer" onclick="window.openMemberListModal()">+${r.members.length-5}</div>`;
+                
+                if(countText) countText.innerHTML = appData.language === 'id' ? `Lihat ${r.members.length} Anggota` : `View ${r.members.length} Members`;
+            }
+
+            const tgtBox = document.getElementById('detail-target-container');
+            if(tgtBox) {
+                if(r.hasTarget) {
+                    tgtBox.classList.remove('hidden');
+                    const progressTxt = document.getElementById('detail-progress-text');
+                    const progressBr = document.getElementById('detail-progress-bar');
+                    const pct = Math.min(Math.round((r.balance/r.target)*100), 100);
+                    if(progressTxt) progressTxt.innerText = `${r.balance.toLocaleString('id-ID')} / ${r.target.toLocaleString('id-ID')}`;
+                    if(progressBr) progressBr.style.width = pct + '%';
+                    const archBtnBox = document.getElementById('detail-archive-btn-container');
+                    if (archBtnBox) {
+                        if (pct >= 100 && !r.isArchived && isAdmin) archBtnBox.classList.remove('hidden'); 
+                        else archBtnBox.classList.add('hidden');
+                    }
+                } else { 
+                    tgtBox.classList.add('hidden'); 
+                    const archBtnBox = document.getElementById('detail-archive-btn-container');
+                    if (archBtnBox) archBtnBox.classList.add('hidden');
+                }
+            }
+            const msBox = document.getElementById('detail-milestone-container');
+            const msList = document.getElementById('detail-milestone-list');
+            if(msBox && msList) {
+                if(r.hasMilestones && r.milestones.length > 0) {
+                    msBox.classList.remove('hidden'); msList.innerHTML = '';
+                    r.milestones.forEach((m, idx) => {
+                        msList.innerHTML += `<div onclick="${isAdmin ? `window.toggleMilestone(${idx})` : ''}" class="flex items-center gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-800 ${isAdmin?'active:scale-[0.98] cursor-pointer':''} transition-all"><div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${m.done ? 'bg-indigo-600 border-indigo-600' : 'border-slate-300'}">${m.done ? '<i data-lucide="check" class="w-4 h-4 text-white"></i>' : ''}</div><div class="flex-1"><p class="text-sm font-bold ${m.done ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'}">${m.name}</p><p class="text-[10px] font-black text-slate-400 tracking-wider uppercase">RP ${m.price.toLocaleString('id-ID')}</p></div></div>`;
+                    });
+                } else msBox.classList.add('hidden');
+            }
             
-            document.getElementById('member-count-text').innerText = `Lihat ${r.members.length} Anggota`;
+            const histList = document.getElementById('detail-history-list');
+            if(histList) {
+                histList.innerHTML = '';
+                let filtered = globalHistory.filter(h => h.roomId === id);
+                
+                // --- KODE FILTER USER BARU ---
+                let filterBadgeHtml = '';
+                if (currentUserHistoryFilter) {
+                    filtered = filtered.filter(h => h.userName === currentUserHistoryFilter);
+                    filterBadgeHtml = `
+                    <div class="flex items-center justify-between bg-indigo-50 dark:bg-indigo-900/30 p-3.5 rounded-2xl mb-4 border border-indigo-100 dark:border-indigo-800 shadow-sm animate-pulse">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="filter" class="w-4 h-4 text-indigo-500"></i>
+                            <span class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Riwayat: <b class="font-black">${currentUserHistoryFilter}</b></span>
+                        </div>
+                        <button onclick="window.clearUserHistoryFilter()" class="p-1.5 text-indigo-500 hover:text-rose-500 bg-white dark:bg-slate-800 rounded-lg shadow-sm transition-colors active:scale-90"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+                    </div>`;
+                }
+                
+                histList.innerHTML = filterBadgeHtml;
+                // --- AKHIR KODE FILTER USER ---
+                
+                const visibleFiltered = filtered.slice(0, historyRenderLimit);
+
+                if(filtered.length === 0) {
+                    histList.innerHTML += `
+                    <div class="text-center py-10 opacity-40">
+                        <i data-lucide="hourglass" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
+                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p>
+                    </div>`;
+                }
+                else {
+                    visibleFiltered.forEach(h => {
+                        const isIn = h.type === 'in';
+                        const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 leading-tight whitespace-pre-wrap">"${h.note}"</p>` : '';
+                        histList.innerHTML += `<div class="relative pl-8 mb-6 last:mb-0"><span class="absolute -left-[20px] top-1 ${isIn ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'} p-1.5 rounded-full border-4 border-white dark:border-slate-900"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-3.5 h-3.5"></i></span><div class="flex justify-between items-start"><div class="flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.userName}</p><p class="text-[9px] font-bold text-slate-400">${h.date}</p>${noteHtml} ${getReactionHTML(h.id, h.reactions)}</div><p class="text-sm font-black ${isIn ? 'text-emerald-600' : 'text-rose-600'} shrink-0">${isIn?'+':'-'} Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                    });
+                    
+                    if (filtered.length > historyRenderLimit) {
+                        histList.innerHTML += `<button onclick="window.loadMoreHistory()" class="w-full py-3 mt-4 text-xs font-bold text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl active:scale-95 transition-transform">Muat Lebih Banyak</button>`;
+                    }
+                }
+            }
+            lucide.createIcons();
         }
 
-        window.clearFilter = () => { currentUserHistoryFilter = null; refreshRoomUI(currentRoomId); };
-
-        window.switchView = (id) => {
-            ['view-home', 'view-detail', 'view-history', 'view-profile'].forEach(v => document.getElementById(v).classList.add('hidden'));
-            document.getElementById(id).classList.remove('hidden');
+        window.toggleMilestone = async (idx) => {
+            const r = globalRooms.find(x => x.id === currentRoomId); if(!r) return;
+            r.milestones[idx].done = !r.milestones[idx].done;
+            await updateDoc(doc(db, "rooms", currentRoomId), { milestones: r.milestones });
         };
 
-        window.onload = () => { lucide.createIcons(); };
+        window.openTransactionModal = (type) => {
+            const trxAmount = document.getElementById('trx-amount');
+            const trxType = document.getElementById('trx-type');
+            const trxTitle = document.getElementById('trx-title');
+            const trxUser = document.getElementById('trx-user-display');
+            const trxNote = document.getElementById('trx-note');
+            const btnSubmit = document.getElementById('btn-submit-trx');
+            
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            const msContainer = document.getElementById('trx-milestone-container');
+            const msSelect = document.getElementById('trx-milestone-select');
+
+            if(trxAmount) trxAmount.value = '';
+            if(trxType) trxType.value = type === 'nabung' ? 'in' : 'out';
+            if(trxTitle) trxTitle.innerText = type === 'nabung' ? i18n[appData.language].save : i18n[appData.language].withdraw;
+            if(trxUser) trxUser.value = appData.user;
+            if(trxNote) trxNote.value = ''; 
+            
+            if(btnSubmit) {
+                btnSubmit.className = `w-full py-5 text-white font-black text-lg rounded-[1.5rem] shadow-xl active:scale-95 transition-all ${type === 'nabung' ? 'bg-emerald-500 shadow-emerald-200 dark:shadow-none' : 'bg-rose-500 shadow-rose-200 dark:shadow-none'}`;
+            }
+
+            if(type === 'nabung' && r && r.hasMilestones) {
+                msContainer.classList.remove('hidden');
+                msSelect.innerHTML = '<option value="">-- Pilih Milestone --</option>';
+                r.milestones.forEach((m, idx) => {
+                    if(!m.done) msSelect.innerHTML += `<option value="${idx}">Bayar: ${m.name} (Rp ${m.price.toLocaleString('id-ID')})</option>`;
+                });
+                
+                msSelect.onchange = function() {
+                    if(this.value !== "") {
+                        const mPrice = r.milestones[this.value].price;
+                        trxAmount.value = mPrice.toLocaleString('id-ID');
+                    }
+                };
+            } else {
+                msContainer.classList.add('hidden');
+                msSelect.innerHTML = '';
+            }
+            
+            window.showModal('modal-transaction');
+            setTimeout(() => { if(trxAmount) trxAmount.focus(); }, 400);
+        };
+
+        window.closeConfirmModal = () => {
+            const m = document.getElementById('modal-confirm-trx');
+            const card = document.getElementById('confirm-trx-card');
+            if (m && card) {
+                card.classList.remove('scale-100');
+                card.classList.add('scale-95');
+                m.classList.remove('opacity-100');
+                m.classList.add('opacity-0');
+                setTimeout(() => m.classList.add('hidden'), 300);
+            }
+        };
+
+        window.handleTransactionSubmit = () => {
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            const amountStr = document.getElementById('trx-amount').value.replace(/\D/g, '');
+            const amount = parseInt(amountStr);
+            if(!amount || !r) return window.showToast("Masukkan nominal yang valid.", true);
+
+            const type = document.getElementById('trx-type').value;
+            let newBal = r.balance;
+            if(type === 'in') {
+                if(r.hasTarget && r.balance + amount > r.target) return window.showToast("Nominal melebihi target tabungan!", true);
+                newBal += amount;
+            } else {
+                if(amount > r.balance) return window.showToast("Saldo tabungan tidak mencukupi.", true);
+                newBal -= amount;
+            }
+
+            let finalNote = document.getElementById('trx-note').value.trim();
+            const msSelect = document.getElementById('trx-milestone-select');
+            let updatedMilestones = r.milestones;
+            
+            if(type === 'in' && msSelect && msSelect.value !== "") {
+                const idx = parseInt(msSelect.value);
+                const mName = r.milestones[idx].name;
+                finalNote = finalNote ? `${finalNote} [Tujuan: ${mName}]` : `[Tujuan: ${mName}]`;
+                updatedMilestones[idx].done = true;
+            }
+
+            const reachedGoal = (r.hasTarget && newBal === r.target && type === 'in');
+            
+            pendingTransaction = { r, type, amount, newBal, finalNote, updatedMilestones, reachedGoal };
+
+            const m = document.getElementById('modal-confirm-trx');
+            const card = document.getElementById('confirm-trx-card');
+            const desc = document.getElementById('confirm-trx-desc');
+            const icon = document.getElementById('confirm-trx-icon');
+            
+            if (m && card && desc && icon) {
+                const actionText = type === 'in' ? `<span class="text-emerald-500 font-black">menabung Rp ${amount.toLocaleString('id-ID')}</span> ke` : `<span class="text-rose-500 font-black">menarik Rp ${amount.toLocaleString('id-ID')}</span> dari`;
+                icon.innerText = type === 'in' ? '💰' : '💸';
+                desc.innerHTML = `Anda akan ${actionText} tabungan <b>"${r.name}"</b>.`;
+                
+                m.classList.remove('hidden');
+                void m.offsetWidth;
+                m.classList.remove('opacity-0');
+                m.classList.add('opacity-100');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }
+        };
+
+        window.executeTransaction = async () => {
+            if (!pendingTransaction) return;
+            const { r, type, amount, newBal, finalNote, updatedMilestones, reachedGoal } = pendingTransaction;
+            
+            const btn = document.getElementById('btn-confirm-yes');
+            const origText = btn.innerText;
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+
+            const ts = Date.now();
+            const trxId = 'trx_' + ts;
+            const h = { id: trxId, roomId: currentRoomId, roomName: r.name, type: type, amount: amount, userName: appData.user, note: finalNote, timestamp: ts, date: new Date().toLocaleString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'}), reactions: {} };
+
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { balance: newBal, milestones: updatedMilestones });
+                await setDoc(doc(db, "history", trxId), h);
+                
+                window.sendPushToMembers("Aktivitas Tabungan 💰", `${appData.user} baru saja ${type === 'in' ? 'menabung' : 'menarik'} Rp ${amount.toLocaleString('id-ID')} di ${r.name}`);
+
+                window.closeConfirmModal();
+                window.closeAllModals();
+                
+                btn.disabled = false; btn.innerText = origText;
+                pendingTransaction = null; 
+                window.showToast("Transaksi Berhasil!");
+
+            } catch(e) { 
+                window.showToast("Terjadi kesalahan sistem.", true); 
+                btn.disabled = false; btn.innerText = origText; 
+            }
+        };
+
+        window.filterRooms = (type) => {
+            currentRoomFilter = type;
+            ['all', 'personal', 'shared'].forEach(f => {
+                const btn = document.getElementById('filter-room-'+f);
+                if(!btn) return;
+                if(f === type) {
+                    btn.classList.replace('bg-white', 'bg-slate-900');
+                    btn.classList.replace('dark:bg-slate-800', 'dark:bg-indigo-600');
+                    btn.classList.replace('text-slate-600', 'text-white');
+                    btn.classList.replace('dark:text-slate-400', 'text-white');
+                    btn.classList.remove('border', 'border-slate-200', 'dark:border-slate-700');
+                } else {
+                    btn.classList.replace('bg-slate-900', 'bg-white');
+                    btn.classList.replace('dark:bg-indigo-600', 'dark:bg-slate-800');
+                    btn.classList.replace('text-white', 'text-slate-600');
+                    btn.classList.replace('text-white', 'dark:text-slate-400');
+                    if (!btn.classList.contains('border')) btn.classList.add('border', 'border-slate-200', 'dark:border-slate-700');
+                }
+            });
+            updateUI();
+        };
+
+        window.filterHistory = (type) => {
+            currentHistoryFilter = type;
+            ['all', 'in', 'out'].forEach(f => {
+                const btn = document.getElementById('filter-'+f);
+                if(!btn) return;
+                if(f === type) {
+                    btn.classList.add('bg-slate-900', 'text-white', 'dark:bg-indigo-600');
+                    btn.classList.remove('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+                } else {
+                    btn.classList.remove('bg-slate-900', 'text-white', 'dark:bg-indigo-600');
+                    btn.classList.add('bg-slate-100', 'text-slate-600', 'dark:bg-slate-800', 'dark:text-slate-400');
+                }
+            });
+            updateUI();
+        };
+
+        window.changeTimeFilter = (val) => { currentTimeFilter = val; updateUI(); }
+
+        window.switchView = (viewId, navId = null, pushMode = true) => {
+            const views = ['view-home', 'view-detail', 'view-history', 'view-profile', 'view-create', 'view-archive'];
+            views.forEach(v => { const el = document.getElementById(v); if(el) el.classList.add('hidden'); });
+            const target = document.getElementById(viewId); 
+            if(target) {
+                target.classList.remove('hidden');
+                if (viewId !== 'view-detail') {
+                    target.scrollTop = 0; 
+                }
+            }
+            const nav = document.getElementById('bottom-nav');
+            if(nav) {
+                if (['view-detail', 'view-create', 'view-archive'].includes(viewId)) nav.classList.add('hidden');
+                else nav.classList.remove('hidden');
+            }
+            if(navId) {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.replace('text-indigo-600', 'text-slate-300');
+                    const span = btn.querySelector('span'); if(span) span.classList.replace('font-black', 'font-bold');
+                });
+                const active = document.getElementById(navId);
+                if(active) {
+                    active.classList.replace('text-slate-300', 'text-indigo-600');
+                    const span = active.querySelector('span'); if(span) span.classList.replace('font-bold', 'font-black');
+                }
+            }
+            
+            if(pushMode === true) {
+                history.pushState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
+            } else if (pushMode === 'replace') {
+                history.replaceState({ viewId, navId, isTab: ['view-home', 'view-history', 'view-profile'].includes(viewId) }, "", location.href);
+            }
+            
+            if(viewId === 'view-create') renderCategoryOptions();
+
+            if(viewId !== 'view-detail' && chatUnsubscribe) { chatUnsubscribe(); chatUnsubscribe = null; }
+        };
+
+        window.openManageModal = (id) => { 
+            roomToDelete = id; 
+            const r = globalRooms.find(x => x.id === id);
+            const isAdmin = r && (!r.adminUid || r.adminUid === appData.uid);
+            
+            const optsContainer = document.getElementById('manage-options-container');
+            if(optsContainer) {
+                let html = `
+                    <button onclick="window.openShareOptions()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors">
+                        <div class="p-2 bg-blue-100 text-blue-600 rounded-xl"><i data-lucide="share-2" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-slate-800 dark:text-white" data-t="share">${i18n[appData.language].share}</span>
+                    </button>
+                `;
+
+                if(isAdmin) {
+                    html += `
+                    <button onclick="window.deleteCurrentRoom()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors">
+                        <div class="p-2 bg-rose-100 text-rose-600 rounded-xl"><i data-lucide="trash-2" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-rose-600" data-t="delete">${i18n[appData.language].delete}</span>
+                    </button>`;
+                } else {
+                    html += `
+                    <button onclick="window.leaveCurrentRoom()" class="w-full flex items-center gap-4 p-5 bg-slate-50 dark:bg-slate-800 rounded-2xl active:bg-slate-100 transition-colors">
+                        <div class="p-2 bg-amber-100 text-amber-600 rounded-xl"><i data-lucide="log-out" class="w-5 h-5"></i></div>
+                        <span class="font-bold text-amber-600" data-t="leave">${i18n[appData.language].leave || "Keluar Tabungan"}</span>
+                    </button>`;
+                }
+                optsContainer.innerHTML = html;
+                lucide.createIcons();
+            }
+
+            window.showModal('modal-manage'); 
+        };
+
+        window.openShareOptions = () => {
+            const mManage = document.getElementById('modal-manage');
+            if(mManage) mManage.classList.add('translate-y-full');
+            const baseUrl = window.location.origin + window.location.pathname;
+            const fullLink = baseUrl + "?id=" + roomToDelete;
+            const textEl = document.getElementById('share-link-text');
+            if(textEl) {
+                textEl.innerText = window.location.host + "/?id=" + roomToDelete.substring(0,8) + "...";
+                textEl.setAttribute('data-link', fullLink);
+            }
+            setTimeout(() => window.showModal('modal-share'), 350);
+        };
+
+        window.copyShareLink = () => {
+            const textEl = document.getElementById('share-link-text');
+            if(!textEl) return;
+            const link = textEl.getAttribute('data-link');
+            const el = document.createElement('textarea'); el.value = link;
+            document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            window.showToast("Disalin!"); window.closeAllModals();
+        };
+
+        window.deleteCurrentRoom = async () => {
+            if(!confirm("Apakah Anda yakin ingin menghapus tabungan ini?")) return;
+            await deleteDoc(doc(db, "rooms", roomToDelete));
+            appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
+            window.saveLocal(); syncJoinedRoomsToCloud();
+            window.closeAllModals(); window.switchView('view-home', 'nav-home', false);
+        };
+
+        window.leaveCurrentRoom = async () => {
+            if(!confirm("Anda yakin ingin keluar dari tabungan bersama ini?")) return;
+            appData.joinedRooms = appData.joinedRooms.filter(x => x !== roomToDelete);
+            window.saveLocal(); syncJoinedRoomsToCloud();
+            
+            try {
+                const rRef = doc(db, "rooms", roomToDelete);
+                const snap = await getDoc(rRef);
+                if(snap.exists()) {
+                    let members = snap.data().members || [];
+                    members = members.filter(m => m.uid !== appData.uid);
+                    await updateDoc(rRef, { members: members });
+                }
+            } catch(e) {}
+            window.closeAllModals(); window.switchView('view-home', 'nav-home', false);
+        };
+
+        window.completeAndArchiveRoom = async () => {
+            if(!currentRoomId) return;
+            try {
+                await updateDoc(doc(db, "rooms", currentRoomId), { isArchived: true });
+                window.closeAllModals();
+                window.switchView('view-home', 'nav-home', false);
+                window.showToast(appData.language === 'id' ? "Berhasil diarsipkan" : "Archived");
+            } catch(e) { window.showToast("Gagal mengarsipkan.", true); }
+        };
+
+        function renderCategoryOptions() {
+            const container = document.getElementById('create-categories');
+            if(!container) return;
+            container.innerHTML = '';
+            CATEGORIES.forEach(c => {
+                const isSel = tempCategorySelection === c.id;
+                container.innerHTML += `
+                    <button id="cat-btn-${c.id}" onclick="window.selectCategory('${c.id}')" class="category-btn px-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl flex flex-col items-center gap-1 shrink-0 transition-all active:scale-90 ${isSel ? 'selected' : ''}">
+                        <span class="text-xl">${c.icon}</span>
+                        <span class="text-[9px] font-black text-slate-600 dark:text-slate-300 uppercase">${c.label}</span>
+                    </button>
+                `;
+            });
+        }
+
+        function updateUI() {
+            if(!appData.user) return;
+            const lang = i18n[appData.language];
+            const initial = appData.user.charAt(0).toUpperCase();
+            const displayChar = appData.avatar.emoji || initial;
+            
+            const homeAv = document.getElementById('home-avatar');
+            const profAv = document.getElementById('profile-avatar');
+            const homeUser = document.getElementById('home-username');
+            const profUser = document.getElementById('profile-username');
+            const profEmail = document.getElementById('profile-email');
+            
+            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner cursor-pointer active:scale-90 transition-transform border-2 border-transparent hover:border-indigo-200 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
+            if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; profAv.innerText = displayChar; }
+            if(homeUser) homeUser.innerText = appData.user;
+            if(profUser) profUser.innerText = appData.user;
+            if(profEmail) profEmail.innerText = appData.email || '';
+
+            const activeRooms = globalRooms.filter(r => !r.isArchived);
+            const total = activeRooms.reduce((acc, r) => acc + r.balance, 0);
+            const totalEl = document.getElementById('total-balance');
+            if(totalEl) {
+                totalEl.setAttribute('data-value', total);
+                if(!isBalanceHidden) totalEl.innerText = 'Rp ' + total.toLocaleString('id-ID');
+            }
+            const profStats = document.getElementById('profile-stats');
+            if(profStats) profStats.innerText = `${activeRooms.length} Tabungan Aktif`;
+            
+            // FEED
+            const liveFeedContainer = document.getElementById('live-feed-container');
+            const liveFeedList = document.getElementById('live-feed-list');
+            if(liveFeedContainer && liveFeedList) {
+                if(globalHistory.length > 0) {
+                    liveFeedContainer.classList.remove('hidden');
+                    liveFeedContainer.classList.add('flex');
+                    liveFeedList.innerHTML = '';
+                    
+                    const isId = appData.language === 'id';
+                    const feedItems = globalHistory.slice(0, 5);
+                    feedItems.forEach(latest => {
+                        const verbIn = isId ? 'menabung' : 'added';
+                        const verbOut = isId ? 'menarik' : 'withdrew';
+                        const verb = latest.type === 'in' ? verbIn : verbOut;
+                        const prepStr = latest.type === 'in' ? (isId ? 'di' : 'to') : (isId ? 'dari' : 'from');
+                        const justStr = isId ? 'baru saja' : 'just';
+                        
+                        liveFeedList.innerHTML += `
+                            <div class="flex items-center gap-3 p-1 rounded-lg snap-start cursor-pointer active:scale-[0.98]" onclick="window.openRoomDetail('${latest.roomId}')">
+                                <div class="text-xl shrink-0 drop-shadow-sm">${latest.type === 'in' ? '💰' : '💸'}</div>
+                                <p class="text-[10px] font-medium leading-snug text-white/90 line-clamp-2">
+                                    <b>${latest.userName}</b> ${justStr} <span class="${latest.type === 'in' ? 'text-emerald-300 font-bold' : 'text-rose-300 font-bold'}">${verb} Rp ${latest.amount.toLocaleString('id-ID')}</span> ${prepStr} <b>${latest.roomName}</b>
+                                </p>
+                            </div>
+                        `;
+                    });
+                } else {
+                    liveFeedContainer.classList.add('hidden');
+                    liveFeedContainer.classList.remove('flex');
+                }
+            }
+
+            const container = document.getElementById('rooms-container');
+            if(container) {
+                container.innerHTML = '';
+                
+                let filteredActive = activeRooms;
+                if(currentRoomFilter === 'personal') {
+                    filteredActive = activeRooms.filter(r => !r.members || r.members.length <= 1);
+                } else if(currentRoomFilter === 'shared') {
+                    filteredActive = activeRooms.filter(r => r.members && r.members.length > 1);
+                }
+
+                if(filteredActive.length === 0) {
+                    container.innerHTML = `
+                    <div class="text-center py-16 bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-sm">
+                        <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="target" class="w-8 h-8"></i>
+                        </div>
+                        <h3 class="font-black text-slate-700 dark:text-white mb-1">${lang.no_goals}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${lang.empty_goal_desc}</p>
+                    </div>`;
+                }
+                else filteredActive.forEach(r => {
+                    const pct = r.hasTarget ? Math.min(Math.round((r.balance/r.target)*100), 100) : 0;
+                    
+                    let avPileHtml = '';
+                    if(r.members && r.members.length > 1) {
+                        avPileHtml = `<div class="flex -space-x-1.5 mt-1.5 ml-0.5">`;
+                        r.members.slice(0,5).forEach(m => {
+                            const c = m.avatar.emoji || m.name.charAt(0).toUpperCase();
+                            avPileHtml += `<div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 text-[10px] font-black flex items-center justify-center shadow-sm ${m.avatar.colorClass} ${m.avatar.textClass}" title="${m.name}">${c}</div>`;
+                        });
+                        if(r.members.length > 5) avPileHtml += `<div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 text-slate-500 text-[9px] font-black flex items-center justify-center shadow-sm">+${r.members.length - 5}</div>`;
+                        avPileHtml += `</div>`;
+                    }
+
+                    let catIcon = '🎯';
+                    if(r.category) {
+                        const c = CATEGORIES.find(x => x.id === r.category);
+                        if(c) catIcon = c.icon;
+                    }
+
+                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-start gap-4"><div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 flex items-center justify-center rounded-2xl shrink-0 text-xl shadow-inner">${catIcon}</div><div class="flex-1"><h3 class="font-black text-slate-800 dark:text-white text-lg leading-tight truncate">${r.name}</h3>${avPileHtml}</div></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2 shrink-0"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
+                });
+            }
+
+            const archContainer = document.getElementById('archive-container');
+            if(archContainer) {
+                archContainer.innerHTML = '';
+                const archived = globalRooms.filter(r => r.isArchived);
+                if(archived.length === 0) {
+                     archContainer.innerHTML = `
+                    <div class="text-center py-20 opacity-40">
+                        <i data-lucide="package-open" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
+                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.no_archive}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_archive_desc}</p>
+                    </div>`;
+                }
+                else archived.forEach(r => {
+                    archContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] opacity-70 mb-4 border border-slate-100 dark:border-slate-800 shadow-sm"><div class="flex items-center gap-4 mb-3"><div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-lg"><i data-lucide="award"></i></div><h3 class="font-black text-slate-800 dark:text-white">${r.name}</h3></div><p class="text-sm font-bold text-slate-500 dark:text-slate-400">Total: Rp ${r.balance.toLocaleString('id-ID')}</p></div>`;
+                });
+            }
+
+            // HISTORY MEMORY PAGINATION LOGIC
+            const gHistContainer = document.getElementById('global-history-container');
+            if(gHistContainer) {
+                gHistContainer.innerHTML = '';
+                let filtered = globalHistory;
+                
+                if(currentHistoryFilter !== 'all') filtered = filtered.filter(h => h.type === currentHistoryFilter);
+                
+                const now = new Date();
+                if(currentTimeFilter === 'this_month') {
+                    filtered = filtered.filter(h => {
+                        const d = new Date(h.timestamp);
+                        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+                    });
+                } else if(currentTimeFilter === 'last_month') {
+                    filtered = filtered.filter(h => {
+                        const d = new Date(h.timestamp);
+                        let lm = now.getMonth() - 1; let ly = now.getFullYear();
+                        if(lm < 0) { lm = 11; ly--; }
+                        return d.getMonth() === lm && d.getFullYear() === ly;
+                    });
+                }
+
+                if(filtered.length === 0) {
+                     gHistContainer.innerHTML = `
+                    <div class="text-center py-20 opacity-40">
+                        <i data-lucide="scroll" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
+                        <h3 class="font-black text-slate-600 dark:text-slate-300">${lang.empty_history}</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">${lang.empty_history_desc}</p>
+                    </div>`;
+                }
+                else {
+                    const visibleHistory = filtered.slice(0, historyRenderLimit);
+                    visibleHistory.forEach(h => {
+                        const isIn = h.type === 'in';
+                        const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 truncate max-w-[200px]">"${h.note}"</p>` : '';
+                        gHistContainer.innerHTML += `<div class="p-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800 shadow-sm flex flex-col gap-2"><div class="flex justify-between items-center"><div class="flex items-center gap-4 flex-1 overflow-hidden"><div class="w-10 h-10 shrink-0 rounded-xl ${isIn ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5"></i></div><div class="overflow-hidden flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.roomName}</p><p class="text-[9px] font-bold text-slate-400 uppercase truncate">${h.userName} • ${h.date.split(',')[0]}</p>${noteHtml}</div></div><p class="text-sm font-black shrink-0 ${isIn ? 'text-emerald-600' : 'text-rose-600'} ml-2">${isIn?'+':'-'}Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                    });
+
+                    if (filtered.length > historyRenderLimit) {
+                        gHistContainer.innerHTML += `<button onclick="window.loadMoreHistory()" class="w-full py-3 mt-4 text-xs font-bold text-indigo-500 hover:text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl active:scale-95 transition-transform">Muat Lebih Banyak</button>`;
+                    }
+                }
+            }
+
+            const nowM = new Date();
+            const curMonth = nowM.getMonth(); const curYear = nowM.getFullYear();
+            let mIn = 0, mOut = 0;
+            globalHistory.forEach(h => {
+                const hDate = new Date(h.timestamp);
+                if(hDate.getMonth() === curMonth && hDate.getFullYear() === curYear) {
+                    if(h.type === 'in') mIn += h.amount; else mOut += h.amount;
+                }
+            });
+            const inEl = document.getElementById('mutasi-in');
+            const outEl = document.getElementById('mutasi-out');
+            if(inEl) {
+                inEl.setAttribute('data-value', mIn);
+                inEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mIn.toLocaleString('id-ID');
+            }
+            if(outEl) {
+                outEl.setAttribute('data-value', mOut);
+                outEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mOut.toLocaleString('id-ID');
+            }
+            lucide.createIcons();
+        }
+
+        window.toggleBalance = () => {
+            isBalanceHidden = !isBalanceHidden;
+            const el = document.getElementById('total-balance');
+            const inEl = document.getElementById('mutasi-in');
+            const outEl = document.getElementById('mutasi-out');
+            const icon = document.getElementById('eye-icon');
+            if(!el || !icon) return;
+            
+            if(isBalanceHidden) { 
+                el.innerText = 'Rp *********'; 
+                if(inEl) inEl.innerText = 'Rp ***';
+                if(outEl) outEl.innerText = 'Rp ***';
+                icon.setAttribute('data-lucide', 'eye-off'); 
+            } else { 
+                el.innerText = 'Rp ' + parseInt(el.getAttribute('data-value')).toLocaleString('id-ID'); 
+                if(inEl) inEl.innerText = 'Rp ' + parseInt(inEl.getAttribute('data-value')).toLocaleString('id-ID');
+                if(outEl) outEl.innerText = 'Rp ' + parseInt(outEl.getAttribute('data-value')).toLocaleString('id-ID');
+                icon.setAttribute('data-lucide', 'eye'); 
+            }
+            lucide.createIcons();
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            // Cek status PWA Standalone (Sudah di-Install)
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                const installBtn = document.getElementById('btn-install-app');
+                if (installBtn) {
+                    installBtn.style.display = 'none'; // Sembunyikan tombol
+                }
+            }
+        });
+
+        window.onload = () => {
+            lucide.createIcons();
+            if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; }
+            applyTranslations();
+
+            document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
+            
+            initSwipeToReply();
+        };
+
     </script>
 </body>
 </html>
