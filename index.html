@@ -832,7 +832,7 @@
         const manifestData = {
             "name": "Tabungan Bersama",
             "short_name": "Tabungan",
-            "start_url": "/?source=pwa",
+            "start_url": ".",
             "display": "standalone",
             "background_color": "#f8fafc",
             "theme_color": "#4f46e5",
@@ -1147,6 +1147,38 @@
             });
         };
 
+        // --- PUSH NOTIFICATION PERMISSION WITH ROBUST LOGIC ---
+        window.requestNotificationPermission = async () => {
+            window.showToast("Memproses izin notifikasi...");
+            try {
+                if (!('Notification' in window)) {
+                    return window.showToast("Browser ini tidak mendukung notifikasi.", true);
+                }
+
+                const permission = await Notification.requestPermission();
+                
+                if (permission === 'granted') {
+                    const token = await getToken(messaging, { 
+                        vapidKey: "BM7sTXFhzw8wQ-jzRckvZz3nTAcHqRuf_IjrIFY5nLr6wa9jqDMULwGh1w7Cx7nnLrsceHfSt0VD4wyeEOBWrU6c" 
+                    });
+                    
+                    if (token && appData.uid) {
+                        await updateDoc(doc(db, "users", appData.uid), { fcmToken: token });
+                        window.showToast("Notifikasi berhasil diaktifkan! ✅");
+                    } else {
+                        window.showToast("Gagal mengambil token server.", true);
+                    }
+                } else if (permission === 'denied') {
+                    window.showToast("Izin ditolak. Cek setelan browser HP Anda.", true);
+                } else {
+                    window.showToast("Permintaan izin diabaikan.", true);
+                }
+            } catch (e) { 
+                console.error("Gagal mendapat izin notif:", e);
+                window.showToast("Error sistem. Coba lagi.", true);
+            }
+        };
+
         // --- AUTH LOGIC (EMAIL + GOOGLE) ---
         window.checkPasswordStrength = () => {
             if (isLoginMode) return; 
@@ -1449,7 +1481,6 @@
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
 
-                // Notif Realtime Dalam Aplikasi untuk Trx
                 if (!isInitialHistoryLoad && hasNewContent && latestTx) {
                     if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
                         const isId = appData.language === 'id';
@@ -2190,7 +2221,6 @@
                 histList.innerHTML = '';
                 let filtered = globalHistory.filter(h => h.roomId === id);
                 
-                // --- KODE FILTER USER BARU ---
                 let filterBadgeHtml = '';
                 if (currentUserHistoryFilter) {
                     filtered = filtered.filter(h => h.userName === currentUserHistoryFilter);
@@ -2205,7 +2235,6 @@
                 }
                 
                 histList.innerHTML = filterBadgeHtml;
-                // --- AKHIR KODE FILTER USER ---
                 
                 const visibleFiltered = filtered.slice(0, historyRenderLimit);
 
@@ -2787,8 +2816,6 @@
             applyTranslations();
 
             document.querySelectorAll('.money-input').forEach(input => { input.addEventListener('input', function() { const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : ''; }); });
-            
-            initSwipeToReply();
         };
 
     </script>
