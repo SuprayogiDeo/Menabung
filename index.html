@@ -220,8 +220,7 @@
 
             <div id="room-tab-diskusi" class="hidden">
                 <div class="p-6 pb-28 relative flex flex-col justify-end min-h-[calc(100vh-220px)]">
-                    <div id="chat-messages" class="w-full space-y-4 pr-2">
-                        </div>
+                    <div id="chat-messages" class="w-full space-y-4 pr-2"></div>
                 </div>
 
                 <button id="chat-scroll-btn" onclick="window.scrollToBottomChat(false)" class="fixed bottom-[90px] right-6 z-40 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 p-3 rounded-full shadow-xl border border-slate-100 dark:border-slate-700 hidden active:scale-90 transition-transform">
@@ -701,6 +700,10 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
+        // GLOBAL ERROR CATCHER - Anti Blank Screen
+        window.addEventListener('error', function(e) { console.error("Global Error:", e.message); window.showToast("Error sistem: " + e.message, true); });
+        window.addEventListener('unhandledrejection', function(e) { console.error("Promise Error:", e.reason); window.showToast("Koneksi/DB Error: " + (e.reason && e.reason.message ? e.reason.message : "Cek koneksi internet"), true); });
+
         // --- CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyDUPTlI50-ZrTwokK9A9S7MJr5iCmqqyT4",
@@ -787,11 +790,15 @@
 
         // --- APP STATE ---
         const DB_KEY = 'tabungan_app_v1_release_final';
-        let appData = JSON.parse(localStorage.getItem(DB_KEY)) || {
-            user: '', email: '', uid: '',
-            avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
-            joinedRooms: [], darkMode: false, language: 'id'
-        };
+        let appData = JSON.parse(localStorage.getItem(DB_KEY));
+        if (!appData) {
+            appData = {
+                user: '', email: '', uid: '',
+                avatar: { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' },
+                joinedRooms: [], darkMode: false, language: 'id'
+            };
+        }
+        
         let tempAvatarSelection = { ...appData.avatar };
         let tempCategorySelection = 'lainnya'; 
 
@@ -828,11 +835,13 @@
             return String(str).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/'/g, "\\'").replace(/"/g, '&quot;');
         };
 
+        window.refreshIcons = () => { try { lucide.createIcons(); } catch(e) {} };
+
         // --- DYNAMIC MANIFEST & SERVICE WORKER ---
         const manifestData = {
             "name": "Tabungan Bersama",
             "short_name": "Tabungan",
-            "start_url": ".",
+            "start_url": "/?source=pwa",
             "display": "standalone",
             "background_color": "#f8fafc",
             "theme_color": "#4f46e5",
@@ -1080,7 +1089,7 @@
                     </div>
                 `;
             }
-            lucide.createIcons();
+            window.refreshIcons();
             window.showModal('modal-install');
         }
 
@@ -1141,7 +1150,7 @@
                         fetch('/.netlify/functions/send-notif', {
                             method: 'POST',
                             body: JSON.stringify({ token: token, title: title, body: body }),
-                        }).catch(e => console.log("Notif function called."));
+                        }).catch(e => console.log("Notif function err", e));
                     }
                 }
             });
@@ -1200,7 +1209,7 @@
             updateHint('length', pass.length >= 6);
             updateHint('case', /[a-z]/.test(pass) && /[A-Z]/.test(pass));
             updateHint('number', /[0-9]/.test(pass));
-            lucide.createIcons();
+            window.refreshIcons();
         };
 
         window.togglePasswordVisibility = () => {
@@ -1213,7 +1222,7 @@
                 input.type = 'password';
                 icon.setAttribute('data-lucide', 'eye');
             }
-            lucide.createIcons();
+            window.refreshIcons();
         };
 
         window.toggleAuthMode = () => {
@@ -1343,16 +1352,15 @@
                     if (userSnap.exists()) {
                         const cloudData = userSnap.data();
                         appData.user = cloudData.name || user.displayName || 'Pengguna';
-                        if (cloudData.avatar) {
+                        if (cloudData.avatar && cloudData.avatar.colorClass) {
                             appData.avatar = cloudData.avatar;
                             tempAvatarSelection = { ...appData.avatar };
+                        } else {
+                            appData.avatar = { emoji: '', colorClass: 'bg-indigo-100', textClass: 'text-indigo-700' };
                         }
                         
-                        if (cloudData.joinedRooms) {
-                            const mergedRooms = [...new Set([...appData.joinedRooms, ...cloudData.joinedRooms])];
-                            appData.joinedRooms = mergedRooms;
-                            if (appData.joinedRooms.length > cloudData.joinedRooms.length) syncJoinedRoomsToCloud();
-                        }
+                        const mergedRooms = [...new Set([...(appData.joinedRooms || []), ...(cloudData.joinedRooms || [])])];
+                        appData.joinedRooms = mergedRooms;
                         
                         const urlParams = new URLSearchParams(window.location.search);
                         const sharedId = urlParams.get('id');
@@ -1382,7 +1390,16 @@
                             }
                         });
                     }
-                } catch (error) { hideSplash(); }
+                } catch (error) { 
+                    console.error("Auth Error/Rules DB:", error);
+                    window.showToast("Gagal memuat profil DB: " + error.message, true);
+                    hideSplash(() => {
+                        if (modalLogin) {
+                            modalLogin.classList.remove('hidden');
+                            modalLogin.classList.add('opacity-100');
+                        }
+                    });
+                }
             } else {
                 hideSplash(() => {
                     if (modalLogin) {
@@ -1481,6 +1498,7 @@
                 updateUI();
                 if(currentRoomId) refreshRoomUI(currentRoomId);
 
+                // Notif Realtime Dalam Aplikasi untuk Trx
                 if (!isInitialHistoryLoad && hasNewContent && latestTx) {
                     if (appData.joinedRooms.includes(latestTx.roomId) && latestTx.userName !== appData.user) {
                         const isId = appData.language === 'id';
@@ -1539,7 +1557,7 @@
                 <button onclick="this.parentElement.remove()" class="absolute top-4 right-4 text-slate-300"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                 <input type="text" autocomplete="off" spellcheck="false" placeholder="Item name..." class="ms-name w-full mb-3 text-sm font-bold border-b border-slate-100 dark:border-slate-700 outline-none pb-2 bg-transparent dark:text-white">
                 <div class="relative"><span class="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs">Rp</span><input type="text" inputmode="numeric" autocomplete="off" placeholder="0" class="ms-price money-input w-full pl-6 text-sm font-black outline-none bg-transparent dark:text-white"></div>`;
-            container.appendChild(row); lucide.createIcons();
+            container.appendChild(row); window.refreshIcons();
             row.querySelector('.ms-price').addEventListener('input', function() {
                 const val = this.value.replace(/\D/g, ''); this.value = val ? parseInt(val).toLocaleString('id-ID') : '';
             });
@@ -1920,8 +1938,12 @@
             visibleMsgs.forEach((m, idx) => {
                 const isMe = m.uid === appData.uid;
                 if(idx === visibleMsgs.length - 1) latestIsMe = isMe;
-                const avaChar = m.avatar.emoji || m.name.charAt(0).toUpperCase();
                 
+                const emojiAva = m.avatar && m.avatar.emoji ? m.avatar.emoji : false;
+                const avaChar = emojiAva || (m.name ? m.name.charAt(0).toUpperCase() : '?');
+                const colClass = m.avatar && m.avatar.colorClass ? m.avatar.colorClass : 'bg-indigo-100';
+                const txtClass = m.avatar && m.avatar.textClass ? m.avatar.textClass : 'text-indigo-700';
+
                 const dateLabel = getChatDateLabel(m.timestamp, appData.language);
                 if (dateLabel !== lastDateLabel) {
                     box.innerHTML += `<div class="flex justify-center my-4"><span class="bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">${dateLabel}</span></div>`;
@@ -2006,7 +2028,7 @@
 
                         <div class="chat-bubble-wrapper w-full flex flex-col items-start pr-8 relative z-10 select-none"> 
                             <div class="flex items-center gap-2 mb-1 pointer-events-none">
-                                <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${m.avatar.colorClass} ${m.avatar.textClass}">${avaChar}</div>
+                                <div class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black shadow-sm border border-black/5 ${colClass} ${txtClass}">${avaChar}</div>
                                 <span class="text-[9px] text-slate-400 font-bold">${m.name}</span>
                             </div>
                             ${m.type === 'sticker' 
@@ -2034,7 +2056,7 @@
                     dot.classList.remove('hidden'); 
                 }
             }
-            lucide.createIcons();
+            window.refreshIcons();
         }
 
         window.toggleStickerPanel = () => {
@@ -2159,12 +2181,15 @@
             if(pile && r.members) {
                 pile.innerHTML = '';
                 r.members.slice(0, 5).forEach(m => {
-                    const char = m.avatar.emoji || m.name.charAt(0).toUpperCase();
+                    const emojiAva = m.avatar && m.avatar.emoji ? m.avatar.emoji : false;
+                    const char = emojiAva || (m.name ? m.name.charAt(0).toUpperCase() : '?');
                     const isMe = m.uid === appData.uid;
+                    const colClass = m.avatar && m.avatar.colorClass ? m.avatar.colorClass : 'bg-indigo-100';
+                    const txtClass = m.avatar && m.avatar.textClass ? m.avatar.textClass : 'text-indigo-700';
                     
                     pile.innerHTML += `
                     <div class="relative cursor-pointer hover:-translate-y-1 transition-transform" onclick="window.openMemberListModal()" title="${m.name}">
-                        <div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-black shadow-sm ${m.avatar.colorClass} ${m.avatar.textClass}">${char}</div>
+                        <div class="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-xs font-black shadow-sm ${colClass} ${txtClass}">${char}</div>
                         <span id="status-dot-${m.uid}" class="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white dark:border-slate-900 rounded-full hidden shadow-sm animate-pulse"></span>
                     </div>`;
 
@@ -2258,7 +2283,7 @@
                     }
                 }
             }
-            lucide.createIcons();
+            window.refreshIcons();
         }
 
         window.toggleMilestone = async (idx) => {
@@ -2510,7 +2535,7 @@
                     </button>`;
                 }
                 optsContainer.innerHTML = html;
-                lucide.createIcons();
+                window.refreshIcons();
             }
 
             window.showModal('modal-manage'); 
@@ -2591,8 +2616,11 @@
         function updateUI() {
             if(!appData.user) return;
             const lang = i18n[appData.language];
+            
             const initial = appData.user.charAt(0).toUpperCase();
-            const displayChar = appData.avatar.emoji || initial;
+            const displayChar = (appData.avatar && appData.avatar.emoji) ? appData.avatar.emoji : initial;
+            const colorClass = (appData.avatar && appData.avatar.colorClass) ? appData.avatar.colorClass : 'bg-indigo-100';
+            const textClass = (appData.avatar && appData.avatar.textClass) ? appData.avatar.textClass : 'text-indigo-700';
             
             const homeAv = document.getElementById('home-avatar');
             const profAv = document.getElementById('profile-avatar');
@@ -2600,14 +2628,14 @@
             const profUser = document.getElementById('profile-username');
             const profEmail = document.getElementById('profile-email');
             
-            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner cursor-pointer active:scale-90 transition-transform border-2 border-transparent hover:border-indigo-200 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; homeAv.innerText = displayChar; }
-            if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${appData.avatar.colorClass} ${appData.avatar.textClass}`; profAv.innerText = displayChar; }
+            if(homeAv) { homeAv.className = `w-12 h-12 rounded-full flex items-center justify-center text-xl font-black shadow-inner cursor-pointer active:scale-90 transition-transform border-2 border-transparent hover:border-indigo-200 ${colorClass} ${textClass}`; homeAv.innerText = displayChar; }
+            if(profAv) { profAv.className = `w-24 h-24 rounded-full flex justify-center items-center text-5xl font-black shadow-inner border border-black/5 dark:border-white/5 ${colorClass} ${textClass}`; profAv.innerText = displayChar; }
             if(homeUser) homeUser.innerText = appData.user;
             if(profUser) profUser.innerText = appData.user;
             if(profEmail) profEmail.innerText = appData.email || '';
 
             const activeRooms = globalRooms.filter(r => !r.isArchived);
-            const total = activeRooms.reduce((acc, r) => acc + r.balance, 0);
+            const total = activeRooms.reduce((acc, r) => acc + (r.balance||0), 0);
             const totalEl = document.getElementById('total-balance');
             if(totalEl) {
                 totalEl.setAttribute('data-value', total);
@@ -2671,14 +2699,16 @@
                     </div>`;
                 }
                 else filteredActive.forEach(r => {
-                    const pct = r.hasTarget ? Math.min(Math.round((r.balance/r.target)*100), 100) : 0;
+                    const pct = r.hasTarget ? Math.min(Math.round(((r.balance||0)/(r.target||1))*100), 100) : 0;
                     
                     let avPileHtml = '';
                     if(r.members && r.members.length > 1) {
                         avPileHtml = `<div class="flex -space-x-1.5 mt-1.5 ml-0.5">`;
                         r.members.slice(0,5).forEach(m => {
-                            const c = m.avatar.emoji || m.name.charAt(0).toUpperCase();
-                            avPileHtml += `<div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 text-[10px] font-black flex items-center justify-center shadow-sm ${m.avatar.colorClass} ${m.avatar.textClass}" title="${m.name}">${c}</div>`;
+                            const c = (m.avatar && m.avatar.emoji) ? m.avatar.emoji : (m.name ? m.name.charAt(0).toUpperCase() : '?');
+                            const mCol = (m.avatar && m.avatar.colorClass) ? m.avatar.colorClass : 'bg-slate-100';
+                            const mTxt = (m.avatar && m.avatar.textClass) ? m.avatar.textClass : 'text-slate-700';
+                            avPileHtml += `<div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 text-[10px] font-black flex items-center justify-center shadow-sm ${mCol} ${mTxt}" title="${m.name}">${c}</div>`;
                         });
                         if(r.members.length > 5) avPileHtml += `<div class="w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 bg-slate-200 text-slate-500 text-[9px] font-black flex items-center justify-center shadow-sm">+${r.members.length - 5}</div>`;
                         avPileHtml += `</div>`;
@@ -2690,7 +2720,7 @@
                         if(c) catIcon = c.icon;
                     }
 
-                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-start gap-4"><div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 flex items-center justify-center rounded-2xl shrink-0 text-xl shadow-inner">${catIcon}</div><div class="flex-1"><h3 class="font-black text-slate-800 dark:text-white text-lg leading-tight truncate">${r.name}</h3>${avPileHtml}</div></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2 shrink-0"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${r.balance.toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
+                    container.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm active:scale-[0.98] transition-all cursor-pointer" onclick="window.openRoomDetail('${r.id}')"><div class="flex justify-between items-start mb-6"><div class="flex items-start gap-4"><div class="w-12 h-12 bg-slate-100 dark:bg-slate-800 flex items-center justify-center rounded-2xl shrink-0 text-xl shadow-inner">${catIcon}</div><div class="flex-1"><h3 class="font-black text-slate-800 dark:text-white text-lg leading-tight truncate">${r.name}</h3>${avPileHtml}</div></div><button onclick="event.stopPropagation(); window.openManageModal('${r.id}')" class="text-slate-300 p-2 shrink-0"><i data-lucide="more-vertical"></i></button></div><div class="flex justify-between items-end"><div><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Terkumpul</p><p class="text-2xl font-black dark:text-white">Rp ${(r.balance||0).toLocaleString('id-ID')}</p></div>${r.hasTarget ? `<p class="text-xl font-black text-indigo-600">${pct}%</p>` : ''}</div>${r.hasTarget ? `<div class="w-full bg-slate-100 dark:bg-slate-800 h-2.5 rounded-full mt-4 overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-1000" style="width:${pct}%"></div></div>` : ''}</div>`;
                 });
             }
 
@@ -2707,7 +2737,7 @@
                     </div>`;
                 }
                 else archived.forEach(r => {
-                    archContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] opacity-70 mb-4 border border-slate-100 dark:border-slate-800 shadow-sm"><div class="flex items-center gap-4 mb-3"><div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-lg"><i data-lucide="award"></i></div><h3 class="font-black text-slate-800 dark:text-white">${r.name}</h3></div><p class="text-sm font-bold text-slate-500 dark:text-slate-400">Total: Rp ${r.balance.toLocaleString('id-ID')}</p></div>`;
+                    archContainer.innerHTML += `<div class="bg-white dark:bg-slate-900 p-6 rounded-[2.5rem] opacity-70 mb-4 border border-slate-100 dark:border-slate-800 shadow-sm"><div class="flex items-center gap-4 mb-3"><div class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-500 rounded-lg"><i data-lucide="award"></i></div><h3 class="font-black text-slate-800 dark:text-white">${r.name}</h3></div><p class="text-sm font-bold text-slate-500 dark:text-slate-400">Total: Rp ${(r.balance||0).toLocaleString('id-ID')}</p></div>`;
                 });
             }
 
@@ -2747,7 +2777,7 @@
                     visibleHistory.forEach(h => {
                         const isIn = h.type === 'in';
                         const noteHtml = h.note ? `<p class="text-[10px] text-slate-500 italic mt-1 truncate max-w-[200px]">"${h.note}"</p>` : '';
-                        gHistContainer.innerHTML += `<div class="p-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800 shadow-sm flex flex-col gap-2"><div class="flex justify-between items-center"><div class="flex items-center gap-4 flex-1 overflow-hidden"><div class="w-10 h-10 shrink-0 rounded-xl ${isIn ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5"></i></div><div class="overflow-hidden flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.roomName}</p><p class="text-[9px] font-bold text-slate-400 uppercase truncate">${h.userName} • ${h.date.split(',')[0]}</p>${noteHtml}</div></div><p class="text-sm font-black shrink-0 ${isIn ? 'text-emerald-600' : 'text-rose-600'} ml-2">${isIn?'+':'-'}Rp ${h.amount.toLocaleString('id-ID')}</p></div></div>`;
+                        gHistContainer.innerHTML += `<div class="p-5 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-50 dark:border-slate-800 shadow-sm flex flex-col gap-2"><div class="flex justify-between items-center"><div class="flex items-center gap-4 flex-1 overflow-hidden"><div class="w-10 h-10 shrink-0 rounded-xl ${isIn ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'} flex items-center justify-center"><i data-lucide="${isIn ? 'arrow-down' : 'arrow-up'}" class="w-5 h-5"></i></div><div class="overflow-hidden flex-1 pr-2"><p class="text-sm font-black dark:text-white truncate">${h.roomName}</p><p class="text-[9px] font-bold text-slate-400 uppercase truncate">${h.userName} • ${h.date.split(',')[0]}</p>${noteHtml}</div></div><p class="text-sm font-black shrink-0 ${isIn ? 'text-emerald-600' : 'text-rose-600'} ml-2">${isIn?'+':'-'}Rp ${(h.amount||0).toLocaleString('id-ID')}</p></div></div>`;
                     });
 
                     if (filtered.length > historyRenderLimit) {
@@ -2762,7 +2792,7 @@
             globalHistory.forEach(h => {
                 const hDate = new Date(h.timestamp);
                 if(hDate.getMonth() === curMonth && hDate.getFullYear() === curYear) {
-                    if(h.type === 'in') mIn += h.amount; else mOut += h.amount;
+                    if(h.type === 'in') mIn += (h.amount||0); else mOut += (h.amount||0);
                 }
             });
             const inEl = document.getElementById('mutasi-in');
@@ -2775,7 +2805,7 @@
                 outEl.setAttribute('data-value', mOut);
                 outEl.innerText = isBalanceHidden ? 'Rp ***' : 'Rp ' + mOut.toLocaleString('id-ID');
             }
-            lucide.createIcons();
+            window.refreshIcons();
         }
 
         window.toggleBalance = () => {
@@ -2797,7 +2827,7 @@
                 if(outEl) outEl.innerText = 'Rp ' + parseInt(outEl.getAttribute('data-value')).toLocaleString('id-ID');
                 icon.setAttribute('data-lucide', 'eye'); 
             }
-            lucide.createIcons();
+            window.refreshIcons();
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -2811,7 +2841,7 @@
         });
 
         window.onload = () => {
-            lucide.createIcons();
+            window.refreshIcons();
             if (appData.darkMode) { document.documentElement.classList.add('dark'); const t = document.getElementById('toggle-dark'); if(t) t.checked = true; }
             applyTranslations();
 
