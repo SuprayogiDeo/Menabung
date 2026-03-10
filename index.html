@@ -23,6 +23,7 @@
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; } 
@@ -35,22 +36,18 @@
         .toast-visible { opacity: 1 !important; transform: translate(-50%, -20px) !important; }
         .celeb-ping { animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; }
         
-        /* Loading Animations */
         @keyframes floatY { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         @keyframes shadowScale { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(0.5); opacity: 0.15; } }
         @keyframes floatCoin { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(15deg); } }
-        
-        /* Sticker Temp Animation */
         @keyframes floatYTemp { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-10px) rotate(-5deg); } 75% { transform: translateY(-5px) rotate(5deg); } }
+        
         .anim-float-temp { animation: floatYTemp 1.2s ease-in-out 2; }
-
         .anim-float { animation: floatY 2.5s ease-in-out infinite; }
         .anim-shadow { animation: shadowScale 2.5s ease-in-out infinite; }
         .anim-coin-1 { animation: floatCoin 2s ease-in-out infinite; }
         .anim-coin-2 { animation: floatCoin 2.8s ease-in-out infinite; animation-delay: 0.4s; }
         .anim-coin-3 { animation: floatCoin 2.4s ease-in-out infinite; animation-delay: 0.8s; }
 
-        /* Spinner */
         .spinner { animation: rotate 2s linear infinite; width: 1.25rem; height: 1.25rem; display: inline-block; vertical-align: middle; }
         .spinner .path { stroke: currentColor; stroke-linecap: round; animation: dash 1.5s ease-in-out infinite; }
         @keyframes rotate { 100% { transform: rotate(360deg); } }
@@ -58,18 +55,16 @@
         
         button:disabled { opacity: 0.7; cursor: not-allowed; }
         
-        /* Modal selection style */
         .color-btn.selected, .category-btn.selected { transform: scale(1.1); border-width: 3px; border-color: #4f46e5; background-color: #eef2ff; }
         .dark .category-btn.selected { background-color: #312e81; }
         .emoji-btn.selected { border-color: #4f46e5; background-color: #eef2ff; transform: scale(1.1); border-width: 2px; }
         .dark .emoji-btn.selected { background-color: #312e81; }
 
-        /* Chat bubbles */
-        .chat-bubble-me { border-radius: 1rem 1rem 0 1rem; background-color: #4f46e5; color: white; }
-        .chat-bubble-other { border-radius: 1rem 1rem 1rem 0; background-color: #f1f5f9; color: #1e293b; }
+        /* Chat Bubbles Layout Fix */
+        .chat-bubble-me { border-radius: 1rem 1rem 0 1rem; background-color: #4f46e5; color: white; width: fit-content; max-width: 85%; }
+        .chat-bubble-other { border-radius: 1rem 1rem 1rem 0; background-color: #f1f5f9; color: #1e293b; width: fit-content; max-width: 85%; }
         .dark .chat-bubble-other { background-color: #1e293b; color: #f8fafc; }
         
-        /* Mention Highlight */
         .mention-highlight { color: #3b82f6; font-weight: 900; background: rgba(59, 130, 246, 0.1); padding: 0 4px; border-radius: 4px; }
         .mention-me { color: #f43f5e; font-weight: 900; background: rgba(244, 63, 94, 0.1); padding: 0 4px; border-radius: 4px; }
     </style>
@@ -129,8 +124,7 @@
                     </div>
 
                     <div id="live-feed-container" class="bg-white/20 backdrop-blur-sm border border-white/10 rounded-xl p-2.5 shadow-inner hidden flex-col mb-5">
-                        <div id="live-feed-list" class="max-h-[75px] overflow-y-auto no-scrollbar space-y-2 snap-y">
-                            </div>
+                        <div id="live-feed-list" class="max-h-[75px] overflow-y-auto no-scrollbar space-y-2 snap-y"></div>
                     </div>
                     
                     <div class="relative z-10 pt-4 border-t border-white/20 flex justify-between items-center">
@@ -220,9 +214,15 @@
                     <div id="detail-milestone-list" class="space-y-3"></div>
                 </div>
 
-                <div class="p-6">
+                <div class="p-6 pb-2">
                     <h3 class="font-black text-slate-900 dark:text-white mb-6 flex items-center gap-2 uppercase text-xs tracking-widest"><i data-lucide="history" class="w-4 h-4"></i> <span data-t="history">Riwayat</span></h3>
                     <div id="detail-history-list" class="relative border-l-2 border-indigo-100 dark:border-indigo-900/30 ml-3 space-y-4 pb-4"></div>
+                </div>
+                
+                <div class="px-6 pb-6">
+                    <button onclick="window.downloadSummaryImage(event)" class="w-full py-3.5 bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-400 font-black text-[10px] uppercase tracking-widest rounded-2xl border border-sky-100 dark:border-sky-900/50 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                        <i data-lucide="image" class="w-4 h-4"></i> Simpan Gambar Ringkasan
+                    </button>
                 </div>
             </div>
 
@@ -709,7 +709,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
-        // GLOBAL ERROR CATCHER - Anti Blank Screen
+        // GLOBAL ERROR CATCHER
         window.addEventListener('error', function(e) { console.error("Global Error:", e.message); window.showToast("Error sistem: " + e.message, true); });
         window.addEventListener('unhandledrejection', function(e) { console.error("Promise Error:", e.reason); window.showToast("Koneksi/DB Error: " + (e.reason && e.reason.message ? e.reason.message : "Cek koneksi internet"), true); });
 
@@ -821,7 +821,6 @@
         let currentTimeFilter = 'all_time';
         let currentRoomFilter = 'all'; 
         let isInitialHistoryLoad = true; 
-        
         let currentUserHistoryFilter = null;
 
         let chatUnsubscribe = null; 
@@ -834,7 +833,6 @@
 
         let isLoginMode = true;
         let pendingTransaction = null; 
-
         let deferredPrompt;
 
         const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install', 'modal-member-list'];
@@ -846,7 +844,7 @@
 
         window.refreshIcons = () => { try { lucide.createIcons(); } catch(e) {} };
 
-        // --- PRESENCE LOGIC (PENTING) ---
+        // --- PRESENCE LOGIC ---
         window.updateOnlineStatus = async (status) => {
             if (!appData || !appData.uid) return;
             try {
@@ -891,42 +889,7 @@
             }
         });
 
-        window.addEventListener("beforeunload", () => {
-            window.updateOnlineStatus(false);
-        });
-
-        // --- DYNAMIC MANIFEST & SERVICE WORKER ---
-        const manifestData = {
-            "name": "Tabungan Bersama",
-            "short_name": "Tabungan",
-            "start_url": ".",
-            "display": "standalone",
-            "background_color": "#f8fafc",
-            "theme_color": "#4f46e5",
-            "icons": [
-                { "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-                { "src": "https://cdn-icons-png.flaticon.com/512/2830/2830284.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
-            ]
-        };
-        const manifestString = JSON.stringify(manifestData);
-        const manifestLink = document.getElementById('manifest-link');
-        if (manifestLink) { manifestLink.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(manifestString); }
-
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('install', function(e) { self.skipWaiting(); });
-                self.addEventListener('activate', function(e) { e.waitUntil(self.clients.claim()); });
-                self.addEventListener('fetch', function(e) { 
-                    e.respondWith(
-                        fetch(e.request).catch(function() { 
-                            return new Response('<html><body style="font-family:sans-serif;text-align:center;padding-top:50px;">Aplikasi Offline</body></html>', {headers: {'Content-Type': 'text/html'}}); 
-                        })
-                    ); 
-                });
-            `;
-            const blob = new Blob([swCode], {type: 'application/javascript'});
-            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(()=>{});
-        }
+        window.addEventListener("beforeunload", () => { window.updateOnlineStatus(false); });
 
         // --- ROUTING / HARDWARE BACK BUTTON ---
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1225,8 +1188,15 @@
                 const permission = await Notification.requestPermission();
                 
                 if (permission === 'granted') {
+                    // REGISTRASI EXPLICIT AGAR TOKEN TIDAK ERROR
+                    let registration = await navigator.serviceWorker.getRegistration();
+                    if (!registration) {
+                        registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
+                    }
+
                     const token = await getToken(messaging, { 
-                        vapidKey: "BM7sTXFhzw8wQ-jzRckvZz3nTAcHqRuf_IjrIFY5nLr6wa9jqDMULwGh1w7Cx7nnLrsceHfSt0VD4wyeEOBWrU6c" 
+                        vapidKey: "BM7sTXFhzw8wQ-jzRckvZz3nTAcHqRuf_IjrIFY5nLr6wa9jqDMULwGh1w7Cx7nnLrsceHfSt0VD4wyeEOBWrU6c",
+                        serviceWorkerRegistration: registration
                     });
                     
                     if (token && appData.uid) {
@@ -1242,8 +1212,158 @@
                 }
             } catch (e) { 
                 console.error("Gagal mendapat izin notif:", e);
-                window.showToast("Error sistem. Coba lagi.", true);
+                window.showToast("Gagal: " + e.message, true);
             }
+        };
+
+        // --- AVATAR MODAL ---
+        window.openAvatarModal = () => {
+            tempAvatarSelection = { ...appData.avatar };
+            const COLORS = [
+                {bg:'bg-indigo-100', txt:'text-indigo-700'}, {bg:'bg-rose-100', txt:'text-rose-700'}, 
+                {bg:'bg-emerald-100', txt:'text-emerald-700'}, {bg:'bg-amber-100', txt:'text-amber-700'}, 
+                {bg:'bg-purple-100', txt:'text-purple-700'}, {bg:'bg-slate-200', txt:'text-slate-700'},
+                {bg:'bg-sky-100', txt:'text-sky-700'}, {bg:'bg-fuchsia-100', txt:'text-fuchsia-700'}
+            ];
+            const colorDiv = document.getElementById('color-options');
+            if (colorDiv) {
+                colorDiv.innerHTML = '';
+                COLORS.forEach(c => {
+                    const b = document.createElement('button'); b.className = `color-btn w-14 h-14 rounded-full border-4 ${c.bg} shrink-0 transition-all active:scale-90`;
+                    b.onclick = () => { 
+                        document.querySelectorAll('#color-options button').forEach(x => x.classList.remove('selected')); 
+                        b.classList.add('selected'); 
+                        tempAvatarSelection.colorClass = c.bg; 
+                        tempAvatarSelection.textClass = c.txt; 
+                    };
+                    if(tempAvatarSelection.colorClass === c.bg) b.classList.add('selected'); 
+                    colorDiv.appendChild(b);
+                });
+            }
+
+            const EMOJIS = ['A', '🐱', '🐶', '🦊', '🦄', '🦖', '🐮', '🐸', '👽', '🍣', '🍔', '🍕', '🍜', '🍟', '🍦', '🍩', '☕', '🐼', '🐯', '🤖', '👾', '👻', '🚀', '🎸', '⚽', '😎', '🥸', '🦁', '🦉', '🦋'];
+            const emojiDiv = document.getElementById('emoji-options');
+            if (emojiDiv) {
+                emojiDiv.innerHTML = '';
+                EMOJIS.forEach(e => {
+                    const b = document.createElement('button'); b.className = `emoji-btn p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-2xl border-2 border-transparent active:scale-90 flex items-center justify-center`;
+                    b.innerText = e === 'A' ? 'Ab' : e;
+                    b.onclick = () => { 
+                        document.querySelectorAll('#emoji-options button').forEach(x => x.classList.remove('selected')); 
+                        b.classList.add('selected'); 
+                        tempAvatarSelection.emoji = (e === 'A') ? '' : e; 
+                    };
+                    if((e === 'A' && !tempAvatarSelection.emoji) || (e === tempAvatarSelection.emoji)) b.classList.add('selected');
+                    emojiDiv.appendChild(b);
+                });
+            }
+            window.showModal('modal-avatar');
+        }
+
+        window.saveAvatarSelection = async () => { 
+            appData.avatar = { ...tempAvatarSelection };
+            window.saveLocal(); 
+            updateUI(); 
+            window.closeAllModals(); 
+            window.showToast("Berhasil disimpan!"); 
+            if(appData.uid) {
+                try { 
+                    await updateDoc(doc(db, "users", appData.uid), { avatar: appData.avatar }); 
+                    await syncUserToRooms(appData.uid, appData.user, appData.avatar);
+                } catch(e) {}
+            }
+        };
+
+        // --- MEMBER LIST & FILTER ---
+        window.calculateUserDeposit = (roomId, userName) => {
+            const roomHistory = globalHistory.filter(h => h.roomId === roomId && h.userName === userName);
+            let total = 0;
+            roomHistory.forEach(h => {
+                if (h.type === 'in') total += h.amount || 0;
+                if (h.type === 'out') total -= h.amount || 0; 
+            });
+            return total;
+        };
+
+        window.openMemberListModal = async () => {
+            if (!currentRoomId) return;
+            const r = globalRooms.find(x => x.id === currentRoomId);
+            if (!r || !r.members) return;
+
+            const container = document.getElementById('member-list-container');
+            container.innerHTML = '<div class="text-center py-10"><svg class="spinner text-indigo-500" viewBox="0 0 50 50"><circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle></svg></div>';
+            
+            window.showModal('modal-member-list');
+
+            const isId = appData.language === 'id';
+            
+            const promises = r.members.map(async (m) => {
+                const char = m.avatar && m.avatar.emoji ? m.avatar.emoji : (m.name ? m.name.charAt(0).toUpperCase() : '?');
+                const colClass = m.avatar && m.avatar.colorClass ? m.avatar.colorClass : 'bg-indigo-100';
+                const txtClass = m.avatar && m.avatar.textClass ? m.avatar.textClass : 'text-indigo-700';
+                
+                const totalDeposit = window.calculateUserDeposit(currentRoomId, m.name);
+                let statusHtml = '';
+
+                if (m.uid === appData.uid) {
+                    statusHtml = `<span class="text-emerald-500 font-bold text-[10px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Online (Anda)</span>`;
+                } else {
+                    try {
+                        const userSnap = await getDoc(doc(db, "users", m.uid));
+                        if (userSnap.exists()) {
+                            const data = userSnap.data();
+                            if (data.isOnline) {
+                                statusHtml = `<span class="text-emerald-500 font-bold text-[10px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span> Online</span>`;
+                            } else {
+                                const lastSeenTxt = window.formatLastSeen(data.lastSeen, appData.language);
+                                statusHtml = `<span class="text-slate-400 font-bold text-[10px] flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-slate-300 dark:bg-slate-600 inline-block"></span> ${lastSeenTxt}</span>`;
+                            }
+                        } else {
+                            statusHtml = `<span class="text-slate-400 font-bold text-[10px]">-</span>`;
+                        }
+                    } catch (e) {
+                        statusHtml = `<span class="text-slate-400 font-bold text-[10px]">-</span>`;
+                    }
+                }
+
+                return `
+                <div class="bg-white dark:bg-slate-900 p-5 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full border-2 border-white dark:border-slate-800 flex items-center justify-center text-xl font-black shadow-sm shrink-0 ${colClass} ${txtClass}">${char}</div>
+                        <div class="flex-1">
+                            <h4 class="font-black text-slate-800 dark:text-white text-sm leading-tight mb-1">${m.name}</h4>
+                            ${statusHtml}
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 dark:bg-slate-800/50 p-4 rounded-2xl flex justify-between items-center">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">${isId ? 'Total Kontribusi' : 'Total Contribution'}</span>
+                        <span class="font-black text-indigo-600 dark:text-indigo-400 text-sm">Rp ${totalDeposit.toLocaleString('id-ID')}</span>
+                    </div>
+                    <button onclick="window.filterHistoryByUser('${window.safeStr(m.name)}')" class="w-full py-3.5 bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition-colors active:scale-95 flex items-center justify-center gap-2">
+                        ${isId ? 'Lihat Riwayat Transaksi' : 'View Transaction History'} <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                    </button>
+                </div>`;
+            });
+
+            const results = await Promise.all(promises);
+            container.innerHTML = results.join('');
+            window.refreshIcons();
+        };
+
+        window.filterHistoryByUser = (userName) => {
+            window.closeAllModals();
+            window.switchRoomTab('ringkasan');
+            currentUserHistoryFilter = userName;
+            refreshRoomUI(currentRoomId);
+            setTimeout(() => {
+                const histContainer = document.getElementById('detail-history-list');
+                if (histContainer) histContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        };
+
+        window.clearUserHistoryFilter = () => {
+            currentUserHistoryFilter = null;
+            refreshRoomUI(currentRoomId);
         };
 
         // --- AUTH LOGIC (EMAIL + GOOGLE) ---
@@ -1420,7 +1540,6 @@
                         const mergedRooms = [...new Set([...(appData.joinedRooms || []), ...(cloudData.joinedRooms || [])])];
                         appData.joinedRooms = mergedRooms;
                         
-                        // FIX: MEMPERBAIKI TYPO newSearchParams MENJADI new URLSearchParams
                         const urlParams = new URLSearchParams(window.location.search);
                         const sharedId = urlParams.get('id');
                         if(sharedId && !appData.joinedRooms.includes(sharedId)) { 
@@ -1823,6 +1942,34 @@
             });
         }
 
+        // --- EXPORT TO JPG ---
+        window.downloadSummaryImage = async (event) => {
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = createSpinner() + ' Memproses...';
+            btn.disabled = true;
+
+            const target = document.getElementById('room-tab-ringkasan');
+            try {
+                const canvas = await html2canvas(target, { 
+                    backgroundColor: appData.darkMode ? '#0f172a' : '#ffffff', 
+                    scale: 2,
+                    ignoreElements: (element) => element.tagName === 'BUTTON'
+                });
+                const link = document.createElement('a');
+                const r = globalRooms.find(x => x.id === currentRoomId);
+                link.download = `Tabungan_${r ? r.name : 'Ringkasan'}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+                window.showToast('Gambar berhasil disimpan!');
+            } catch (e) {
+                window.showToast('Gagal menyimpan gambar', true);
+            }
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            window.refreshIcons();
+        };
+
         function getChatDateLabel(timestamp, lang) {
             const date = new Date(timestamp);
             const now = new Date();
@@ -1848,21 +1995,15 @@
             return `${date.getDate()} ${monthStr} ${date.getFullYear()}`;
         }
 
-        if (!window.animatedStickersTracker) {
-            window.animatedStickersTracker = new Set();
-        }
+        if (!window.animatedStickersTracker) { window.animatedStickersTracker = new Set(); }
 
         window.animateSticker = (el) => {
             if (el.dataset.animating === 'true') return; 
             el.dataset.animating = 'true';
-            
             el.classList.remove('anim-float-temp');
             void el.offsetWidth; 
             el.classList.add('anim-float-temp');
-            
-            setTimeout(() => {
-                el.dataset.animating = 'false';
-            }, 2400); 
+            setTimeout(() => { el.dataset.animating = 'false'; }, 2400); 
         };
 
         let swipeStartX = 0;
@@ -2031,14 +2172,15 @@
 
                 let replyHtmlMe = '';
                 let replyHtmlOther = '';
+                // PERBAIKAN LEBAR REPLY BOX DI CHAT
                 if (m.replyTo) {
                     replyHtmlMe = `
-                    <div class="mb-1.5 p-2 bg-black/10 rounded-lg flex flex-col border-l-2 border-white/50 text-left">
+                    <div class="mb-1.5 p-2 bg-black/10 rounded-lg flex flex-col border-l-2 border-white/50 text-left w-full">
                         <span class="text-[9px] font-black opacity-80">${m.replyTo.name}</span>
                         <span class="text-[10px] opacity-90 line-clamp-1">${m.replyTo.message}</span>
                     </div>`;
                     replyHtmlOther = `
-                    <div class="mb-1.5 p-2 bg-black/5 dark:bg-white/5 rounded-lg flex flex-col border-l-2 border-indigo-400 text-left">
+                    <div class="mb-1.5 p-2 bg-black/5 dark:bg-white/5 rounded-lg flex flex-col border-l-2 border-indigo-400 text-left w-full">
                         <span class="text-[9px] font-black text-indigo-600 dark:text-indigo-400">${m.replyTo.name}</span>
                         <span class="text-[10px] opacity-80 line-clamp-1 text-slate-700 dark:text-slate-300">${m.replyTo.message}</span>
                     </div>`;
@@ -2066,7 +2208,7 @@
                             <span class="text-[9px] text-slate-400 font-bold mb-1 mr-1 pointer-events-none">Anda</span>
                             ${m.type === 'sticker' 
                                 ? `<div class="text-6xl cursor-pointer pointer-events-auto ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
-                                : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm whitespace-pre-wrap text-left pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlMe}${formattedMsg}</div>`
+                                : `<div class="chat-bubble-me p-3 text-sm font-bold shadow-sm text-left flex flex-col items-end pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlMe}<span class="whitespace-pre-wrap w-full text-left">${formattedMsg}</span></div>`
                             }
                         </div>
                     </div>`;
@@ -2092,7 +2234,7 @@
                             </div>
                             ${m.type === 'sticker' 
                                 ? `<div class="text-6xl cursor-pointer pointer-events-auto ml-7 ${animClass}" data-animating="${dataAnim}" onclick="window.animateSticker(this)">${m.message}</div>` 
-                                : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm whitespace-pre-wrap ml-7 pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlOther}${formattedMsg}</div>`
+                                : `<div class="chat-bubble-other p-3 text-sm font-bold shadow-sm text-left flex flex-col items-start ml-7 pointer-events-auto ${isMentioned ? 'ring-2 ring-rose-400' : ''}">${replyHtmlOther}<span class="whitespace-pre-wrap w-full text-left">${formattedMsg}</span></div>`
                             }
                         </div>
                     </div>`;
@@ -2890,11 +3032,10 @@
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Cek status PWA Standalone (Sudah di-Install)
             if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
                 const installBtn = document.getElementById('btn-install-app');
                 if (installBtn) {
-                    installBtn.style.display = 'none'; // Sembunyikan tombol
+                    installBtn.style.display = 'none'; 
                 }
             }
         });
