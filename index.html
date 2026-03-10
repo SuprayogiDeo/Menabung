@@ -93,7 +93,7 @@
         <div id="realtime-notif" class="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-full w-[90%] max-w-[400px] bg-indigo-600 text-white p-4 rounded-2xl shadow-2xl z-[110] flex items-start gap-3 transition-transform duration-300 cursor-pointer" onclick="this.classList.replace('translate-y-4', '-translate-y-full')">
             <div class="bg-white/20 p-2 rounded-full shrink-0"><i data-lucide="bell-ring" class="w-5 h-5 text-white"></i></div>
             <div>
-                <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-0.5" data-t="notif_title">Aktivitas Baru!</p>
+                <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-widest mb-0.5">Aktivitas Baru!</p>
                 <p id="realtime-notif-text" class="text-sm font-black leading-tight">-</p>
             </div>
         </div>
@@ -122,7 +122,6 @@
                         </div>
                         <h1 id="total-balance" class="text-4xl font-black tracking-tight mb-4" data-value="0">Rp 0</h1>
                     </div>
-
                     <div id="live-feed-container" class="bg-white/20 backdrop-blur-sm border border-white/10 rounded-xl p-2.5 shadow-inner hidden flex-col mb-5">
                         <div id="live-feed-list" class="max-h-[75px] overflow-y-auto no-scrollbar space-y-2 snap-y"></div>
                     </div>
@@ -450,6 +449,7 @@
                         <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">"Ayo wujudkan targetmu bersama!"</p>
                     </div>
                 </div>
+                
                 <div class="grid grid-cols-2 gap-3 mt-2">
                     <button onclick="window.shareReceipt(event)" class="py-4 bg-indigo-600 text-white rounded-[1.25rem] font-black text-sm active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 dark:shadow-none"><i data-lucide="share-2" class="w-4 h-4"></i> Bagikan</button>
                     <button onclick="window.downloadReceipt(event)" class="py-4 bg-slate-800 text-white rounded-[1.25rem] font-black text-sm active:scale-95 transition-transform flex items-center justify-center gap-2 shadow-lg shadow-slate-300 dark:shadow-none"><i data-lucide="download" class="w-4 h-4"></i> JPG</button>
@@ -619,11 +619,11 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-messaging.js";
 
         // !!! PENTING: GANTI TEKS DI BAWAH INI DENGAN KUNCI VAPID DARI FIREBASE ANDA !!!
-        const VAPID_KEY_FIREBASE = "BOMDk8gxLgadSdfuYHXNMFLdxb6W7G_kVaZve9k2kuek7UaCLKoHnbI7rqDTQnh3TnlDsiaoU0MbxdE_UPBRfuA"; 
+        const VAPID_KEY_FIREBASE = "BOMDk8gxLgadSdfuYHXNMFLdxb6W7G_kVaZve9k2kuek7UaCLKoHnbI7rqDTQnh3TnlDsiaoU0MbxdE_UPBRfuA; 
         
         // GLOBAL ERROR CATCHER
         window.addEventListener('error', function(e) { console.error("Global Error:", e.message); window.showToast("Error sistem: " + e.message, true); });
@@ -872,6 +872,77 @@
         const auth = getAuth(app);
         const messaging = getMessaging(app);
 
+        // --- TRANSLATIONS ---
+        const i18n = {
+            id: {
+                welcome: "Selamat datang,", total_balance: "Total Saldo", income: "Masuk", outcome: "Keluar",
+                savings_goal: "Tujuan Tabungan", available_balance: "Saldo Tersedia", progress: "Progres Keseluruhan",
+                archive_now: "Arsipkan Sekarang", milestone_list: "Daftar Milestone", history: "Riwayat Transaksi",
+                withdraw: "Tarik", save: "Nabung", nav_home: "Beranda", nav_history: "Riwayat", nav_profile: "Profil",
+                archive: "Arsip Tabungan", archive_desc: "Target 100% Selesai", dark_mode: "Mode Gelap", language_name: "Bahasa",
+                language_val: "ID", edit_goal: "Ubah Tabungan", goal_name: "Nama Tujuan", target_nominal: "Target Nominal",
+                save_changes: "Simpan Perubahan", goal_reached: "Tercapai!", celeb_desc: "Tabungan", celeb_done: "lunas 100%!",
+                continue: "Lanjutkan", label_depositor: "Penyetor", label_note: "Catatan (Opsional)", confirm: "Konfirmasi",
+                all: "Semua", in: "Masuk", out: "Keluar", data_activities: "Data & Aktivitas", app_settings: "Pengaturan Aplikasi",
+                no_goals: "Belum ada tabungan", no_archive: "Belum ada arsip", empty_history: "Belum ada riwayat",
+                placeholder_goal: "Beli Laptop...", install_app: "Install Aplikasi", category: "Kategori",
+                install_title: "Cara Install", choose_avatar: "Pilih Avatar", options: "Opsi", share: "Bagikan", delete: "Hapus Tabungan", leave: "Keluar Tabungan",
+                share_title: "Undang Teman", enable_notif: "Aktifkan Notifikasi",
+                install_ios_desc: "Untuk pengguna iPhone/iPad (Safari):", install_ios_step1: "Tekan ikon Bagikan di bawah", install_ios_step2: "Pilih 'Tambah ke Layar Utama'",
+                install_android_desc: "Aplikasi siap diinstall ke perangkat Anda.", install_android_step1: "Tekan ikon Bagikan / Titik Tiga", install_android_step2: "Pilih 'Install Aplikasi' atau 'Tambahkan ke Layar Utama'",
+                install_prompt_title: "Install Aplikasi", install_prompt_desc: "Akses lebih cepat & mudah", install_btn: "Lihat Tutorial",
+                login_desc: "Simpan data tabungan Anda dengan aman di awan.", login_google: "Masuk dengan Google", logout: "Keluar (Logout)",
+                name_warning: "*Peringatan: Nama tidak dapat diubah setelah disimpan. Mohon gunakan nama asli Anda.",
+                filter_all_time: "Semua Waktu", filter_this_month: "Bulan Ini", filter_last_month: "Bulan Lalu",
+                empty_goal_desc: "Yuk, buat tujuan pertamamu!", empty_archive_desc: "Belum ada tabungan yang diselesaikan", empty_history_desc: "Mulai menabung untuk melihat riwayat",
+                notif_title: "Aktivitas Baru!",
+                filter_room_all: "Semua", filter_room_personal: "Pribadi", filter_room_shared: "Bersama",
+                type_message: "Ketik pesan...", tab_summary: "Ringkasan", tab_discussion: "Diskusi",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Lupa Password?",
+                login_btn: "Masuk", register_btn: "Daftar Akun", no_account: "Belum punya akun?",
+                register_link: "Daftar Sekarang", has_account: "Sudah punya akun?", login_link: "Masuk di sini", or: "ATAU",
+                pass_reset_sent: "Email reset password telah dikirim!"
+            },
+            en: {
+                welcome: "Welcome,", total_balance: "Total Balance", income: "Income", outcome: "Outcome",
+                savings_goal: "Saving Goals", available_balance: "Available Balance", progress: "Total Progress",
+                archive_now: "Archive Now", milestone_list: "Milestone List", history: "Transaction History",
+                withdraw: "Withdraw", save: "Save", nav_home: "Home", nav_history: "History", nav_profile: "Profile",
+                archive: "Archive", archive_desc: "100% Goal Completed", dark_mode: "Dark Mode", language_name: "Language",
+                language_val: "EN", edit_goal: "Edit Saving", goal_name: "Goal Name", target_nominal: "Target Amount",
+                save_changes: "Save Changes", goal_reached: "Reached!", celeb_desc: "Saving", celeb_done: "is 100% completed!",
+                continue: "Continue", label_depositor: "Depositor", label_note: "Note (Optional)", confirm: "Confirm",
+                all: "All", in: "In", out: "Out", data_activities: "Data & Activities", app_settings: "App Settings",
+                no_goals: "No goals yet", no_archive: "No archived items", empty_history: "No history yet",
+                placeholder_goal: "Buy a Laptop...", install_app: "Install App", category: "Category",
+                install_title: "How to Install", choose_avatar: "Choose Avatar", options: "Options", share: "Share", delete: "Delete Goal", leave: "Leave Goal",
+                share_title: "Invite Friends", enable_notif: "Enable Notifications",
+                install_ios_desc: "For iPhone/iPad users (Safari):", install_ios_step1: "Tap the Share icon at the bottom", install_ios_step2: "Select 'Add to Home Screen'",
+                install_android_desc: "App is ready to be installed on your device.", install_android_step1: "Tap the Share / Three Dots icon", install_android_step2: "Select 'Install App' or 'Add to Home screen'",
+                install_prompt_title: "Install App", install_prompt_desc: "Faster access & easy to use", install_btn: "View Tutorial",
+                login_desc: "Save your savings data securely in the cloud.", login_google: "Sign in with Google", logout: "Log Out",
+                name_warning: "*Warning: Name cannot be changed once saved. Please use your real name.",
+                filter_all_time: "All Time", filter_this_month: "This Month", filter_last_month: "Last Month",
+                empty_goal_desc: "Let's create your first goal!", empty_archive_desc: "No completed goals yet", empty_history_desc: "Start saving to see your history",
+                notif_title: "New Activity!",
+                filter_room_all: "All", filter_room_personal: "Personal", filter_room_shared: "Shared",
+                type_message: "Type message...", tab_summary: "Summary", tab_discussion: "Discussion",
+                email_label: "Email", pass_label: "Password", forgot_pass: "Forgot Password?",
+                login_btn: "Login", register_btn: "Register Account", no_account: "Don't have an account?",
+                register_link: "Register Now", has_account: "Already have an account?", login_link: "Login here", or: "OR",
+                pass_reset_sent: "Password reset email sent!"
+            }
+        };
+
+        const CATEGORIES = [
+            { id: 'liburan', label: 'Liburan', icon: '✈️', color: '#3b82f6' },
+            { id: 'gadget', label: 'Gadget', icon: '💻', color: '#8b5cf6' },
+            { id: 'pendidikan', label: 'Pendidikan', icon: '🎓', color: '#10b981' },
+            { id: 'darurat', label: 'Darurat', icon: '🏥', color: '#f43f5e' },
+            { id: 'lainnya', label: 'Lainnya', icon: '🛍️', color: '#f59e0b' }
+        ];
+
+        // --- APP STATE ---
         const DB_KEY = 'tabungan_app_v1_release_final';
         let appData = JSON.parse(localStorage.getItem(DB_KEY));
         if (!appData) {
@@ -909,7 +980,81 @@
         let pendingTransaction = null; 
         let deferredPrompt;
 
-        const modalIds = ['modal-transaction', 'modal-manage', 'modal-share', 'modal-avatar', 'modal-edit', 'modal-name-entry', 'modal-action-sheet', 'modal-install', 'modal-member-list', 'modal-receipt'];
+        // --- AUTH LOGIC ---
+        window.checkPasswordStrength = () => {
+            if (isLoginMode) return; 
+            const pass = document.getElementById('auth-pass').value;
+            const updateHint = (id, isValid) => {
+                const p = document.getElementById('hint-' + id);
+                if (!p) return;
+                const text = p.querySelector('span').innerText;
+                if (isValid) {
+                    p.classList.replace('text-rose-500', 'text-emerald-500');
+                    p.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i> <span>${text}</span>`;
+                } else {
+                    p.classList.replace('text-emerald-500', 'text-rose-500');
+                    p.innerHTML = `<i data-lucide="x" class="w-3.5 h-3.5"></i> <span>${text}</span>`;
+                }
+            };
+            updateHint('length', pass.length >= 6);
+            updateHint('case', /[a-z]/.test(pass) && /[A-Z]/.test(pass));
+            updateHint('number', /[0-9]/.test(pass));
+            window.refreshIcons();
+        };
+
+        window.togglePasswordVisibility = () => {
+            const input = document.getElementById('auth-pass');
+            const icon = document.getElementById('auth-pass-eye');
+            if(input.type === 'password') { input.type = 'text'; icon.setAttribute('data-lucide', 'eye-off'); } 
+            else { input.type = 'password'; icon.setAttribute('data-lucide', 'eye'); }
+            window.refreshIcons();
+        };
+
+        window.toggleAuthMode = () => {
+            isLoginMode = !isLoginMode;
+            const fpContainer = document.getElementById('forgot-pass-container');
+            const passHints = document.getElementById('pass-hints');
+            if(isLoginMode) { fpContainer.classList.remove('hidden'); passHints.classList.add('hidden'); } 
+            else { fpContainer.classList.add('hidden'); passHints.classList.remove('hidden'); window.checkPasswordStrength(); }
+            window.showAuthError(""); window.showAuthSuccess(""); applyTranslations();
+        };
+
+        window.handleForgotPassword = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            window.showAuthError(""); window.showAuthSuccess("");
+            if(!email) return window.showAuthError(appData.language === 'id' ? 'Tulis email Anda di kolom atas terlebih dahulu.' : 'Please enter your email above first.');
+            try {
+                await sendPasswordResetEmail(auth, email);
+                window.showAuthSuccess(appData.language === 'id' ? "Email reset terkirim! Silakan cek kotak masuk." : "Password reset email sent! Check your inbox.");
+            } catch(e) { window.showAuthError("Gagal mengirim email reset."); }
+        };
+
+        window.handleEmailAuth = async () => {
+            const email = document.getElementById('auth-email').value.trim();
+            const pass = document.getElementById('auth-pass').value.trim();
+            window.showAuthError(""); window.showAuthSuccess("");
+            if(!email || !pass) return window.showAuthError("Email dan password harus diisi lengkap.");
+            if(!isLoginMode && (pass.length < 6 || !/[a-z]/.test(pass) || !/[A-Z]/.test(pass) || !/[0-9]/.test(pass))) {
+                return window.showAuthError("Password belum memenuhi syarat.");
+            }
+            const btn = document.getElementById('btn-email-auth');
+            const origText = btn.innerText; btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            try {
+                if(isLoginMode) await signInWithEmailAndPassword(auth, email, pass); 
+                else await createUserWithEmailAndPassword(auth, email, pass); 
+            } catch(error) {
+                window.showAuthError("Gagal: Periksa kembali email dan kata sandi Anda.");
+                btn.disabled = false; btn.innerText = origText;
+            }
+        };
+
+        window.loginWithGoogle = async () => {
+            const btn = document.getElementById('btn-google-login');
+            const origHTML = btn.innerHTML; window.showAuthError(""); window.showAuthSuccess("");
+            btn.disabled = true; btn.innerHTML = createSpinner() + ' ...';
+            try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
+            catch (error) { btn.disabled = false; btn.innerHTML = origHTML; }
+        };
 
         const splashStartTime = Date.now();
         const MIN_SPLASH_TIME = 2000;
@@ -1077,6 +1222,7 @@
                 window.closeConfirmModal(); window.closeAllModals(); pendingTransaction = null; 
                 window.showToast("Transaksi Berhasil!");
                 
+                // MUNCULKAN STRUK SETELAH TRANSAKSI
                 setTimeout(() => window.openReceiptModal('transaction', h), 500);
 
             } catch(e) { window.showToast("Terjadi kesalahan sistem.", true); }
